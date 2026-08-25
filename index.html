@@ -824,12 +824,19 @@
 <script>
 
 /* =========================================================
-   SUPABASE & ESTADO GLOBAL
+   SUPABASE & ESTADO GLOBAL (CON API KEY CORREGIDA)
    ========================================================= */
 
 const SUPABASE_URL = "https://czxfitmwbwjhureyualf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Forzamos que la librería incluya la cabecera de la API correctamente en cada petición
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: { persistSession: false },
+  global: {
+    headers: { 'apikey': SUPABASE_KEY }
+  }
+});
 
 let currentRoom = null;
 let currentPlayer = null;
@@ -1007,7 +1014,6 @@ function updateInterface() {
   document.getElementById("shareText").textContent = t.share;
   document.getElementById("chooseModeTitle").textContent = t.chooseModeTitle;
 
-  // Actualizar tarjetas de modos
   const modeCards = document.querySelectorAll(".mode-card");
   modeCards.forEach((card, index) => {
     if (t.modes[index]) {
@@ -1299,7 +1305,6 @@ async function finishMyAnswers() {
     });
   }
 
-  // Insertar o actualizar de forma limpia para evitar duplicados si se reintenta
   await supabaseClient.from("answers").upsert(rows, { onConflict: "room_id,player_id,question_id" });
 
   if (pollInterval) clearInterval(pollInterval);
@@ -1322,7 +1327,6 @@ async function checkIfBothFinished() {
     const p1Count = allAnswers.filter(a => a.player_id === playerIds[0]).length;
     const p2Count = allAnswers.filter(a => a.player_id === playerIds[1]).length;
 
-    // Solo se dispara cuando AMBOS jugadores hayan completado el total de preguntas exactas
     if (p1Count >= totalQ && p2Count >= totalQ) {
       if (pollInterval) clearInterval(pollInterval);
       
@@ -1350,7 +1354,6 @@ function calculateFinalScore(allAnswers, totalQ, playersData) {
   for (let i = 0; i < totalQ; i++) {
     const qObj = activeQuestions[i % activeQuestions.length];
     
-    // Obtener texto de pregunta según el idioma del jugador actual
     let qText = qObj ? (currentLanguage === "en" ? (qObj.question_en || qObj.question_es) : currentLanguage === "ar" ? (qObj.question_ar || qObj.question_es) : qObj.question_es) : `Pregunta ${i + 1}`;
 
     let optsRaw = qObj ? (currentLanguage === "en" ? (qObj.options_en || qObj.options_es) : currentLanguage === "ar" ? (qObj.options_ar || qObj.options_es) : qObj.options_es) : "";
