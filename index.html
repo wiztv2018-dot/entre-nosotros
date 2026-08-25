@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Entre Nosotros 💗</title>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -21,14 +19,16 @@
       font-family: Arial, Helvetica, sans-serif;
       color: white;
       background:
-        radial-gradient(circle at top, #442052 0%, #1b1325 40%, #0c0910 100%);
+        radial-gradient(circle at top, #442052 0%, #1b1325 45%, #0c0910 100%);
       overflow-x: hidden;
     }
 
-    button,
-    input,
-    select {
+    button, input, select {
       font: inherit;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     .app {
@@ -118,8 +118,7 @@
       font-size: 12px;
     }
 
-    input,
-    select {
+    input, select {
       width: 100%;
       padding: 14px;
       color: white;
@@ -129,8 +128,7 @@
       outline: none;
     }
 
-    input:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: #ff70b1;
     }
 
@@ -140,7 +138,6 @@
       padding: 15px;
       border: none;
       border-radius: 15px;
-      cursor: pointer;
       color: white;
       font-weight: 800;
       background: linear-gradient(100deg, #ff67aa, #9b82ff);
@@ -148,14 +145,13 @@
       transition: .2s;
     }
 
-    .button:hover {
+    .button:hover:not(:disabled) {
       transform: translateY(-2px);
     }
 
-    .secondary {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: none;
+    .button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
     }
 
     .join-box {
@@ -182,26 +178,29 @@
       padding: 0 22px;
     }
 
-    .error {
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 12px;
-      background: rgba(255,70,100,.12);
-      border: 1px solid rgba(255,70,100,.25);
-      color: #ffb5c4;
-      font-size: 13px;
-      display: none;
-    }
-
+    .error,
     .success {
       margin-top: 15px;
       padding: 12px;
       border-radius: 12px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .error {
+      background: rgba(255,70,100,.12);
+      border: 1px solid rgba(255,70,100,.25);
+      color: #ffb5c4;
+    }
+
+    .success {
       background: rgba(80,220,160,.1);
       border: 1px solid rgba(80,220,160,.2);
       color: #a8f5d5;
-      font-size: 13px;
-      display: none;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     .code {
@@ -281,7 +280,6 @@
       text-align: center;
       font-size: clamp(25px, 5vw, 40px);
       line-height: 1.15;
-      letter-spacing: -1px;
       margin-bottom: 28px;
     }
 
@@ -299,7 +297,6 @@
       background: rgba(255,255,255,.06);
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 17px;
-      cursor: pointer;
       transition: .2s;
     }
 
@@ -336,12 +333,76 @@
     .score {
       font-size: 65px;
       font-weight: 900;
-      letter-spacing: -4px;
       margin: 5px 0;
     }
 
-    .hidden {
-      display: none !important;
+    /* CONTADOR */
+
+    #countdownScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, #442052 0%, #180d20 45%, #070509 100%);
+      animation: countdownFade .25s ease;
+    }
+
+    #countdownHeart {
+      font-size: 65px;
+      margin-bottom: 15px;
+      animation: heartBeat .8s infinite;
+    }
+
+    #countdownNumber {
+      font-size: clamp(120px, 25vw, 230px);
+      font-weight: 900;
+      line-height: .9;
+      text-shadow: 0 0 60px rgba(255,100,170,.7);
+      animation: numberPop .35s ease;
+    }
+
+    #countdownText {
+      margin-top: 25px;
+      color: #bbb;
+      font-size: 18px;
+    }
+
+    @keyframes floating {
+      50% {
+        transform: translateY(-8px) scale(1.05);
+      }
+    }
+
+    @keyframes pulse {
+      50% {
+        opacity: .3;
+      }
+    }
+
+    @keyframes heartBeat {
+      50% {
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes numberPop {
+      from {
+        transform: scale(.7);
+        opacity: .2;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes countdownFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     [dir="rtl"] {
@@ -378,18 +439,6 @@
         padding-top: 50px;
       }
     }
-
-    @keyframes floating {
-      50% {
-        transform: translateY(-8px) scale(1.05);
-      }
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .3;
-      }
-    }
   </style>
 </head>
 
@@ -419,9 +468,7 @@
     </h1>
 
     <p id="subtitle">
-      Un pequeño juego para conocerse,
-      reírse y descubrir qué tanto tienen
-      en común.
+      Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.
     </p>
 
   </section>
@@ -451,7 +498,6 @@
 
       </div>
 
-
       <div class="field">
 
         <label id="languageLabel">
@@ -460,24 +506,15 @@
 
         <select id="language">
 
-          <option value="es">
-            🇪🇸 Español
-          </option>
-
-          <option value="ar">
-            🇸🇦 العربية
-          </option>
-
-          <option value="en">
-            🇬🇧 English
-          </option>
+          <option value="es">🇪🇸 Español</option>
+          <option value="ar">🇸🇦 العربية</option>
+          <option value="en">🇬🇧 English</option>
 
         </select>
 
       </div>
 
     </div>
-
 
     <button
       class="button"
@@ -518,58 +555,33 @@
 
     </div>
 
-
-    <div
-      class="error"
-      id="error"
-    ></div>
-
-    <div
-      class="success"
-      id="success"
-    ></div>
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
 
   </section>
 
 
   <!-- SALA -->
 
-  <section
-    class="card hidden"
-    id="lobby"
-  >
+  <section class="card hidden" id="lobby">
 
-    <h2
-      id="lobbyTitle"
-      style="text-align:center"
-    >
+    <h2 id="lobbyTitle" style="text-align:center">
       Tu sala está lista
     </h2>
 
-
-    <div
-      class="code"
-      id="roomCode"
-    >
+    <div class="code" id="roomCode">
       K7X92
     </div>
 
-
-    <p
-      class="share"
-      id="shareText"
-    >
+    <p class="share" id="shareText">
       Comparte este código con tu pareja.
     </p>
-
 
     <div class="players">
 
       <div class="player">
 
-        <span id="player1Flag">
-          🇨🇴
-        </span>
+        <span id="player1Flag">🇨🇴</span>
 
         <b id="playerOne">
           Carlos
@@ -584,9 +596,7 @@
 
       <div class="player">
 
-        <span id="player2Flag">
-          ❤️
-        </span>
+        <span id="player2Flag">❤️</span>
 
         <b id="playerTwo">
           Esperando...
@@ -601,13 +611,9 @@
     </div>
 
 
-    <div
-      class="waiting"
-      id="waiting"
-    >
+    <div class="waiting" id="waiting">
 
       <span class="dot"></span>
-
       Esperando a tu pareja...
 
     </div>
@@ -619,9 +625,7 @@
       onclick="startGame()"
       disabled
     >
-
       Esperando jugador 2...
-
     </button>
 
   </section>
@@ -629,25 +633,18 @@
 
   <!-- JUEGO -->
 
-  <section
-    class="card hidden"
-    id="game"
-  >
+  <section class="card hidden" id="game">
 
     <div class="progress">
 
-      <div
-        class="bar"
-        id="bar"
-      ></div>
+      <div class="bar" id="bar"></div>
 
     </div>
-
 
     <div class="meta">
 
       <span id="round">
-        Ronda 1 de 10
+        Ronda 1 / 10
       </span>
 
       <span id="category">
@@ -656,26 +653,13 @@
 
     </div>
 
+    <div class="question" id="question"></div>
 
-    <div
-      class="question"
-      id="question"
-    ></div>
+    <div class="answers" id="answers"></div>
 
-
-    <div
-      class="answers"
-      id="answers"
-    ></div>
-
-
-    <div
-      class="status"
-      id="status"
-    >
+    <div class="status" id="status">
       Elige una respuesta.
     </div>
-
 
     <button
       class="button"
@@ -683,9 +667,7 @@
       disabled
       onclick="nextQuestion()"
     >
-
       Siguiente →
-
     </button>
 
   </section>
@@ -693,10 +675,7 @@
 
   <!-- RESULTADO -->
 
-  <section
-    class="card hidden result"
-    id="result"
-  >
+  <section class="card hidden result" id="result">
 
     <div class="big">
       💞
@@ -710,22 +689,16 @@
       ¡Hay mucho por descubrir!
     </h2>
 
-    <p
-      id="resultText"
-      style="color:#aaa2b2"
-    >
+    <p id="resultText" style="color:#aaa2b2">
       Esta es nuestra primera versión.
     </p>
-
 
     <button
       class="button"
       onclick="location.reload()"
       id="againButton"
     >
-
       Jugar otra vez
-
     </button>
 
   </section>
@@ -757,271 +730,113 @@ const supabaseClient =
    ========================================================= */
 
 let currentRoom = null;
-
 let currentPlayer = null;
 
 let roomSubscription = null;
-
 let playerSubscription = null;
 
 let currentLanguage = "es";
 
 let currentQuestion = 0;
-
 let selectedAnswer = null;
+
+let countdownRunning = false;
 
 
 /* =========================================================
-   TRADUCCIONES DE LA INTERFAZ
+   TRADUCCIONES
    ========================================================= */
 
 const translations = {
 
   es: {
-
     title: "Entre<br>Nosotros",
-
-    subtitle:
-      "Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",
-
-    setupTitle:
-      "Crear una partida",
-
-    nameLabel:
-      "Tu nombre",
-
-    languageLabel:
-      "Tu idioma",
-
-    create:
-      "Crear sala 💗",
-
-    joinTitle:
-      "¿Ya tienes un código?",
-
-    join:
-      "Unirse ❤️",
-
-    lobby:
-      "Tu sala está lista",
-
-    share:
-      "Comparte este código con tu pareja.",
-
-    waiting:
-      "Esperando a tu pareja...",
-
-    secondPlayer:
-      "Segundo jugador",
-
-    start:
-      "Empezar partida →",
-
-    waitingStart:
-      "Esperando jugador 2...",
-
-    round:
-      "Ronda",
-
-    category:
-      "❤️ Conóceme",
-
-    choose:
-      "Elige una respuesta.",
-
-    saved:
-      "Respuesta guardada ✓",
-
-    next:
-      "Siguiente →",
-
-    result:
-      "¡Hay mucho por descubrir!",
-
-    resultText:
-      "Esta es nuestra primera versión.",
-
-    again:
-      "Jugar otra vez",
-
-    invalid:
-      "Escribe un código de sala.",
-
-    notFound:
-      "No encontramos esa sala.",
-
-    full:
-      "Esta sala ya tiene dos jugadores.",
-
-    connection:
-      "No pudimos conectar con la sala."
-
+    subtitle: "Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",
+    setupTitle: "Crear una partida",
+    nameLabel: "Tu nombre",
+    languageLabel: "Tu idioma",
+    create: "Crear sala 💗",
+    joinTitle: "¿Ya tienes un código?",
+    join: "Unirse ❤️",
+    lobby: "Tu sala está lista",
+    share: "Comparte este código con tu pareja.",
+    waiting: "Esperando a tu pareja...",
+    secondPlayer: "Segundo jugador",
+    start: "Empezar partida →",
+    waitingStart: "Esperando jugador 2...",
+    round: "Ronda",
+    category: "❤️ Conóceme",
+    choose: "Elige una respuesta.",
+    saved: "Respuesta guardada ✓",
+    next: "Siguiente →",
+    result: "¡Hay mucho por descubrir!",
+    resultText: "Esta es nuestra primera versión.",
+    again: "Jugar otra vez",
+    invalid: "Escribe un código de sala.",
+    notFound: "No encontramos esa sala.",
+    full: "Esta sala ya tiene dos jugadores.",
+    connection: "No pudimos conectar con la sala.",
+    getReady: "Prepárense..."
   },
-
 
   ar: {
-
-    title:
-      "بيننا",
-
-    subtitle:
-      "لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",
-
-    setupTitle:
-      "إنشاء لعبة",
-
-    nameLabel:
-      "اسمك",
-
-    languageLabel:
-      "لغتك",
-
-    create:
-      "إنشاء غرفة 💗",
-
-    joinTitle:
-      "هل لديك رمز الغرفة؟",
-
-    join:
-      "انضم ❤️",
-
-    lobby:
-      "غرفتك جاهزة",
-
-    share:
-      "شارك هذا الرمز مع شريكك.",
-
-    waiting:
-      "في انتظار شريكك...",
-
-    secondPlayer:
-      "اللاعب الثاني",
-
-    start:
-      "ابدأ اللعبة →",
-
-    waitingStart:
-      "في انتظار اللاعب الثاني...",
-
-    round:
-      "الجولة",
-
-    category:
-      "❤️ لنتعرف على بعضنا",
-
-    choose:
-      "اختر إجابة.",
-
-    saved:
-      "تم حفظ الإجابة ✓",
-
-    next:
-      "التالي →",
-
-    result:
-      "لا يزال هناك الكثير لاكتشافه!",
-
-    resultText:
-      "هذه هي نسختنا الأولى.",
-
-    again:
-      "العب مرة أخرى",
-
-    invalid:
-      "اكتب رمز الغرفة.",
-
-    notFound:
-      "لم نجد هذه الغرفة.",
-
-    full:
-      "هذه الغرفة تحتوي بالفعل على لاعبين.",
-
-    connection:
-      "تعذر الاتصال بالغرفة."
-
+    title: "بيننا",
+    subtitle: "لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",
+    setupTitle: "إنشاء لعبة",
+    nameLabel: "اسمك",
+    languageLabel: "لغتك",
+    create: "إنشاء غرفة 💗",
+    joinTitle: "هل لديك رمز الغرفة؟",
+    join: "انضم ❤️",
+    lobby: "غرفتك جاهزة",
+    share: "شارك هذا الرمز مع شريكك.",
+    waiting: "في انتظار شريكك...",
+    secondPlayer: "اللاعب الثاني",
+    start: "ابدأ اللعبة →",
+    waitingStart: "في انتظار اللاعب الثاني...",
+    round: "الجولة",
+    category: "❤️ لنتعرف على بعضنا",
+    choose: "اختر إجابة.",
+    saved: "تم حفظ الإجابة ✓",
+    next: "التالي →",
+    result: "لا يزال هناك الكثير لاكتشافه!",
+    resultText: "هذه هي نسختنا الأولى.",
+    again: "العب مرة أخرى",
+    invalid: "اكتب رمز الغرفة.",
+    notFound: "لم نجد هذه الغرفة.",
+    full: "هذه الغرفة تحتوي بالفعل على لاعبين.",
+    connection: "تعذر الاتصال بالغرفة.",
+    getReady: "استعدوا..."
   },
 
-
   en: {
-
-    title:
-      "Between<br>Us",
-
-    subtitle:
-      "A little game to get to know each other, laugh together and discover how much we have in common.",
-
-    setupTitle:
-      "Create a game",
-
-    nameLabel:
-      "Your name",
-
-    languageLabel:
-      "Your language",
-
-    create:
-      "Create room 💗",
-
-    joinTitle:
-      "Already have a room code?",
-
-    join:
-      "Join ❤️",
-
-    lobby:
-      "Your room is ready",
-
-    share:
-      "Share this code with your partner.",
-
-    waiting:
-      "Waiting for your partner...",
-
-    secondPlayer:
-      "Second player",
-
-    start:
-      "Start game →",
-
-    waitingStart:
-      "Waiting for player 2...",
-
-    round:
-      "Round",
-
-    category:
-      "❤️ Get to know me",
-
-    choose:
-      "Choose an answer.",
-
-    saved:
-      "Answer saved ✓",
-
-    next:
-      "Next →",
-
-    result:
-      "There is still so much to discover!",
-
-    resultText:
-      "This is our first version.",
-
-    again:
-      "Play again",
-
-    invalid:
-      "Enter a room code.",
-
-    notFound:
-      "We couldn't find that room.",
-
-    full:
-      "This room already has two players.",
-
-    connection:
-      "We couldn't connect to the room."
-
+    title: "Between<br>Us",
+    subtitle: "A little game to get to know each other, laugh together and discover how much we have in common.",
+    setupTitle: "Create a game",
+    nameLabel: "Your name",
+    languageLabel: "Your language",
+    create: "Create room 💗",
+    joinTitle: "Already have a room code?",
+    join: "Join ❤️",
+    lobby: "Your room is ready",
+    share: "Share this code with your partner.",
+    waiting: "Waiting for your partner...",
+    secondPlayer: "Second player",
+    start: "Start game →",
+    waitingStart: "Waiting for player 2...",
+    round: "Round",
+    category: "❤️ Get to know me",
+    choose: "Choose an answer.",
+    saved: "Answer saved ✓",
+    next: "Next →",
+    result: "There is still so much to discover!",
+    resultText: "This is our first version.",
+    again: "Play again",
+    invalid: "Enter a room code.",
+    notFound: "We couldn't find that room.",
+    full: "This room already has two players.",
+    connection: "We couldn't connect to the room.",
+    getReady: "Get ready..."
   }
 
 };
@@ -1089,7 +904,7 @@ const questions = [
       ["Una carta 💌","رسالة 💌","A letter 💌"],
       ["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],
       ["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],
-      ["Una experiencia ✈️","تجربة مميزة ✈️","An experience ✈️"]
+      ["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]
     ]
   },
 
@@ -1157,12 +972,12 @@ const questions = [
 
 
 /* =========================================================
-   CAMBIAR IDIOMA
+   IDIOMA
    ========================================================= */
 
 document
   .getElementById("language")
-  .addEventListener("change", function () {
+  .addEventListener("change", function() {
 
     currentLanguage = this.value;
 
@@ -1179,9 +994,7 @@ function updateInterface() {
     currentLanguage;
 
   document.documentElement.dir =
-    currentLanguage === "ar"
-      ? "rtl"
-      : "ltr";
+    currentLanguage === "ar" ? "rtl" : "ltr";
 
   document.getElementById("title").innerHTML =
     t.title;
@@ -1234,15 +1047,10 @@ async function createRoom() {
   clearMessages();
 
   const name =
-    document
-      .getElementById("name")
-      .value
-      .trim();
+    document.getElementById("name").value.trim();
 
   currentLanguage =
-    document
-      .getElementById("language")
-      .value;
+    document.getElementById("language").value;
 
   if (!name) {
 
@@ -1255,13 +1063,9 @@ async function createRoom() {
     );
 
     return;
-
   }
 
-
-  const code =
-    generateRoomCode();
-
+  const code = generateRoomCode();
 
   const { data: room, error } =
     await supabaseClient
@@ -1273,7 +1077,6 @@ async function createRoom() {
       .select()
       .single();
 
-
   if (error) {
 
     console.error(error);
@@ -1283,9 +1086,7 @@ async function createRoom() {
     );
 
     return;
-
   }
-
 
   const { data: player, error: playerError } =
     await supabaseClient
@@ -1298,7 +1099,6 @@ async function createRoom() {
       .select()
       .single();
 
-
   if (playerError) {
 
     console.error(playerError);
@@ -1308,26 +1108,10 @@ async function createRoom() {
     );
 
     return;
-
   }
 
-
   currentRoom = room;
-
   currentPlayer = player;
-
-
-  localStorage.setItem(
-    "entre_nosotros_player",
-    JSON.stringify(player)
-  );
-
-
-  localStorage.setItem(
-    "entre_nosotros_room",
-    JSON.stringify(room)
-  );
-
 
   document.getElementById("playerOne").textContent =
     name;
@@ -1335,18 +1119,18 @@ async function createRoom() {
   document.getElementById("playerOneLang").textContent =
     getLanguageName(currentLanguage);
 
+  document.getElementById("player1Flag").textContent =
+    getFlag(currentLanguage);
+
   document.getElementById("roomCode").textContent =
     code;
 
   document.getElementById("roomBadge").textContent =
     "SALA " + code;
 
-
   showOnly("lobby");
 
-
   subscribeToRoom(room.id);
-
   subscribeToPlayers(room.id);
 
   await loadPlayers(room.id);
@@ -1363,23 +1147,13 @@ async function joinRoom() {
   clearMessages();
 
   const name =
-    document
-      .getElementById("name")
-      .value
-      .trim();
+    document.getElementById("name").value.trim();
 
   const code =
-    document
-      .getElementById("joinCode")
-      .value
-      .trim()
-      .toUpperCase();
+    document.getElementById("joinCode").value.trim().toUpperCase();
 
   currentLanguage =
-    document
-      .getElementById("language")
-      .value;
-
+    document.getElementById("language").value;
 
   if (!name) {
 
@@ -1392,9 +1166,7 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   if (!code) {
 
@@ -1403,9 +1175,7 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   const { data: room, error } =
     await supabaseClient
@@ -1413,7 +1183,6 @@ async function joinRoom() {
       .select("*")
       .eq("code", code)
       .maybeSingle();
-
 
   if (error) {
 
@@ -1424,9 +1193,7 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   if (!room) {
 
@@ -1435,16 +1202,13 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   const { data: existingPlayers, error: playersError } =
     await supabaseClient
       .from("players")
       .select("*")
       .eq("room_id", room.id);
-
 
   if (playersError) {
 
@@ -1455,9 +1219,7 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   if (existingPlayers.length >= 2) {
 
@@ -1466,9 +1228,7 @@ async function joinRoom() {
     );
 
     return;
-
   }
-
 
   const { data: player, error: playerError } =
     await supabaseClient
@@ -1481,7 +1241,6 @@ async function joinRoom() {
       .select()
       .single();
 
-
   if (playerError) {
 
     console.error(playerError);
@@ -1491,26 +1250,10 @@ async function joinRoom() {
     );
 
     return;
-
   }
 
-
   currentRoom = room;
-
   currentPlayer = player;
-
-
-  localStorage.setItem(
-    "entre_nosotros_player",
-    JSON.stringify(player)
-  );
-
-
-  localStorage.setItem(
-    "entre_nosotros_room",
-    JSON.stringify(room)
-  );
-
 
   document.getElementById("roomCode").textContent =
     room.code;
@@ -1518,12 +1261,9 @@ async function joinRoom() {
   document.getElementById("roomBadge").textContent =
     "SALA " + room.code;
 
-
   showOnly("lobby");
 
-
   subscribeToRoom(room.id);
-
   subscribeToPlayers(room.id);
 
   await loadPlayers(room.id);
@@ -1532,7 +1272,7 @@ async function joinRoom() {
 
 
 /* =========================================================
-   CÓDIGO DE SALA
+   CÓDIGO
    ========================================================= */
 
 function generateRoomCode() {
@@ -1559,7 +1299,7 @@ function generateRoomCode() {
 
 
 /* =========================================================
-   CARGAR JUGADORES
+   JUGADORES
    ========================================================= */
 
 async function loadPlayers(roomId) {
@@ -1573,40 +1313,26 @@ async function loadPlayers(roomId) {
         ascending: true
       });
 
-
   if (error) {
 
     console.error(error);
 
     return;
-
   }
-
 
   updatePlayers(players);
 
 }
 
 
-/* =========================================================
-   ACTUALIZAR JUGADORES
-   ========================================================= */
-
 function updatePlayers(players) {
 
   if (!players || players.length === 0) {
-
     return;
-
   }
 
-
-  const player1 =
-    players[0];
-
-  const player2 =
-    players[1];
-
+  const player1 = players[0];
+  const player2 = players[1];
 
   document.getElementById("playerOne").textContent =
     player1.name;
@@ -1614,6 +1340,8 @@ function updatePlayers(players) {
   document.getElementById("playerOneLang").textContent =
     getLanguageName(player1.language);
 
+  document.getElementById("player1Flag").textContent =
+    getFlag(player1.language);
 
   if (player2) {
 
@@ -1623,10 +1351,8 @@ function updatePlayers(players) {
     document.getElementById("playerTwoLang").textContent =
       getLanguageName(player2.language);
 
-
     document.getElementById("player2Flag").textContent =
       getFlag(player2.language);
-
 
     document.getElementById("waiting").innerHTML =
       "❤️ " +
@@ -1638,35 +1364,31 @@ function updatePlayers(players) {
             : "¡Tu pareja se unió!"
       );
 
-
     const startButton =
       document.getElementById("startButton");
-
 
     startButton.disabled = false;
 
     startButton.textContent =
       translations[currentLanguage].start;
-
-
   }
 
 }
 
 
 /* =========================================================
-   REALTIME — JUGADORES
+   REALTIME JUGADORES
    ========================================================= */
 
 function subscribeToPlayers(roomId) {
 
   if (playerSubscription) {
 
-    supabaseClient
-      .removeChannel(playerSubscription);
+    supabaseClient.removeChannel(
+      playerSubscription
+    );
 
   }
-
 
   playerSubscription =
     supabaseClient
@@ -1693,18 +1415,18 @@ function subscribeToPlayers(roomId) {
 
 
 /* =========================================================
-   REALTIME — SALA
+   REALTIME SALA
    ========================================================= */
 
 function subscribeToRoom(roomId) {
 
   if (roomSubscription) {
 
-    supabaseClient
-      .removeChannel(roomSubscription);
+    supabaseClient.removeChannel(
+      roomSubscription
+    );
 
   }
-
 
   roomSubscription =
     supabaseClient
@@ -1720,12 +1442,15 @@ function subscribeToRoom(roomId) {
         },
         payload => {
 
-          currentRoom =
-            payload.new;
+          currentRoom = payload.new;
 
-          if (payload.new.status === "starting") {
-  startCountdown();
-}
+          if (
+            payload.new.status === "starting"
+          ) {
+
+            startCountdown();
+
+          }
 
         }
       )
@@ -1736,173 +1461,167 @@ function subscribeToRoom(roomId) {
 
 
 /* =========================================================
-   JUEGO
+   INICIO DE PARTIDA
    ========================================================= */
 
 async function startGame() {
 
   if (!currentRoom) {
-    showError("No hay una sala conectada.");
-    return;
-  }
-
-  // Iniciamos el contador en este dispositivo
-  startCountdown();
-
-  // Avisamos al otro jugador
-  const { error } = await supabaseClient
-    .from("rooms")
-    .update({
-      status: "starting"
-    })
-    .eq("id", currentRoom.id);
-
-  if (error) {
-
-    console.error("Error iniciando partida:", error);
 
     showError(
-      "No se pudo sincronizar el inicio con el otro jugador."
+      "No hay una sala conectada."
     );
 
     return;
   }
 
-}
+  /*
+    MUY IMPORTANTE:
+
+    El contador NO se inicia localmente
+    aquí.
+
+    Primero escribimos "starting"
+    en Supabase.
+
+    Ambos dispositivos reciben
+    exactamente el mismo evento.
+  */
+
+  const { error } =
+    await supabaseClient
+      .from("rooms")
+      .update({
+        status: "starting"
+      })
+      .eq("id", currentRoom.id);
+
+  if (error) {
+
+    console.error(
+      "Error iniciando partida:",
+      error
+    );
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+  }
 
 }
+
+
+/* =========================================================
+   CONTADOR SINCRONIZADO
+   ========================================================= */
 
 function startCountdown() {
 
-  // Evitamos que el contador se ejecute dos veces
-  if (
-    document.getElementById("countdownScreen")
-  ) {
+  if (countdownRunning) {
     return;
   }
 
+  countdownRunning = true;
 
-  const countdown =
+  /*
+    Creamos la pantalla
+    del contador.
+  */
+
+  const screen =
     document.createElement("div");
 
-  countdown.id =
+  screen.id =
     "countdownScreen";
-
-
-  countdown.style.position =
-    "fixed";
-
-  countdown.style.inset =
-    "0";
-
-  countdown.style.zIndex =
-    "9999";
-
-  countdown.style.display =
-    "flex";
-
-  countdown.style.flexDirection =
-    "column";
-
-  countdown.style.alignItems =
-    "center";
-
-  countdown.style.justifyContent =
-    "center";
-
-  countdown.style.background =
-    "radial-gradient(circle, #442052, #0c0910)";
 
 
   const heart =
     document.createElement("div");
 
+  heart.id =
+    "countdownHeart";
+
   heart.textContent =
     "💗";
-
-  heart.style.fontSize =
-    "60px";
 
 
   const number =
     document.createElement("div");
 
-  number.style.fontSize =
-    "clamp(100px, 25vw, 220px)";
+  number.id =
+    "countdownNumber";
 
-  number.style.fontWeight =
-    "900";
-
-  number.style.lineHeight =
-    "1";
-
-  number.style.textShadow =
-    "0 0 50px rgba(255,100,170,.6)";
+  number.textContent =
+    "5";
 
 
   const text =
     document.createElement("div");
 
-  text.style.marginTop =
-    "20px";
-
-  text.style.fontSize =
-    "18px";
-
-  text.style.color =
-    "#aaa2b2";
-
+  text.id =
+    "countdownText";
 
   text.textContent =
-    currentLanguage === "ar"
-      ? "استعدوا..."
-      : currentLanguage === "en"
-        ? "Get ready..."
-        : "Prepárense...";
+    translations[currentLanguage].getReady;
 
 
-  countdown.appendChild(heart);
+  screen.appendChild(heart);
+  screen.appendChild(number);
+  screen.appendChild(text);
 
-  countdown.appendChild(number);
+  document.body.appendChild(screen);
 
-  countdown.appendChild(text);
 
-  document.body.appendChild(countdown);
-
+  /*
+    5
+    4
+    3
+    2
+    1
+    0
+  */
 
   let count = 5;
-
-
-  number.textContent =
-    count;
-
 
   const interval =
     setInterval(() => {
 
       count--;
 
-
-      if (count > 0) {
+      if (count >= 0) {
 
         number.textContent =
           count;
 
+        /*
+          Reiniciamos la animación
+          del número.
+        */
+
+        number.style.animation = "none";
+
+        void number.offsetWidth;
+
+        number.style.animation =
+          "numberPop .35s ease";
+
       }
 
-
-      else {
-
-        number.textContent =
-          "0";
-
+      if (count === 0) {
 
         clearInterval(interval);
 
-
         setTimeout(() => {
 
-          countdown.remove();
+          screen.remove();
+
+          countdownRunning = false;
+
+          /*
+            Cambiamos a la pregunta
+            automáticamente.
+          */
 
           currentQuestion = 0;
 
@@ -1916,8 +1635,13 @@ function startCountdown() {
 
     }, 1000);
 
-} 
-  
+}
+
+
+/* =========================================================
+   PREGUNTAS
+   ========================================================= */
+
 function renderQuestion() {
 
   selectedAnswer = null;
@@ -1925,10 +1649,8 @@ function renderQuestion() {
   const q =
     questions[currentQuestion];
 
-
   document.getElementById("question").textContent =
     q[currentLanguage];
-
 
   document.getElementById("round").textContent =
     translations[currentLanguage].round +
@@ -1936,22 +1658,17 @@ function renderQuestion() {
     (currentQuestion + 1) +
     " / 10";
 
-
   document.getElementById("category").textContent =
     translations[currentLanguage].category;
-
 
   document.getElementById("bar").style.width =
     ((currentQuestion + 1) * 10) +
     "%";
 
-
   const container =
     document.getElementById("answers");
 
-
   container.innerHTML = "";
-
 
   q.answers.forEach(
     (answer, index) => {
@@ -1959,10 +1676,8 @@ function renderQuestion() {
       const button =
         document.createElement("button");
 
-
       button.className =
         "answer";
-
 
       button.innerHTML =
         "<small>" +
@@ -1976,7 +1691,6 @@ function renderQuestion() {
               : 0
         ];
 
-
       button.onclick = () => {
 
         document
@@ -1988,34 +1702,23 @@ function renderQuestion() {
               )
           );
 
-
-        button
-          .classList
-          .add("selected");
-
+        button.classList.add("selected");
 
         selectedAnswer =
           index;
 
+        document.getElementById("next").disabled =
+          false;
 
-        document
-          .getElementById("next")
-          .disabled = false;
-
-
-        document
-          .getElementById("status")
-          .textContent =
-            translations[currentLanguage].saved;
+        document.getElementById("status").textContent =
+          translations[currentLanguage].saved;
 
       };
-
 
       container.appendChild(button);
 
     }
   );
-
 
   document.getElementById("next").disabled =
     true;
@@ -2026,11 +1729,8 @@ function renderQuestion() {
 function nextQuestion() {
 
   if (selectedAnswer === null) {
-
     return;
-
   }
-
 
   if (currentQuestion < 9) {
 
@@ -2038,9 +1738,7 @@ function nextQuestion() {
 
     renderQuestion();
 
-  }
-
-  else {
+  } else {
 
     showOnly("result");
 
@@ -2070,7 +1768,6 @@ function showOnly(section) {
 
   });
 
-
   document
     .getElementById(section)
     .classList
@@ -2081,11 +1778,13 @@ function showOnly(section) {
 
 function getLanguageName(language) {
 
-  if (language === "ar")
+  if (language === "ar") {
     return "العربية";
+  }
 
-  if (language === "en")
+  if (language === "en") {
     return "English";
+  }
 
   return "Español";
 
@@ -2094,13 +1793,15 @@ function getLanguageName(language) {
 
 function getFlag(language) {
 
-  if (language === "ar")
+  if (language === "ar") {
     return "🇸🇦";
+  }
 
-  if (language === "en")
+  if (language === "en") {
     return "🇬🇧";
+  }
 
-  return "🇨🇴";
+  return "🇪🇸";
 
 }
 
@@ -2110,9 +1811,7 @@ function updateStartButton() {
   const button =
     document.getElementById("startButton");
 
-  if (
-    !button.disabled
-  ) {
+  if (!button.disabled) {
 
     button.textContent =
       translations[currentLanguage].start;
@@ -2147,22 +1846,8 @@ function showError(message) {
 }
 
 
-function showSuccess(message) {
-
-  const element =
-    document.getElementById("success");
-
-  element.textContent =
-    message;
-
-  element.style.display =
-    "block";
-
-}
-
-
 /* =========================================================
-   IDIOMA INICIAL
+   INICIO
    ========================================================= */
 
 updateInterface();
