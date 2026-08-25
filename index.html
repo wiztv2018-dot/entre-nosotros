@@ -410,12 +410,14 @@
       padding: 25px;
       border-radius: 20px;
       width: 90%;
-      max-width: 480px;
+      max-width: 520px;
       color: white;
       display: flex;
       flex-direction: column;
       gap: 12px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .admin-content h3 {
@@ -437,6 +439,76 @@
       background: #100b16;
       color: white;
       font-size: 14px;
+    }
+
+    /* NUEVO: Pestañas de Modos en Panel Admin */
+    .admin-mode-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .admin-tab-btn {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.15);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn.active {
+      background: #ff70b1;
+      border-color: #ff70b1;
+      font-weight: bold;
+    }
+
+    /* NUEVO: Selector de Modos en el Lobby */
+    .modes-selector-title {
+      font-size: 14px;
+      color: #aaa1b4;
+      margin: 20px 0 10px;
+      text-align: left;
+    }
+
+    .modes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .mode-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .mode-card:hover {
+      border-color: #ff70b1;
+      background: rgba(255,112,177,.08);
+    }
+
+    .mode-card.selected {
+      border-color: #ff70b1;
+      background: rgba(255,112,177,.2);
+    }
+
+    .mode-card h4 {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .mode-card p {
+      font-size: 11px;
+      color: #bbb;
+      line-height: 1.3;
     }
 
     @keyframes floating {
@@ -468,7 +540,7 @@
     [dir="rtl"] .result { text-align: center; }
 
     @media(max-width:650px) {
-      .fields, .players, .answers { grid-template-columns: 1fr; }
+      .fields, .players, .answers, .modes-grid { grid-template-columns: 1fr; }
       .join-row { grid-template-columns: 1fr; }
       .join-row .button { width: 100%; padding: 15px; }
       .card { padding: 22px; }
@@ -481,11 +553,23 @@
 
 <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">🔑</button>
 
+<!-- PANEL ADMIN / LLAVECITA ACTUALIZADO CON PESTAÑAS DE MODOS -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
-    <p style="font-size: 12px; color: #bbb; margin-bottom: 5px;">Agrega una nueva pregunta directamente a Supabase:</p>
+    <p style="font-size: 12px; color: #bbb;">Selecciona el modo para agregar la pregunta:</p>
     
+    <div class="admin-mode-tabs">
+      <button class="admin-tab-btn active" onclick="switchAdminMode(1, this)">❤️ Modo 1</button>
+      <button class="admin-tab-btn" onclick="switchAdminMode(2, this)">🧠 Modo 2</button>
+      <button class="admin-tab-btn" onclick="switchAdminMode(3, this)">🌎 Modo 3</button>
+      <button class="admin-tab-btn" onclick="switchAdminMode(4, this)">😂 Modo 4</button>
+      <button class="admin-tab-btn" onclick="switchAdminMode(5, this)">🥹 Modo 5</button>
+      <button class="admin-tab-btn" onclick="switchAdminMode(6, this)">🔥 Modo 6</button>
+    </div>
+
+    <div style="font-size: 12px; color: #ff70b1; font-weight: bold;" id="adminCurrentModeLabel">Cargando para: Modo 1 (Conóceme)</div>
+
     <label>Pregunta (Español):</label>
     <input type="text" id="admin_es" placeholder="Ej: ¿Qué prefieres...?" />
 
@@ -495,10 +579,12 @@
     <label>Pregunta (Árabe):</label>
     <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
 
-    <label>Opciones (Separadas por comas en Español):</label>
-    <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
+    <div id="adminOptionsContainer">
+      <label>Opciones (Separadas por comas en Español):</label>
+      <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
+    </div>
 
-    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta 💾</button>
+    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta en Modo 💾</button>
     <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cancelar</button>
   </div>
 </div>
@@ -556,7 +642,7 @@
     <div class="success" id="success"></div>
   </section>
 
-  <!-- SALA DE ESPERA -->
+  <!-- SALA DE ESPERA / LOBBY CON SELECTOR DE MODOS EN TIEMPO REAL -->
   <section class="card hidden" id="lobby">
     <h2 id="lobbyTitle" style="text-align:center">Tu sala está lista</h2>
     <div class="code" id="roomCode">K7X92</div>
@@ -573,6 +659,35 @@
         <span id="player2Flag">❤️</span>
         <b id="playerTwo">Esperando...</b>
         <small id="playerTwoLang">Segundo jugador</small>
+      </div>
+    </div>
+
+    <!-- NUEVO: SELECTOR DE MODOS EN LOBBY -->
+    <div class="modes-selector-title">Elige el modo de juego:</div>
+    <div class="modes-grid">
+      <div class="mode-card selected" onclick="selectGameMode(1, this)">
+        <h4>❤️ Modo 1: Conóceme</h4>
+        <p>Mismas preguntas, elijan individualmente.</p>
+      </div>
+      <div class="mode-card" onclick="selectGameMode(2, this)">
+        <h4>🧠 Modo 2: ¿Cuánto me conoces?</h4>
+        <p>Responde lo que crees que elegirá tu pareja.</p>
+      </div>
+      <div class="mode-card" onclick="selectGameMode(3, this)">
+        <h4>🌎 Modo 3: ¿Quién sabe más?</h4>
+        <p>Cultura general, cine, fútbol y música.</p>
+      </div>
+      <div class="mode-card" onclick="selectGameMode(4, this)">
+        <h4>😂 Modo 4: ¿Qué prefieres?</h4>
+        <p>Dilemas divertidos para debatir juntos.</p>
+      </div>
+      <div class="mode-card" onclick="selectGameMode(5, this)">
+        <h4>🥹 Modo 5: Profundas</h4>
+        <p>Respuestas de texto abierto y emociones.</p>
+      </div>
+      <div class="mode-card" onclick="selectGameMode(6, this)">
+        <h4>🔥 Modo 6: Adivina mi respuesta</h4>
+        <p>Intenta acertar la elección exacta de tu pareja.</p>
       </div>
     </div>
 
@@ -649,6 +764,10 @@ let currentLanguage = "es";
 let currentQuestion = 0;
 let selectedAnswer = null;
 let userAnswers = {};
+
+// NUEVAS VARIABLES PARA MODOS
+let selectedAdminMode = 1;
+let selectedGameMode = 1;
 
 /* =========================================================
    TRADUCCIONES & PREGUNTAS
@@ -972,7 +1091,6 @@ async function finishMyAnswers() {
 
   await supabaseClient.from("answers").insert(rows);
 
-  // Iniciar monitoreo activo del segundo jugador cada 1.5 segundos
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(checkIfBothFinished, 1500);
   checkIfBothFinished();
@@ -986,10 +1104,8 @@ async function checkIfBothFinished() {
 
   if (error || !allAnswers) return;
 
-  // Agrupa respuestas por cada jugador
   const playerIds = [...new Set(allAnswers.map(a => a.player_id))];
 
-  // Muestra los resultados una vez ambos jugadores tengan 10 respuestas guardadas
   if (playerIds.length >= 2) {
     const p1Count = allAnswers.filter(a => a.player_id === playerIds[0]).length;
     const p2Count = allAnswers.filter(a => a.player_id === playerIds[1]).length;
@@ -1040,7 +1156,7 @@ function calculateFinalScore(allAnswers) {
 }
 
 /* =========================================================
-   UTILIDADES & PANEL
+   UTILIDADES & PANEL DE ADMINISTRACIÓN
    ========================================================= */
 
 function showOnly(section) {
@@ -1089,6 +1205,38 @@ function closeAdminModal() {
   document.getElementById("adminModal").style.display = "none";
 }
 
+// NUEVA FUNCIÓN: Cambiar modo en el Panel Admin (Llavecita)
+function switchAdminMode(mode, btn) {
+  selectedAdminMode = mode;
+  document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const modeNames = {
+    1: "Modo 1 (Conóceme)",
+    2: "Modo 2 (¿Cuánto me conoces?)",
+    3: "Modo 3 (¿Quién sabe más?)",
+    4: "Modo 4 (¿Qué prefieres?)",
+    5: "Modo 5 (Preguntas profundas)",
+    6: "Modo 6 (Adivina mi respuesta)"
+  };
+
+  document.getElementById("adminCurrentModeLabel").textContent = `Cargando para: ${modeNames[mode]}`;
+  
+  // El Modo 5 no usa opciones A/B/C/D ya que se escribe texto
+  if (mode === 5) {
+    document.getElementById("adminOptionsContainer").style.display = "none";
+  } else {
+    document.getElementById("adminOptionsContainer").style.display = "block";
+  }
+}
+
+// NUEVA FUNCIÓN: Seleccionar Modo de Juego en el Lobby
+function selectGameMode(mode, card) {
+  selectedGameMode = mode;
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
+  card.classList.add("selected");
+}
+
 async function guardarPreguntaSupabase() {
   const qEs = document.getElementById("admin_es").value.trim();
   const qEn = document.getElementById("admin_en").value.trim();
@@ -1101,13 +1249,14 @@ async function guardarPreguntaSupabase() {
     question_es: qEs,
     question_en: qEn,
     question_ar: qAr,
-    options_es: optsEs
+    options_es: optsEs,
+    mode_id: String(selectedAdminMode)
   }]);
 
   if (error) {
     alert("Hubo un error al guardar en la base de datos.");
   } else {
-    alert("¡Pregunta agregada con éxito!");
+    alert(`¡Pregunta agregada con éxito para el Modo ${selectedAdminMode}!`);
     document.getElementById("admin_es").value = "";
     document.getElementById("admin_en").value = "";
     document.getElementById("admin_ar").value = "";
