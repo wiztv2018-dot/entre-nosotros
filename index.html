@@ -330,6 +330,60 @@
       font-size: 80px;
     }
 
+    /* ESTILOS NUEVOS PARA EL DESGLOSE CARIÑOSO DE RESULTADOS */
+    .breakdown-container {
+      text-align: left;
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .breakdown-section-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #ff70b1;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .breakdown-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 12px 15px;
+      font-size: 13px;
+    }
+
+    .breakdown-item.match {
+      border-color: rgba(255, 112, 177, 0.4);
+      background: rgba(255, 112, 177, 0.08);
+    }
+
+    .breakdown-item.diff {
+      border-color: rgba(155, 130, 255, 0.4);
+      background: rgba(155, 130, 255, 0.08);
+    }
+
+    .breakdown-q {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .breakdown-ans {
+      color: #ccc;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
     .waiting-partner {
       text-align: center;
       padding: 20px 0;
@@ -802,15 +856,20 @@
     </div>
   </section>
 
-  <!-- RESULTADO FINAL COMPARATIVO -->
+  <!-- RESULTADO FINAL COMPARATIVO CON SECCIÓN DE MATCH Y DIFERENCIAS -->
   <section class="card hidden result" id="result">
     <div class="big">💞</div>
     <div style="font-size: 14px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Coincidieron en</div>
     <div class="score" id="finalScore" style="font-size: 55px; color: #ff70b1;">0 de 10</div>
     <h2 id="resultTitle" style="margin-top: 5px;">respuestas</h2>
-    <p id="resultText" style="color:#bdb5c7; margin: 15px 0 25px; line-height: 1.5;"></p>
+    <p id="resultText" style="color:#bdb5c7; margin: 15px 0 10px; line-height: 1.5;"></p>
 
-    <button class="button" onclick="location.reload()" id="againButton">
+    <!-- Contenedor del desglose cariñoso -->
+    <div class="breakdown-container" id="breakdownContainer">
+      <!-- Se llena dinámicamente -->
+    </div>
+
+    <button class="button" onclick="location.reload()" id="againButton" style="margin-top: 25px;">
       Jugar otra vez 🔄
     </button>
   </section>
@@ -849,6 +908,7 @@ let selectedAdminMode = 1;
 let selectedGameMode = 1; 
 let activeQuestions = [];  
 let adminQuestionsCache = []; 
+let cachedPlayersList = [];
 
 /* =========================================================
    TRADUCCIONES DE LA INTERFAZ
@@ -1023,6 +1083,7 @@ function generateRoomCode() {
 
 async function loadPlayers(roomId) {
   const { data: players } = await supabaseClient.from("players").select("*").eq("room_id", roomId).order("joined_at", { ascending: true });
+  cachedPlayersList = players || [];
   updatePlayers(players);
 }
 
@@ -1236,36 +1297,82 @@ async function checkIfBothFinished() {
 
     if (p1Count >= totalQ && p2Count >= totalQ) {
       if (pollInterval) clearInterval(pollInterval);
-      calculateFinalScore(allAnswers, totalQ);
+      calculateFinalScore(allAnswers, totalQ, playerIds);
     }
   }
 }
 
-function calculateFinalScore(allAnswers, totalQ) {
+function calculateFinalScore(allAnswers, totalQ, playerIds) {
   let matches = 0;
+  const breakdownContainer = document.getElementById("breakdownContainer");
+  breakdownContainer.innerHTML = "";
+
+  const p1Id = playerIds[0];
+  const p2Id = playerIds[1];
+  
+  const p1Obj = cachedPlayersList.find(p => p.id === p1Id) || { name: "Pareja 1" };
+  const p2Obj = cachedPlayersList.find(p => p.id === p2Id) || { name: "Pareja 2" };
+
+  let matchHtml = `<div class="breakdown-section-title">💖 Sintonía perfecta (¡Match Total!)</div>`;
+  let matchCount = 0;
+
+  let diffHtml = `<div class="breakdown-section-title" style="margin-top: 15px;">🌱 Nuevas perspectivas (¡Para descubrirse más!)</div>`;
+  let diffCount = 0;
 
   for (let i = 0; i < totalQ; i++) {
+    const qObj = activeQuestions[i % activeQuestions.length];
+    let qText = qObj ? (qObj.question_es || "Pregunta") : `Pregunta ${i+1}`;
+    
+    let rawOpts = qObj && qObj.options_es ? qObj.options_es.split(",") : ["Op A", "Op B", "Op C", "Op D"];
+
     const qAns = allAnswers.filter(a => String(a.question_id) === String(i));
+    const ansP1 = qAns.find(a => a.player_id === p1Id);
+    const ansP2 = qAns.find(a => a.player_id === p2Id);
 
-    if (qAns.length >= 2) {
-      const p1Val = String(qAns[0].original_text).trim();
-      const p2Val = String(qAns[1].original_text).trim();
+    if (ansP1 && ansP2) {
+      const idx1 = parseInt(ansP1.original_text);
+      const idx2 = parseInt(ansP2.original_text);
+      const text1 = rawOpts[idx1] ? rawOpts[idx1].trim() : ansP1.original_text;
+      const text2 = rawOpts[idx2] ? rawOpts[idx2].trim() : ansP2.original_text;
 
-      if (p1Val === p2Val) {
+      if (idx1 === idx2) {
         matches++;
+        matchCount++;
+        matchHtml += `
+          <div class="breakdown-item match">
+            <div class="breakdown-q">${i+1}. ${qText}</div>
+            <div class="breakdown-ans">
+              <span>✨ Coincidieron en: <b>${text1}</b></span>
+            </div>
+          </div>`;
+      } else {
+        diffCount++;
+        diffHtml += `
+          <div class="breakdown-item diff">
+            <div class="breakdown-q">${i+1}. ${qText}</div>
+            <div class="breakdown-ans">
+              <span>👤 ${p1Obj.name}: ${text1}</span>
+              <span>👤 ${p2Obj.name}: ${text2}</span>
+            </div>
+          </div>`;
       }
     }
   }
+
+  if (matchCount === 0) matchHtml += `<div style="font-size: 12px; color: #aaa; padding: 5px;">¡Ninguna coincidencia exacta esta vez, pero mucho de qué hablar!</div>`;
+  if (diffCount === 0) diffHtml += `<div style="font-size: 12px; color: #aaa; padding: 5px;">¡Pensaron exactamente igual en todo el juego!</div>`;
+
+  breakdownContainer.innerHTML = matchHtml + diffHtml;
 
   document.getElementById("finalScore").textContent = `${matches} de ${totalQ}`;
 
   let feedbackText = "";
   if (matches === totalQ) {
-    feedbackText = "¡Conexión total! Respondieron exactamente lo mismo en todo.";
+    feedbackText = "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
   } else if (matches >= Math.ceil(totalQ * 0.7)) {
     feedbackText = "¡Tienen muchísima química! Están super alineados.";
   } else {
-    feedbackText = "¡Buen balance! Tienen mucho por descubrir el uno del otro.";
+    feedbackText = "¡Buen balance! Sus diferencias son puertas abiertas para conocerse más.";
   }
 
   document.getElementById("resultText").textContent = feedbackText;
