@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -337,7 +336,16 @@
       margin: 5px 0;
     }
 
-    /* CONTADOR */
+    .waiting-partner {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .waiting-partner .sand-clock {
+      font-size: 60px;
+      animation: heartBeat 1.5s infinite;
+      margin-bottom: 15px;
+    }
 
     #countdownScreen {
       position: fixed;
@@ -371,8 +379,6 @@
       color: #bbb;
       font-size: 18px;
     }
-
-    /* BOTÓN LLAVE Y MODAL DE ADMINISTRACIÓN */
 
     .admin-btn {
       position: fixed;
@@ -508,7 +514,6 @@
       }
     }
   </style>
-
 </head>
 
 <body>
@@ -639,14 +644,23 @@
     </button>
   </section>
 
+  <!-- ESPERA AL OTRO JUGADOR -->
+  <section class="card hidden" id="waitingPartner">
+    <div class="waiting-partner">
+      <div class="sand-clock">⏳</div>
+      <h2>¡Has terminado!</h2>
+      <p style="color:#bdb5c7; margin-top: 10px; line-height: 1.5;">El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗</p>
+    </div>
+  </section>
+
   <!-- RESULTADO -->
   <section class="card hidden result" id="result">
     <div class="big">💞</div>
-    <div class="score" id="finalScore">⏳</div>
-    <h2 id="resultTitle">¡Calculando compatibilidad!</h2>
-    <p id="resultText" style="color:#aaa2b2">Procesando las respuestas de ambos...</p>
+    <div class="score" id="finalScore">--%</div>
+    <h2 id="resultTitle">¡Compatibilidad calculada!</h2>
+    <p id="resultText" style="color:#aaa2b2">Este es el resultado basado en las respuestas de ambos.</p>
 
-    <button class="button hidden" onclick="location.reload()" id="againButton">
+    <button class="button" onclick="location.reload()" id="againButton">
       Jugar otra vez
     </button>
   </section>
@@ -656,7 +670,7 @@
 <script>
 
 /* =========================================================
-   SUPABASE & ESTADO
+   SUPABASE & ESTADO GLOBAL
    ========================================================= */
 
 const SUPABASE_URL = "https://czxfitmwbwjhureyualf.supabase.co";
@@ -667,11 +681,12 @@ let currentRoom = null;
 let currentPlayer = null;
 let roomSubscription = null;
 let playerSubscription = null;
+let answersSubscription = null;
 
 let currentLanguage = "es";
 let currentQuestion = 0;
 let selectedAnswer = null;
-let userAnswers = {}; // Guardar localmente las respuestas seleccionadas
+let userAnswers = {};
 
 function getQuestionUUID(index) {
   const hex = index.toString(16).padStart(12, '0');
@@ -725,7 +740,7 @@ const translations = {
     choose: "اختر إجابة.",
     next: "التالي →",
     result: "لا يزال هناك الكثير لاكتشافه!",
-    resultText: "هذه هي النسبة النهائية للفقاتكم.",
+    resultText: "هذه هي النسبة النهائية لفقاتكم.",
     again: "العب مرة أخرى",
     getReady: "استعدوا..."
   },
@@ -937,6 +952,7 @@ function startCountdown() {
         currentQuestion = 0;
         showOnly("game");
         renderQuestion();
+        listenToGameCompletion();
       }, 500);
     }
   }, 1000);
@@ -976,28 +992,27 @@ function renderQuestion() {
 function nextQuestion() {
   if (selectedAnswer === null) return;
 
-  // Guardar respuesta elegida
   userAnswers[currentQuestion] = selectedAnswer;
 
   if (currentQuestion < 9) {
     currentQuestion++;
     renderQuestion();
   } else {
-    submitAllAnswersAndFinish();
+    finishMyAnswers();
   }
 }
 
 /* =========================================================
-   CÁLCULO Y RESULTADOS (SINOPSIS Y ESPERA DE 5 SEG)
+   FIN DEL JUEGO & SINCRONIZACIÓN REALTIME
    ========================================================= */
 
-async function submitAllAnswersAndFinish() {
-  showOnly("result");
+async function finishMyAnswers() {
+  showOnly("waitingPartner");
 
-  // Guardar las 10 respuestas en Supabase
-  const rowsToInsert = [];
+  // Subir las 10 respuestas juntas
+  const rows = [];
   for (let i = 0; i < 10; i++) {
-    rowsToInsert.push({
+    rows.push({
       room_id: currentRoom.id,
       player_id: currentPlayer.id,
       question_id: getQuestionUUID(i),
@@ -1005,37 +1020,54 @@ async function submitAllAnswersAndFinish() {
       original_language: currentLanguage
     });
   }
+  await supabaseClient.from("answers").insert(rows);
 
-  await supabaseClient.from("answers").insert(rowsToInsert);
+  // Verificar si el otro ya había respondido todo
+  checkIfBothFinished();
+}
 
-  // Esperar 5 segundos exactos antes de hacer el cálculo
-  setTimeout(async () => {
-    const { data: allAnswers } = await supabaseClient
-      .from("answers")
-      .select("*")
-      .eq("room_id", currentRoom.id);
+function listenToGameCompletion() {
+  if (answersSubscription) supabaseClient.removeChannel(answersSubscription);
+  
+  answersSubscription = supabaseClient.channel("answers-" + currentRoom.id)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "answers", filter: "room_id=eq." + currentRoom.id }, () => {
+      checkIfBothFinished();
+    }).subscribe();
+}
 
-    let matches = 0;
+async function checkIfBothFinished() {
+  const { data: allAnswers } = await supabaseClient
+    .from("answers")
+    .select("*")
+    .eq("room_id", currentRoom.id);
 
-    for (let i = 0; i < 10; i++) {
-      const qUUID = getQuestionUUID(i);
-      const qAns = allAnswers ? allAnswers.filter(a => a.question_id === qUUID) : [];
-      
-      // Si ambos han respondido esta pregunta y coinciden
-      if (qAns.length >= 2) {
-        if (qAns[0].original_text === qAns[1].original_text) {
-          matches++;
-        }
+  // 10 preguntas x 2 jugadores = 20 respuestas guardadas en total
+  if (allAnswers && allAnswers.length >= 20) {
+    calculateFinalScore(allAnswers);
+  }
+}
+
+function calculateFinalScore(allAnswers) {
+  let matches = 0;
+
+  for (let i = 0; i < 10; i++) {
+    const qUUID = getQuestionUUID(i);
+    const qAns = allAnswers.filter(a => a.question_id === qUUID);
+
+    if (qAns.length >= 2) {
+      if (qAns[0].original_text === qAns[1].original_text) {
+        matches++;
       }
     }
+  }
 
-    const matchPercent = Math.round((matches / 10) * 100);
+  const scorePercentage = Math.round((matches / 10) * 100);
 
-    document.getElementById("finalScore").textContent = matchPercent + "%";
-    document.getElementById("resultTitle").textContent = translations[currentLanguage].result;
-    document.getElementById("resultText").textContent = translations[currentLanguage].resultText;
-    document.getElementById("againButton").classList.remove("hidden");
-  }, 5000);
+  document.getElementById("finalScore").textContent = scorePercentage + "%";
+  document.getElementById("resultTitle").textContent = translations[currentLanguage].result;
+  document.getElementById("resultText").textContent = translations[currentLanguage].resultText;
+  
+  showOnly("result");
 }
 
 /* =========================================================
@@ -1043,7 +1075,7 @@ async function submitAllAnswersAndFinish() {
    ========================================================= */
 
 function showOnly(section) {
-  ["home", "setup", "lobby", "game", "result"].forEach(id => {
+  ["home", "setup", "lobby", "game", "waitingPartner", "result"].forEach(id => {
     document.getElementById(id).classList.add("hidden");
   });
   document.getElementById(section).classList.remove("hidden");
