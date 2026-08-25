@@ -441,7 +441,6 @@
       font-size: 14px;
     }
 
-    /* NUEVO: Pestañas de Modos en Panel Admin */
     .admin-mode-tabs {
       display: flex;
       gap: 6px;
@@ -465,7 +464,6 @@
       font-weight: bold;
     }
 
-    /* NUEVO: Selector de Modos en el Lobby */
     .modes-selector-title {
       font-size: 14px;
       color: #aaa1b4;
@@ -534,7 +532,6 @@
     }
 
     [dir="rtl"] { text-align: right; }
-
     [dir="rtl"] .hero,
     [dir="rtl"] .question,
     [dir="rtl"] .result { text-align: center; }
@@ -553,11 +550,11 @@
 
 <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">🔑</button>
 
-<!-- PANEL ADMIN / LLAVECITA ACTUALIZADO CON PESTAÑAS DE MODOS -->
+<!-- PANEL ADMIN / LLAVECITA -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
-    <p style="font-size: 12px; color: #bbb;">Selecciona el modo para agregar la pregunta:</p>
+    <p style="font-size: 12px; color: #bbb;">Selecciona el modo donde deseas agregar la pregunta:</p>
     
     <div class="admin-mode-tabs">
       <button class="admin-tab-btn active" onclick="switchAdminMode(1, this)">❤️ Modo 1</button>
@@ -580,11 +577,11 @@
     <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
 
     <div id="adminOptionsContainer">
-      <label>Opciones (Separadas por comas en Español):</label>
+      <label>Opciones (Separadas por comas en Español, Inglés y Árabe ordenadas):</label>
       <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
     </div>
 
-    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta en Modo 💾</button>
+    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta en este Modo 💾</button>
     <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cancelar</button>
   </div>
 </div>
@@ -642,7 +639,7 @@
     <div class="success" id="success"></div>
   </section>
 
-  <!-- SALA DE ESPERA / LOBBY CON SELECTOR DE MODOS EN TIEMPO REAL -->
+  <!-- SALA DE ESPERA / LOBBY CON SELECTOR DE MODOS -->
   <section class="card hidden" id="lobby">
     <h2 id="lobbyTitle" style="text-align:center">Tu sala está lista</h2>
     <div class="code" id="roomCode">K7X92</div>
@@ -662,12 +659,11 @@
       </div>
     </div>
 
-    <!-- NUEVO: SELECTOR DE MODOS EN LOBBY -->
     <div class="modes-selector-title">Elige el modo de juego:</div>
     <div class="modes-grid">
       <div class="mode-card selected" onclick="selectGameMode(1, this)">
         <h4>❤️ Modo 1: Conóceme</h4>
-        <p>Mismas preguntas, elijan individualmente.</p>
+        <p>Preguntas creadas para conocernos a fondo.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(2, this)">
         <h4>🧠 Modo 2: ¿Cuánto me conoces?</h4>
@@ -708,7 +704,7 @@
 
     <div class="meta">
       <span id="round">Ronda 1 / 10</span>
-      <span id="category">❤️ Conóceme</span>
+      <span id="category">❤️ Modo de Juego</span>
     </div>
 
     <div class="question" id="question"></div>
@@ -765,12 +761,12 @@ let currentQuestion = 0;
 let selectedAnswer = null;
 let userAnswers = {};
 
-// NUEVAS VARIABLES PARA MODOS
 let selectedAdminMode = 1;
-let selectedGameMode = 1;
+let selectedGameMode = 1; // Modo seleccionado en el Lobby
+let activeQuestions = [];  // Preguntas descargadas para la partida actual
 
 /* =========================================================
-   TRADUCCIONES & PREGUNTAS
+   TRADUCCIONES DE LA INTERFAZ
    ========================================================= */
 
 const translations = {
@@ -789,7 +785,6 @@ const translations = {
     secondPlayer: "Segundo jugador",
     start: "Empezar partida →",
     round: "Ronda",
-    category: "❤️ Conóceme",
     choose: "Elige una respuesta.",
     next: "Siguiente →",
     again: "Jugar otra vez",
@@ -810,7 +805,6 @@ const translations = {
     secondPlayer: "اللاعب الثاني",
     start: "ابدأ اللعبة →",
     round: "الجولة",
-    category: "❤️ لنتعرف على بعضنا",
     choose: "اختر إجابة.",
     next: "التالي →",
     again: "العب مرة أخرى",
@@ -831,26 +825,12 @@ const translations = {
     secondPlayer: "Second player",
     start: "Start game →",
     round: "Round",
-    category: "❤️ Get to know me",
     choose: "Choose an answer.",
     next: "Next →",
     again: "Play again",
     getReady: "Get ready..."
   }
 };
-
-const questions = [
-  { es: "¿Cuál elegirías para una cita perfecta?", ar: "ماذا ستختار لموعد مثالي؟", en: "What would you choose for a perfect date?", answers: [["Una noche viendo películas","ليلة لمشاهدة الأفلام","A night watching movies"],["Una cena elegante","عشاء فاخر","A fancy dinner"],["Una caminata por la playa","نزهة على الشاطئ","A walk on the beach"],["Una aventura espontánea","مغامرة عفوية","A spontaneous adventure"]] },
-  { es: "¿Qué te hace sentir más querido/a?", ar: "ما الذي يجعلك تشعر بأنك محبوب أكثر؟", en: "What makes you feel most loved?", answers: [["Palabras bonitas","كلمات جميلة","Sweet words"],["Tiempo juntos","قضاء الوقت معًا","Quality time"],["Pequeños detalles","التفاصيل الصغيرة","Little gestures"],["Abrazos y cariño","العناق والمودة","Hugs and affection"]] },
-  { es: "Si pudiéramos viajar mañana, ¿a dónde iríamos?", ar: "لو كان بإمكاننا السفر غدًا، إلى أين سنذهب؟", en: "If we could travel tomorrow, where would we go?", answers: [["Japón 🇯🇵","اليابان 🇯🇵","Japan 🇯🇵"],["Italia 🇮🇹","إيطاليا 🇮🇹","Italy 🇮🇹"],["Una isla tropical 🏝️","جزيرة استوائية 🏝️","A tropical island 🏝️"],["Un lugar completamente nuevo 🌎","مكان جديد تمامًا 🌎","Somewhere completely new 🌎"]] },
-  { es: "¿Qué plan suena mejor un viernes por la noche?", ar: "ما الخطة الأفضل ليوم الجمعة مساءً؟", en: "What sounds like the best Friday night plan?", answers: [["Quedarnos hablando","البقاء والتحدث معًا","Staying up talking"],["Salir a comer","الخروج لتناول الطعام","Going out to eat"],["Jugar algo juntos","اللعب معًا","Playing something together"],["Ver una película","مشاهدة فيلم","Watching a movie"]] },
-  { es: "¿Qué prefieres recibir?", ar: "ماذا تفضل أن تتلقى؟", en: "What would you rather receive?", answers: [["Una carta 💌","رسالة 💌","A letter 💌"],["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]] },
-  { es: "¿Qué describe mejor una relación ideal?", ar: "ما الوصف الأفضل للعلاقة المثالية؟", en: "What best describes an ideal relationship?", answers: [["Tranquila","هادئة","Peaceful"],["Divertida","ممتعة","Fun"],["Aventurera","مليئة بالمغامرات","Adventurous"],["Profunda","عميقة","Deep"]] },
-  { es: "¿Qué pequeño gesto puede mejorar tu día?", ar: "ما التصرف الصغير الذي يمكن أن يجعل يومك أفضل؟", en: "What small gesture can make your day better?", answers: [["Un mensaje","رسالة","A message"],["Un abrazo","عناق","A hug"],["Que me escuchen","أن يستمع إليّ أحد","Being listened to"],["Una sorpresa","مفاجأة","A surprise"]] },
-  { es: "¿Qué escogerías para una tarde juntos?", ar: "ماذا ستختار لقضاء فترة بعد الظهر معًا؟", en: "What would you choose for an afternoon together?", answers: [["Cocinar","الطبخ","Cooking"],["Pasear","التنزه","Going for a walk"],["Jugar","اللعب","Playing"],["Dormir","النوم","Sleeping"]] },
-  { es: "¿Qué te gustaría hacer conmigo algún día?", ar: "ماذا تود أن تفعل معي يومًا ما؟", en: "What would you like to do with me someday?", answers: [["Viajar","السفر","Travel"],["Aprender algo juntos","تعلم شيء معًا","Learn something together"],["Crear un proyecto","إنشاء مشروع","Create a project"],["Vivir una aventura","عيش مغامرة","Live an adventure"]] },
-  { es: "¿Qué valoras más en una persona?", ar: "ما الشيء الذي تقدّره أكثر في الشخص؟", en: "What do you value most in a person?", answers: [["Honestidad","الصدق","Honesty"],["Lealtad","الوفاء","Loyalty"],["Humor","روح الدعابة","Humor"],["Comprensión","التفهم","Understanding"]] }
-];
 
 /* =========================================================
    IDIOMA
@@ -890,7 +870,7 @@ async function createRoom() {
   if (!name) return showError("Escribe tu nombre primero.");
 
   const code = generateRoomCode();
-  const { data: room, error } = await supabaseClient.from("rooms").insert({ code, status: "waiting" }).select().single();
+  const { data: room, error } = await supabaseClient.from("rooms").insert({ code, status: "waiting", game_mode: selectedGameMode }).select().single();
   if (error) return showError("Error al crear la sala.");
 
   const { data: player, error: pErr } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage }).select().single();
@@ -928,6 +908,7 @@ async function joinRoom() {
 
   currentRoom = room;
   currentPlayer = player;
+  selectedGameMode = room.game_mode || 1; // Sincronizar el modo elegido por el creador
 
   document.getElementById("roomCode").textContent = room.code;
   document.getElementById("roomBadge").textContent = "SALA " + room.code;
@@ -981,20 +962,57 @@ function subscribeToPlayers(roomId) {
 function subscribeToRoom(roomId) {
   if (roomSubscription) supabaseClient.removeChannel(roomSubscription);
   roomSubscription = supabaseClient.channel("room-" + roomId)
-    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "rooms", filter: "id=eq." + roomId }, payload => {
+    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "rooms", filter: "id=eq." + roomId }, async payload => {
       currentRoom = payload.new;
-      if (payload.new.status === "starting") startCountdown();
+      selectedGameMode = currentRoom.game_mode || 1;
+      if (payload.new.status === "starting") {
+        await fetchQuestionsForGame();
+        startCountdown();
+      }
     })
     .subscribe();
 }
 
 /* =========================================================
-   INICIO & JUEGO LOCAL
+   CARGA DE PREGUNTAS DESDE SUPABASE SEGÚN EL MODO
+   ========================================================= */
+
+async function fetchQuestionsForGame() {
+  const { data, error } = await supabaseClient
+    .from("questions")
+    .select("*")
+    .eq("mode_id", String(selectedGameMode));
+
+  if (error || !data || data.length === 0) {
+    alert("No hay suficientes preguntas guardadas para este modo en la base de datos. Por favor agrégalas con la llavecita 🔑.");
+    activeQuestions = getDefaultFallbackQuestions(); // Respaldo por seguridad
+  } else {
+    activeQuestions = data;
+  }
+}
+
+function getDefaultFallbackQuestions() {
+  // Preguntas predeterminadas por si la base de datos está vacía temporalmente
+  return [
+    {
+      question_es: "¿Cuál elegirías para una cita perfecta?",
+      question_en: "What would you choose for a perfect date?",
+      question_ar: "ماذا ستختار لموعد مثالي؟",
+      options_es: "Una noche viendo películas,Una cena elegante,Una caminata por la playa,Una aventura espontánea"
+    }
+  ];
+}
+
+/* =========================================================
+   INICIO & JUEGO
    ========================================================= */
 
 async function startGame() {
   if (!currentRoom) return;
-  await supabaseClient.from("rooms").update({ status: "starting" }).eq("id", currentRoom.id);
+  // Actualizar tanto el estado como el modo de juego elegido en la sala
+  await supabaseClient.from("rooms").update({ status: "starting", game_mode: selectedGameMode }).eq("id", currentRoom.id);
+  await fetchQuestionsForGame();
+  startCountdown();
 }
 
 function startCountdown() {
@@ -1029,20 +1047,30 @@ function startCountdown() {
 
 function renderQuestion() {
   selectedAnswer = null;
-  const q = questions[currentQuestion];
+  if (!activeQuestions || activeQuestions.length === 0) return;
 
-  document.getElementById("question").textContent = q[currentLanguage];
-  document.getElementById("round").textContent = `${translations[currentLanguage].round} ${currentQuestion + 1} / 10`;
-  document.getElementById("category").textContent = translations[currentLanguage].category;
-  document.getElementById("bar").style.width = ((currentQuestion + 1) * 10) + "%";
+  const q = activeQuestions[currentQuestion % activeQuestions.length];
+  const totalQ = Math.min(activeQuestions.length, 10);
+
+  let textToShow = q.question_es;
+  if (currentLanguage === "en" && q.question_en) textToShow = q.question_en;
+  if (currentLanguage === "ar" && q.question_ar) textToShow = q.question_ar;
+
+  document.getElementById("question").textContent = textToShow;
+  document.getElementById("round").textContent = `${translations[currentLanguage].round} ${currentQuestion + 1} / ${totalQ}`;
+  document.getElementById("category").textContent = `Modo ${selectedGameMode}`;
+  document.getElementById("bar").style.width = (((currentQuestion + 1) / totalQ) * 100) + "%";
 
   const container = document.getElementById("answers");
   container.innerHTML = "";
 
-  q.answers.forEach((answer, index) => {
+  // Procesar opciones separadas por coma guardadas desde la interfaz de admin
+  let rawOpts = q.options_es ? q.options_es.split(",") : ["Opción A", "Opción B", "Opción C", "Opción D"];
+
+  rawOpts.forEach((optText, index) => {
     const button = document.createElement("button");
     button.className = "answer";
-    button.innerHTML = `<small>${String.fromCharCode(65 + index)}</small>${answer[currentLanguage === "ar" ? 1 : currentLanguage === "en" ? 2 : 0]}`;
+    button.innerHTML = `<small>${String.fromCharCode(65 + index)}</small>${optText.trim()}`;
 
     button.onclick = () => {
       document.querySelectorAll(".answer").forEach(btn => btn.classList.remove("selected"));
@@ -1060,10 +1088,10 @@ function renderQuestion() {
 
 function nextQuestion() {
   if (selectedAnswer === null) return;
-
   userAnswers[currentQuestion] = selectedAnswer;
 
-  if (currentQuestion < 9) {
+  const totalQ = Math.min(activeQuestions.length, 10);
+  if (currentQuestion < totalQ - 1) {
     currentQuestion++;
     renderQuestion();
   } else {
@@ -1072,14 +1100,15 @@ function nextQuestion() {
 }
 
 /* =========================================================
-   FIN DEL JUEGO & VERIFICACIÓN
+   FIN DEL JUEGO & RESULTADOS
    ========================================================= */
 
 async function finishMyAnswers() {
   showOnly("waitingPartner");
 
+  const totalQ = Math.min(activeQuestions.length, 10);
   const rows = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < totalQ; i++) {
     rows.push({
       room_id: currentRoom.id,
       player_id: currentPlayer.id,
@@ -1107,25 +1136,21 @@ async function checkIfBothFinished() {
   const playerIds = [...new Set(allAnswers.map(a => a.player_id))];
 
   if (playerIds.length >= 2) {
+    const totalQ = Math.min(activeQuestions.length, 10);
     const p1Count = allAnswers.filter(a => a.player_id === playerIds[0]).length;
     const p2Count = allAnswers.filter(a => a.player_id === playerIds[1]).length;
 
-    if (p1Count >= 10 && p2Count >= 10) {
+    if (p1Count >= totalQ && p2Count >= totalQ) {
       if (pollInterval) clearInterval(pollInterval);
-      calculateFinalScore(allAnswers);
+      calculateFinalScore(allAnswers, totalQ);
     }
   }
 }
 
-/* =========================================================
-   CÁLCULO DE COINCIDENCIAS
-   ========================================================= */
-
-function calculateFinalScore(allAnswers) {
+function calculateFinalScore(allAnswers, totalQ) {
   let matches = 0;
-  const totalQuestions = 10;
 
-  for (let i = 0; i < totalQuestions; i++) {
+  for (let i = 0; i < totalQ; i++) {
     const qAns = allAnswers.filter(a => String(a.question_id) === String(i));
 
     if (qAns.length >= 2) {
@@ -1138,17 +1163,15 @@ function calculateFinalScore(allAnswers) {
     }
   }
 
-  document.getElementById("finalScore").textContent = `${matches} de ${totalQuestions}`;
+  document.getElementById("finalScore").textContent = `${matches} de ${totalQ}`;
 
   let feedbackText = "";
-  if (matches === totalQuestions) {
+  if (matches === totalQ) {
     feedbackText = "¡Conexión total! Respondieron exactamente lo mismo en todo.";
-  } else if (matches >= 7) {
+  } else if (matches >= Math.ceil(totalQ * 0.7)) {
     feedbackText = "¡Tienen muchísima química! Están super alineados.";
-  } else if (matches >= 4) {
-    feedbackText = "¡Buen balance! Tienen varios puntos en común.";
   } else {
-    feedbackText = "Los opuestos se atraen. ¡Tienen mucho por descubrir!";
+    feedbackText = "¡Buen balance! Tienen mucho por descubrir el uno del otro.";
   }
 
   document.getElementById("resultText").textContent = feedbackText;
@@ -1156,7 +1179,7 @@ function calculateFinalScore(allAnswers) {
 }
 
 /* =========================================================
-   UTILIDADES & PANEL DE ADMINISTRACIÓN
+   PANEL ADMIN & UTILIDADES
    ========================================================= */
 
 function showOnly(section) {
@@ -1205,7 +1228,6 @@ function closeAdminModal() {
   document.getElementById("adminModal").style.display = "none";
 }
 
-// NUEVA FUNCIÓN: Cambiar modo en el Panel Admin (Llavecita)
 function switchAdminMode(mode, btn) {
   selectedAdminMode = mode;
   document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
@@ -1216,21 +1238,13 @@ function switchAdminMode(mode, btn) {
     2: "Modo 2 (¿Cuánto me conoces?)",
     3: "Modo 3 (¿Quién sabe más?)",
     4: "Modo 4 (¿Qué prefieres?)",
-    5: "Modo 5 (Preguntas profundas)",
+    5: "Modo 5 (Profundas)",
     6: "Modo 6 (Adivina mi respuesta)"
   };
 
   document.getElementById("adminCurrentModeLabel").textContent = `Cargando para: ${modeNames[mode]}`;
-  
-  // El Modo 5 no usa opciones A/B/C/D ya que se escribe texto
-  if (mode === 5) {
-    document.getElementById("adminOptionsContainer").style.display = "none";
-  } else {
-    document.getElementById("adminOptionsContainer").style.display = "block";
-  }
 }
 
-// NUEVA FUNCIÓN: Seleccionar Modo de Juego en el Lobby
 function selectGameMode(mode, card) {
   selectedGameMode = mode;
   document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("selected"));
@@ -1250,7 +1264,7 @@ async function guardarPreguntaSupabase() {
     question_en: qEn,
     question_ar: qAr,
     options_es: optsEs,
-    mode_id: String(selectedAdminMode)
+    mode_id: String(selectedAdminMode) // Esto garantiza que se guarde exclusivamente en el modo seleccionado
   }]);
 
   if (error) {
