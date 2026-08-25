@@ -372,6 +372,89 @@
       font-size: 18px;
     }
 
+    /* =========================================================
+       ESTILOS DEL PANEL DE ADMINISTRACIÓN (LLAVE 🔑)
+       ========================================================= */
+
+    .admin-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 18px;
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10000;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .admin-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255, 112, 177, 0.3);
+    }
+
+    .admin-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 10001;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .admin-content {
+      background: #1b1325;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 25px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 480px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+
+    .admin-content h3 {
+      font-size: 20px;
+      margin-bottom: 5px;
+      color: #ff70b1;
+    }
+
+    .admin-content label {
+      font-size: 12px;
+      color: #aaa1b4;
+    }
+
+    .admin-content input, .admin-content select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #100b16;
+      color: white;
+      font-size: 14px;
+    }
+
+    .admin-content .admin-btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .admin-content .admin-btn-group button {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: bold;
+    }
+
     @keyframes floating {
       50% {
         transform: translateY(-8px) scale(1.05);
@@ -445,6 +528,32 @@
 </head>
 
 <body>
+
+<!-- BOTÓN FLOTANTE DE LA LLAVE 🔑 -->
+<button class="admin-btn" onclick="openAdminPrompt()" title="Administración">🔑</button>
+
+<!-- MODAL DE ADMINISTRACIÓN PARA AGREGAR PREGUNTAS -->
+<div id="adminModal" class="admin-modal">
+  <div class="admin-content">
+    <h3>Panel de Administración 🔑</h3>
+    <p style="font-size: 12px; color: #bbb; margin-bottom: 5px;">Agrega una nueva pregunta directamente a Supabase:</p>
+    
+    <label>Pregunta (Español):</label>
+    <input type="text" id="admin_es" placeholder="Ej: ¿Qué prefieres...?" />
+
+    <label>Pregunta (Inglés):</label>
+    <input type="text" id="admin_en" placeholder="Ej: What do you prefer...?" />
+
+    <label>Pregunta (Árabe):</label>
+    <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
+
+    <label>Opciones (Separadas por comas en Español):</label>
+    <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
+
+    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta 💾</button>
+    <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cancelar</button>
+  </div>
+</div>
 
 <div class="app">
 
@@ -1840,6 +1949,59 @@ function showError(message) {
   element.style.display =
     "block";
 
+}
+
+
+/* =========================================================
+   LÓGICA DEL PANEL DE ADMINISTRACIÓN Y CONTRASEÑA 🔑
+   ========================================================= */
+
+function openAdminPrompt() {
+  const pass = prompt("Acceso restringido. Escribe la contraseña de administrador:");
+  if (pass === "1234567.") {
+    document.getElementById("adminModal").style.display = "flex";
+  } else if (pass !== null) {
+    alert("Contraseña incorrecta.");
+  }
+}
+
+function closeAdminModal() {
+  document.getElementById("adminModal").style.display = "none";
+}
+
+async function guardarPreguntaSupabase() {
+  const qEs = document.getElementById("admin_es").value.trim();
+  const qEn = document.getElementById("admin_en").value.trim();
+  const qAr = document.getElementById("admin_ar").value.trim();
+  const optsEs = document.getElementById("admin_opts_es").value.trim();
+
+  if (!qEs) {
+    alert("Ingresa al menos la pregunta en español.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("questions")
+    .insert([
+      {
+        question_es: qEs,
+        question_en: qEn,
+        question_ar: qAr,
+        options_es: optsEs
+      }
+    ]);
+
+  if (error) {
+    console.error("Error al guardar en Supabase:", error);
+    alert("Hubo un error al guardar en la base de datos.");
+  } else {
+    alert("¡Pregunta agregada con éxito!");
+    document.getElementById("admin_es").value = "";
+    document.getElementById("admin_en").value = "";
+    document.getElementById("admin_ar").value = "";
+    document.getElementById("admin_opts_es").value = "";
+    closeAdminModal();
+  }
 }
 
 
