@@ -147,8 +147,9 @@
 
     .fields {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1fr 1fr;
       gap: 14px;
+      margin-bottom: 14px;
     }
 
     .field {
@@ -442,18 +443,6 @@
       padding-right: 4px;
     }
 
-    .breakdown-section-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #f472b6;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
     .breakdown-item {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.07);
@@ -535,65 +524,24 @@
       font-weight: 500;
     }
 
-    /* BOTONES SUPERIORES (CONFIG Y CORAZÓN) */
-    .top-buttons-container {
+    .admin-btn {
       position: fixed;
       top: 20px;
       right: 20px;
-      display: flex;
-      gap: 10px;
-      z-index: 10000;
-      align-items: center;
-    }
-
-    .admin-btn, .heart-trigger-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       font-size: 16px;
       padding: 10px;
       border-radius: 50%;
       cursor: pointer;
+      z-index: 10000;
       transition: all 0.2s;
     }
 
-    .admin-btn:hover, .heart-trigger-btn:hover {
+    .admin-btn:hover {
       transform: scale(1.1);
       background: rgba(168, 85, 247, 0.2);
       border-color: rgba(168, 85, 247, 0.4);
-    }
-
-    /* MODAL DEL CORAZÓN SECRETO */
-    .heart-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(10px);
-      z-index: 10002;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .heart-content {
-      background: #120e1c;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 30px;
-      border-radius: 24px;
-      width: 90%;
-      max-width: 400px;
-      color: white;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.7);
-      animation: cardPopUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .heart-content input {
-      text-align: center;
-      font-size: 16px;
-      padding: 12px;
     }
 
     .admin-modal {
@@ -770,6 +718,27 @@
       line-height: 1.3;
     }
 
+    /* ESTILO PARA LA INFO DE DISTANCIA Y HORA EN EL JUEGO */
+    .distance-clock-bar {
+      background: rgba(168, 85, 247, 0.08);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+      border-radius: 14px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e2e8f0;
+      animation: popIn 0.3s ease;
+    }
+
+    .distance-badge-pill {
+      color: #f472b6;
+      font-weight: 700;
+    }
+
     /* KEYFRAMES */
     @keyframes floating {
       0%, 100% { transform: translateY(0); }
@@ -821,28 +790,14 @@
       .join-row .button { width: 100%; padding: 14px; }
       .card { padding: 24px; }
       .hero { padding-top: 20px; }
+      .distance-clock-bar { flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
 </head>
 
 <body>
 
-<!-- BOTONES FLOTANTES SUPERIORES (CONFIG Y CORAZÓN) -->
-<div class="top-buttons-container" id="topButtonsContainer">
-  <button class="heart-trigger-btn" id="heartTriggerBtn" onclick="openHeartModal()" title="Sorpresa">❤️</button>
-  <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">⚙️</button>
-</div>
-
-<!-- MODAL DEL CORAZÓN SECRETO -->
-<div id="heartModal" class="heart-modal">
-  <div class="heart-content">
-    <div style="font-size: 40px;">❤️</div>
-    <h3 id="heartModalTitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; color: #f472b6;">Espacio Especial</h3>
-    <input type="text" id="secretInput" placeholder="Escribe algo..." oninput="checkSecretInput(this.value)">
-    <p id="secretMessage" style="font-weight: bold; color: #ff4d6d; min-height: 24px; font-size: 14px;"></p>
-    <button id="heartCloseBtn" onclick="closeHeartModal()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 10px; font-size: 13px; cursor: pointer; margin-top: 5px;">Cerrar</button>
-  </div>
-</div>
+<button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">⚙️</button>
 
 <!-- PANEL ADMIN -->
 <div id="adminModal" class="admin-modal">
@@ -961,6 +916,20 @@
       </div>
     </div>
 
+    <!-- SELECCIÓN DE PAÍS -->
+    <div class="field" style="margin-bottom: 14px;">
+      <label id="countryLabel">Tu país</label>
+      <select id="country">
+        <option value="CO">🇨🇴 Colombia</option>
+        <option value="MA">🇲🇦 Marruecos</option>
+        <option value="ES">🇪🇸 España</option>
+        <option value="US">🇺🇸 Estados Unidos</option>
+        <option value="FR">🇫🇷 Francia</option>
+        <option value="JP">🇯🇵 Japón</option>
+        <option value="AR">🇦🇷 Argentina</option>
+      </select>
+    </div>
+
     <button class="button" id="createButton" onclick="createRoom()">Crear sala ✨</button>
 
     <div class="join-box">
@@ -1034,6 +1003,12 @@
 
   <!-- JUEGO -->
   <section class="card hidden" id="game">
+    <!-- BARRA DE DISTANCIA Y RELOJES EN TIEMPO REAL -->
+    <div class="distance-clock-bar" id="distanceClockBar">
+      <span id="distanceInfo">Calculando distancia...</span>
+      <span id="realtimeClocksBar">Hora de x: --:-- ❤️ Hora de y: --:--</span>
+    </div>
+
     <div class="progress">
       <div class="bar" id="bar"></div>
     </div>
@@ -1102,6 +1077,7 @@ let currentPlayer = null;
 let roomSubscription = null;
 let playerSubscription = null;
 let pollInterval = null;
+let clockInterval = null;
 
 let currentLanguage = "es";
 let currentQuestion = 0;
@@ -1115,7 +1091,33 @@ let adminQuestionsCache = [];
 let cachedPlayersList = [];
 
 /* =========================================================
-   TRADUCCIONES COMPLETAS DE LA INTERFAZ
+   DATOS GEOGRÁFICOS Y DE ZONAS HORARIAS DE PAÍSES
+   ========================================================= */
+
+const countryData = {
+  CO: { name: "Colombia", lat: 4.6097, lon: -74.0817, tz: "America/Bogota", flag: "🇨🇴" },
+  MA: { name: "Marruecos", lat: 33.9716, lon: -6.8498, tz: "Africa/Casablanca", flag: "🇲🇦" },
+  ES: { name: "España", lat: 40.4168, lon: -3.7038, tz: "Europe/Madrid", flag: "🇪🇸" },
+  US: { name: "Estados Unidos", lat: 40.7128, lon: -74.0060, tz: "America/New_York", flag: "🇺🇸" },
+  FR: { name: "Francia", lat: 48.8566, lon: 2.3522, tz: "Europe/Paris", flag: "🇫🇷" },
+  JP: { name: "Japón", lat: 35.6762, lon: 139.6503, tz: "Asia/Tokyo", flag: "🇯🇵" },
+  AR: { name: "Argentina", lat: -34.6037, lon: -58.3816, tz: "America/Argentina/Buenos_Aires", flag: "🇦🇷" }
+};
+
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radio de la tierra en km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
+/* =========================================================
+   TRADUCCIONES DE LA INTERFAZ
    ========================================================= */
 
 const translations = {
@@ -1125,6 +1127,7 @@ const translations = {
     setupTitle: "Crear una partida",
     nameLabel: "Tu nombre",
     languageLabel: "Tu idioma",
+    countryLabel: "Tu país",
     create: "Crear sala ✨",
     joinTitle: "¿Ya tienes un código de acceso?",
     join: "Unirse ⚡",
@@ -1142,15 +1145,7 @@ const translations = {
     finishedSubtitle: "La otra persona está respondiendo las últimas preguntas...<br>Por favor espera un momento ✨",
     coincidedLabel: "Coincidieron en",
     respuestasText: "respuestas",
-    matchTitle: "✨ Sintonía perfecta (¡Match Total!)",
-    diffTitle: "🌱 Nuevas perspectivas (¡Para debatir más!)",
-    noMatchText: "¡Ninguna coincidencia exacta esta vez, pero mucho de qué hablar!",
-    allMatchText: "¡Pensaron exactamente igual en todo el juego!",
     modeSelectorTitle: "Elige el modo de juego:",
-    heartTitle: "Espacio Especial",
-    heartPlaceholder: "Escribe algo...",
-    heartClose: "Cerrar",
-    secretLoveMsg: "¡Felicidades, eres el amor de mi vida! ❤️",
     modes: [
       { t: "❤️ Modo 1: Conóceme", d: "Preguntas creadas para conocernos a fondo." },
       { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá tu pareja." },
@@ -1166,6 +1161,7 @@ const translations = {
     setupTitle: "إنشاء لعبة",
     nameLabel: "اسمك",
     languageLabel: "لغتك",
+    countryLabel: "بلدك",
     create: "إنشاء غرفة ✨",
     joinTitle: "هل لديك رمز الغرفة؟",
     join: "انضم ⚡",
@@ -1183,15 +1179,7 @@ const translations = {
     finishedSubtitle: "الشخص الآخر يجيب على الأسئلة الأخيرة...<br>يرجى الانتظار قليلاً ✨",
     coincidedLabel: "لقد تطابقتم في",
     respuestasText: "إجابات",
-    matchTitle: "✨ انسجام تام (تطابق كامل!)",
-    diffTitle: "🌱 وجهات نظر جديدة للنقاش!",
-    noMatchText: "لا توجد تطابقات دقيقة هذه المرة، ولكن هناك الكثير للنقاش!",
-    allMatchText: "فكرتم بطريقة متطابقة تماماً في كل اللعبة!",
     modeSelectorTitle: "اختر وضع اللعبة:",
-    heartTitle: "مساحة خاصة",
-    heartPlaceholder: "اكتب شيئاً...",
-    heartClose: "إغلاق",
-    secretLoveMsg: "تهانينا، أنت حب حياتي! ❤️",
     modes: [
       { t: "❤️ الوضع 1: تعرف علي", d: "أسئلة مصممة للتعرف على بعضنا بعمق." },
       { t: "🧠 الوضع 2: كم تعرفني؟", d: "أجب بما تعتقد أن الشخص الآخر سيختاره." },
@@ -1207,6 +1195,7 @@ const translations = {
     setupTitle: "Create a game",
     nameLabel: "Your name",
     languageLabel: "Your language",
+    countryLabel: "Your country",
     create: "Create room ✨",
     joinTitle: "Already have a room code?",
     join: "Join ⚡",
@@ -1224,15 +1213,7 @@ const translations = {
     finishedSubtitle: "The other person is answering the last questions...<br>Please wait a moment ✨",
     coincidedLabel: "You matched in",
     respuestasText: "answers",
-    matchTitle: "✨ Perfect Harmony (Total Match!)",
-    diffTitle: "🌱 New Perspectives (To debate more!)",
-    noMatchText: "No exact matches this time, but plenty to talk about!",
-    allMatchText: "You thought exactly alike throughout the entire game!",
     modeSelectorTitle: "Choose game mode:",
-    heartTitle: "Special Space",
-    heartPlaceholder: "Type something...",
-    heartClose: "Close",
-    secretLoveMsg: "Congratulations, you are the love of my life! ❤️",
     modes: [
       { t: "❤️ Mode 1: Get to know me", d: "Questions designed to know each other deeply." },
       { t: "🧠 Mode 2: How well do you know me?", d: "Answer what you think your partner will choose." },
@@ -1243,39 +1224,6 @@ const translations = {
     ]
   }
 };
-
-/* =========================================================
-   CONTROL DEL CORAZÓN SECRETO (SALMA)
-   ========================================================= */
-
-function openHeartModal() {
-  document.getElementById("heartModal").style.display = "flex";
-  document.getElementById("secretInput").value = "";
-  document.getElementById("secretMessage").textContent = "";
-  setTimeout(() => document.getElementById("secretInput").focus(), 100);
-}
-
-function closeHeartModal() {
-  document.getElementById("heartModal").style.display = "none";
-}
-
-function checkSecretInput(value) {
-  const messageEl = document.getElementById("secretMessage");
-  const cleanValue = value.trim().toLowerCase();
-
-  const validNames = ["salma", "سلمى", "سل馬", "سلما"];
-
-  if (validNames.includes(cleanValue)) {
-    const t = translations[currentLanguage];
-    messageEl.textContent = t.secretLoveMsg;
-  } else {
-    messageEl.textContent = "";
-  }
-}
-
-/* =========================================================
-   ACTUALIZAR INTERFAZ Y IDIOMA
-   ========================================================= */
 
 document.getElementById("language").addEventListener("change", function() {
   currentLanguage = this.value;
@@ -1292,6 +1240,7 @@ function updateInterface() {
   document.getElementById("setupTitle").textContent = t.setupTitle;
   document.getElementById("nameLabel").textContent = t.nameLabel;
   document.getElementById("languageLabel").textContent = t.languageLabel;
+  document.getElementById("countryLabel").textContent = t.countryLabel;
   document.getElementById("createButton").textContent = t.create;
   document.getElementById("joinTitle").textContent = t.joinTitle;
   document.getElementById("joinButton").textContent = t.join;
@@ -1304,11 +1253,6 @@ function updateInterface() {
   document.getElementById("coincidedLabel").textContent = t.coincidedLabel;
   document.getElementById("resultTitle").textContent = t.respuestasText;
   document.getElementById("againButton").textContent = t.again;
-
-  // Textos del modal secreto adaptados al idioma
-  document.getElementById("heartModalTitle").textContent = t.heartTitle;
-  document.getElementById("secretInput").placeholder = t.heartPlaceholder;
-  document.getElementById("heartCloseBtn").textContent = t.heartClose;
 
   for (let i = 0; i < 6; i++) {
     const cardEl = document.querySelectorAll(".mode-card")[i];
@@ -1326,6 +1270,7 @@ function updateInterface() {
 async function createRoom() {
   clearMessages();
   const name = document.getElementById("name").value.trim();
+  const country = document.getElementById("country").value;
   currentLanguage = document.getElementById("language").value;
   if (!name) return showError("Escribe tu nombre primero.");
 
@@ -1340,7 +1285,7 @@ async function createRoom() {
 
   const { data: player, error: pErr } = await supabaseClient
     .from("players")
-    .insert({ room_id: room.id, name, language: currentLanguage })
+    .insert({ room_id: room.id, name, language: currentLanguage, country })
     .select()
     .single();
     
@@ -1350,8 +1295,8 @@ async function createRoom() {
   currentPlayer = player;
 
   document.getElementById("playerOne").textContent = name;
-  document.getElementById("playerOneLang").textContent = getLanguageName(currentLanguage);
-  document.getElementById("player1Flag").textContent = getFlag(currentLanguage);
+  document.getElementById("playerOneLang").textContent = getLanguageName(currentLanguage) + " • " + countryData[country].name;
+  document.getElementById("player1Flag").textContent = countryData[country].flag;
   document.getElementById("roomCode").textContent = code;
   document.getElementById("roomBadge").textContent = "SALA " + code;
 
@@ -1364,6 +1309,7 @@ async function createRoom() {
 async function joinRoom() {
   clearMessages();
   const name = document.getElementById("name").value.trim();
+  const country = document.getElementById("country").value;
   const code = document.getElementById("joinCode").value.trim().toUpperCase();
   currentLanguage = document.getElementById("language").value;
   if (!name || !code) return showError("Completa todos los campos.");
@@ -1374,7 +1320,7 @@ async function joinRoom() {
   const { data: players } = await supabaseClient.from("players").select("*").eq("room_id", room.id);
   if (players && players.length >= 2) return showError("La sala está llena.");
 
-  const { data: player } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage }).select().single();
+  const { data: player } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage, country }).select().single();
 
   currentRoom = room;
   currentPlayer = player;
@@ -1407,14 +1353,16 @@ function updatePlayers(players) {
   const player1 = players[0];
   const player2 = players[1];
 
+  const c1 = countryData[player1.country] || countryData["CO"];
   document.getElementById("playerOne").textContent = player1.name;
-  document.getElementById("playerOneLang").textContent = getLanguageName(player1.language);
-  document.getElementById("player1Flag").textContent = getFlag(player1.language);
+  document.getElementById("playerOneLang").textContent = getLanguageName(player1.language) + " • " + c1.name;
+  document.getElementById("player1Flag").textContent = c1.flag;
 
   if (player2) {
+    const c2 = countryData[player2.country] || countryData["MA"];
     document.getElementById("playerTwo").textContent = player2.name;
-    document.getElementById("playerTwoLang").textContent = getLanguageName(player2.language);
-    document.getElementById("player2Flag").textContent = getFlag(player2.language);
+    document.getElementById("playerTwoLang").textContent = getLanguageName(player2.language) + " • " + c2.name;
+    document.getElementById("player2Flag").textContent = c2.flag;
     document.getElementById("waiting").innerHTML = "⚡ ¡Segundo jugador conectado!";
 
     const btn = document.getElementById("startButton");
@@ -1470,7 +1418,7 @@ async function fetchQuestionsForGame() {
 }
 
 /* =========================================================
-   INICIO & JUEGO
+   INICIO & JUEGO CON HORA EN TIEMPO REAL Y DISTANCIA
    ========================================================= */
 
 async function startGame() {
@@ -1504,10 +1452,36 @@ function startCountdown() {
         screen.remove();
         currentQuestion = 0;
         showOnly("game");
+        initGameUIBar();
         renderQuestion();
       }, 500);
     }
   }, 1000);
+}
+
+function initGameUIBar() {
+  if (cachedPlayersList.length < 2) return;
+  const p1 = cachedPlayersList[0];
+  const p2 = cachedPlayersList[1];
+
+  const c1 = countryData[p1.country] || countryData["CO"];
+  const c2 = countryData[p2.country] || countryData["MA"];
+
+  const distanceKm = calculateDistanceKm(c1.lat, c1.lon, c2.lat, c2.lon);
+  document.getElementById("distanceInfo").innerHTML = `✈️ Distancia: <span class="distance-badge-pill">${distanceKm} km</span> (${c1.name} y ${c2.name})`;
+
+  if (clockInterval) clearInterval(clockInterval);
+  updateRealtimeClocks(p1, p2, c1, c2);
+  clockInterval = setInterval(() => updateRealtimeClocks(p1, p2, c1, c2), 1000);
+}
+
+function updateRealtimeClocks(p1, p2, c1, c2) {
+  const now = new Date();
+  
+  const time1 = new Intl.DateTimeFormat('es-ES', { timeZone: c1.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).format(now);
+  const time2 = new Intl.DateTimeFormat('es-ES', { timeZone: c2.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).format(now);
+
+  document.getElementById("realtimeClocksBar").innerHTML = `Hora de ${p1.name}: ${time1} ❤️ Hora de ${p2.name}: ${time2}`;
 }
 
 function renderQuestion() {
@@ -1580,6 +1554,7 @@ function nextQuestion() {
    ========================================================= */
 
 async function finishMyAnswers() {
+  if (clockInterval) clearInterval(clockInterval);
   showOnly("waitingPartner");
 
   const totalQ = Math.min(activeQuestions.length, 10);
@@ -1637,7 +1612,6 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
 
   let p1Score = 0;
   let p2Score = 0;
-  
   let detailsHtml = "";
 
   for (let i = 0; i < totalQ; i++) {
@@ -1732,20 +1706,14 @@ function showOnly(section) {
   });
   document.getElementById(section).classList.remove("hidden");
 
-  const topBtns = document.getElementById("topButtonsContainer");
-  if (topBtns) topBtns.style.display = (section === "home" || section === "setup") ? "flex" : "none";
+  const keyBtn = document.getElementById("adminKeyBtn");
+  if (keyBtn) keyBtn.style.display = (section === "home" || section === "setup") ? "block" : "none";
 }
 
 function getLanguageName(lang) {
   if (lang === "ar") return "العربية";
   if (lang === "en") return "English";
   return "Español";
-}
-
-function getFlag(lang) {
-  if (lang === "ar") return "🇸🇦";
-  if (lang === "en") return "🇬🇧";
-  return "🇪🇸";
 }
 
 function clearMessages() {
