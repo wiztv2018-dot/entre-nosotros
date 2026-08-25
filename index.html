@@ -595,7 +595,7 @@
       font-weight: 600;
     }
 
-    .admin-content input {
+    .admin-content input, .admin-content select {
       width: 100%;
       padding: 8px 12px;
       border-radius: 10px;
@@ -845,6 +845,16 @@
       </div>
     </div>
 
+    <div>
+      <label>Respuesta Correcta (Solo para Modo 3 - Índice 0, 1, 2...):</label>
+      <select id="admin_correct_index">
+        <option value="0">Opción A (Primera)</option>
+        <option value="1">Opción B (Segunda)</option>
+        <option value="2">Opción C (Tercera)</option>
+        <option value="3">Opción D (Cuarta)</option>
+      </select>
+    </div>
+
     <div style="display: flex; gap: 8px; margin-top: 4px;">
       <button class="button" id="saveQuestionBtn" onclick="guardarPreguntaSupabase()" style="margin-top:0; padding:10px;">Guardar Pregunta 💾</button>
       <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; padding: 0 12px; font-size: 11px; cursor: pointer;">Cancelar</button>
@@ -941,7 +951,7 @@
       </div>
       <div class="mode-card" onclick="selectGameMode(3, this)">
         <h4 id="m3Title">🌎 Modo 3: ¿Quién sabe más?</h4>
-        <p id="m3Desc">Cultura general, cine, fútbol y música.</p>
+        <p id="m3Desc">Cultura general con respuestas correctas.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(4, this)">
         <h4 id="m4Title">😂 Modo 4: ¿Qué prefieres?</h4>
@@ -1083,8 +1093,8 @@ const translations = {
     modeSelectorTitle: "Elige el modo de juego:",
     modes: [
       { t: "❤️ Modo 1: Conóceme", d: "Preguntas creadas para conocernos a fondo." },
-      { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá la otra persona." },
-      { t: "🌎 Modo 3: ¿Quién sabe más?", d: "Cultura general, cine, fútbol y música." },
+      { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá tu pareja." },
+      { t: "🌎 Modo 3: ¿Quién sabe más?", d: "Cultura general con respuestas correctas." },
       { t: "😂 Modo 4: ¿Qué prefieres?", d: "Dilemas divertidos para debatir juntos." },
       { t: "🥹 Modo 5: Profundas", d: "Respuestas de texto abierto y emociones." },
       { t: "🔥 Modo 6: Adivina mi respuesta", d: "Intenta acertar la elección exacta." }
@@ -1121,7 +1131,7 @@ const translations = {
     modes: [
       { t: "❤️ الوضع 1: تعرف علي", d: "أسئلة مصممة للتعرف على بعضنا بعمق." },
       { t: "🧠 الوضع 2: كم تعرفني؟", d: "أجب بما تعتقد أن الشخص الآخر سيختاره." },
-      { t: "🌎 الوضع 3: من يعرف أكثر؟", d: "ثقافة عامة، سينما، كرة قدم وموسيقى." },
+      { t: "🌎 الوضع 3: من يعرف أكثر؟", d: "ثقافة عامة مع إجابات صحيحة." },
       { t: "😂 الوضع 4: ماذا تفضل؟", d: "معضلات ممتعة للنقاش معاً." },
       { t: "🥹 الوضع 5: أسئلة عميقة", d: "إجابات ومشاوير تعبيرية." },
       { t: "🔥 الوضع 6: احزر إجابتي", d: "حاول تخمين الاختيار الدقيق." }
@@ -1158,7 +1168,7 @@ const translations = {
     modes: [
       { t: "❤️ Mode 1: Get to know me", d: "Questions designed to know each other deeply." },
       { t: "🧠 Mode 2: How well do you know me?", d: "Answer what you think your partner will choose." },
-      { t: "🌎 Mode 3: Who knows more?", d: "General culture, movies, football and music." },
+      { t: "🌎 Mode 3: Who knows more?", d: "General culture with correct answers." },
       { t: "😂 Mode 4: Would you rather?", d: "Fun dilemmas to debate together." },
       { t: "🥹 Mode 5: Deep questions", d: "Open answers and emotions." },
       { t: "🔥 Mode 6: Guess my answer", d: "Try to guess the exact choice." }
@@ -1349,7 +1359,8 @@ async function fetchQuestionsForGame() {
       question_ar: "ماذا ستختار لتجربة مثالية؟",
       options_es: "Una noche de pelis y series,Una cena elegante,Una caminata nocturna,Una aventura espontánea",
       options_en: "Movie night,Elegant dinner,Night walk,Spontaneous adventure",
-      options_ar: "ليلة أفلام,عشاء أنيق,نزهة ليلية,مغامرة عفوية"
+      options_ar: "ليلة أفلام,عشاء أنيق,نزهة ليلية,مغامرة عفوية",
+      correct_index: 0
     }];
   } else {
     activeQuestions = data;
@@ -1511,7 +1522,6 @@ async function checkIfBothFinished() {
 }
 
 function calculateFinalScore(allAnswers, totalQ, playerIds) {
-  let matches = 0;
   const breakdownContainer = document.getElementById("breakdownContainer");
   breakdownContainer.innerHTML = "";
 
@@ -1521,19 +1531,19 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
   const p1Obj = cachedPlayersList.find(p => p.id === p1Id) || { name: "Player 1", language: "es" };
   const p2Obj = cachedPlayersList.find(p => p.id === p2Id) || { name: "Player 2", language: "es" };
 
-  const t = translations[currentLanguage];
+  const isMode3 = (Number(selectedGameMode) === 3);
 
-  let matchHtml = `<div class="breakdown-section-title">${t.matchTitle}</div>`;
-  let matchCount = 0;
-
-  let diffHtml = `<div class="breakdown-section-title" style="margin-top: 10px;">${t.diffTitle}</div>`;
-  let diffCount = 0;
+  let p1Score = 0;
+  let p2Score = 0;
+  
+  let detailsHtml = "";
 
   for (let i = 0; i < totalQ; i++) {
     const qObj = activeQuestions[i % activeQuestions.length];
     
     let qText = qObj ? qObj.question_es : `Question ${i+1}`;
     let optsRaw = qObj ? qObj.options_es : "A,B,C,D";
+    let correctIdx = qObj && qObj.correct_index !== undefined ? Number(qObj.correct_index) : 0;
 
     if (currentLanguage === "en") {
       if (qObj && qObj.question_en) qText = qObj.question_en;
@@ -1554,48 +1564,59 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
       const idx2 = parseInt(ansP2.original_text);
       const text1 = rawOpts[idx1] ? rawOpts[idx1].trim() : ansP1.original_text;
       const text2 = rawOpts[idx2] ? rawOpts[idx2].trim() : ansP2.original_text;
+      const correctText = rawOpts[correctIdx] ? rawOpts[correctIdx].trim() : "";
 
-      if (idx1 === idx2) {
-        matches++;
-        matchCount++;
-        matchHtml += `
-          <div class="breakdown-item match">
+      if (isMode3) {
+        const p1Correct = (idx1 === correctIdx);
+        const p2Correct = (idx2 === correctIdx);
+        if (p1Correct) p1Score++;
+        if (p2Correct) p2Score++;
+
+        detailsHtml += `
+          <div class="breakdown-item ${p1Correct || p2Correct ? 'match' : 'diff'}">
             <div class="breakdown-q">${i+1}. ${qText}</div>
             <div class="breakdown-ans">
-              <span>✨ <b>${text1}</b></span>
+              <span>🎯 <b>Respuesta correcta:</b> ${correctText}</span>
+              <span>👤 ${p1Obj.name}: ${text1} ${p1Correct ? '✅' : '❌'}</span>
+              <span>👤 ${p2Obj.name}: ${text2} ${p2Correct ? '✅' : '❌'}</span>
             </div>
           </div>`;
       } else {
-        diffCount++;
-        diffHtml += `
-          <div class="breakdown-item diff">
-            <div class="breakdown-q">${i+1}. ${qText}</div>
-            <div class="breakdown-ans">
-              <span>👤 ${p1Obj.name}: ${text1}</span>
-              <span>👤 ${p2Obj.name}: ${text2}</span>
-            </div>
-          </div>`;
+        if (idx1 === idx2) {
+          p1Score++; // En otros modos, cuenta coincidencias
+          detailsHtml += `
+            <div class="breakdown-item match">
+              <div class="breakdown-q">${i+1}. ${qText}</div>
+              <div class="breakdown-ans">
+                <span>✨ <b>${text1}</b></span>
+              </div>
+            </div>`;
+        } else {
+          detailsHtml += `
+            <div class="breakdown-item diff">
+              <div class="breakdown-q">${i+1}. ${qText}</div>
+              <div class="breakdown-ans">
+                <span>👤 ${p1Obj.name}: ${text1}</span>
+                <span>👤 ${p2Obj.name}: ${text2}</span>
+              </div>
+            </div>`;
+        }
       }
     }
   }
 
-  if (matchCount === 0) matchHtml += `<div style="font-size: 11px; color: #888; padding: 4px;">${t.noMatchText}</div>`;
-  if (diffCount === 0) diffHtml += `<div style="font-size: 11px; color: #888; padding: 4px;">${t.allMatchText}</div>`;
+  breakdownContainer.innerHTML = detailsHtml;
 
-  breakdownContainer.innerHTML = matchHtml + diffHtml;
-
-  document.getElementById("finalScore").textContent = `${matches} de ${totalQ}`;
-
-  let feedbackText = "";
-  if (matches === totalQ) {
-    feedbackText = currentLanguage === "ar" ? "اتصال كامل يا tdm! لقد أجبتم على كل شيء بشكل مطبق تماماً." : currentLanguage === "en" ? "Total connection, tdm! You answered everything exactly the same." : "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
-  } else if (matches >= Math.ceil(totalQ * 0.7)) {
-    feedbackText = currentLanguage === "ar" ? "ديكم كيمياء رائعة! أنتم متطابقون جداً." : currentLanguage === "en" ? "You have great chemistry! You are super aligned." : "¡Tienen muchísima química! Están super alineados.";
+  if (isMode3) {
+    document.getElementById("coincidedLabel").textContent = "Puntaje Modo Trivia";
+    document.getElementById("finalScore").innerHTML = `${p1Obj.name}: <b>${p1Score}</b> | ${p2Obj.name}: <b>${p2Score}</b>`;
+    document.getElementById("resultText").textContent = p1Score > p2Score ? `¡${p1Obj.name} ganó demostrando más conocimiento!` : p2Score > p1Score ? `¡${p2Obj.name} ganó demostrando más conocimiento!` : "¡Empate técnico en conocimientos!";
   } else {
-    feedbackText = currentLanguage === "ar" ? "توازن جميل! اختلافاتكم هي أبواب مفتوحة لتعلم المزيد عن بعضكم." : currentLanguage === "en" ? "Great balance! Your differences are open doors to know each other more." : "¡Buen balance! Sus diferencias son excelentes puntos de debate.";
+    document.getElementById("coincidedLabel").textContent = "Coincidieron en";
+    document.getElementById("finalScore").textContent = `${p1Score} de ${totalQ}`;
+    document.getElementById("resultText").textContent = "¡Partida finalizada con éxito!";
   }
 
-  document.getElementById("resultText").textContent = feedbackText;
   showOnly("result");
 }
 
@@ -1743,6 +1764,7 @@ function editQuestionById(id) {
   document.getElementById("admin_opts_es").value = q.options_es || "";
   document.getElementById("admin_opts_en").value = q.options_en || "";
   document.getElementById("admin_opts_ar").value = q.options_ar || "";
+  document.getElementById("admin_correct_index").value = q.correct_index !== undefined ? q.correct_index : 0;
 
   document.getElementById("formTitle").textContent = "✏️ Editando pregunta ID: " + q.id;
   document.getElementById("saveQuestionBtn").textContent = "Actualizar Pregunta 💾";
@@ -1757,6 +1779,7 @@ function resetAdminForm() {
   document.getElementById("admin_opts_es").value = "";
   document.getElementById("admin_opts_en").value = "";
   document.getElementById("admin_opts_ar").value = "";
+  document.getElementById("admin_correct_index").value = "0";
 
   document.getElementById("formTitle").textContent = "➕ Agregar nueva pregunta";
   document.getElementById("saveQuestionBtn").textContent = "Guardar Pregunta 💾";
@@ -1771,20 +1794,24 @@ async function guardarPreguntaSupabase() {
   const optsEs = document.getElementById("admin_opts_es").value.trim();
   const optsEn = document.getElementById("admin_opts_en").value.trim();
   const optsAr = document.getElementById("admin_opts_ar").value.trim();
+  const correctIdx = parseInt(document.getElementById("admin_correct_index").value);
 
   if (!qEs) return alert("Ingresa al menos la pregunta en español.");
+
+  const payloadData = {
+    question_es: qEs,
+    question_en: qEn,
+    question_ar: qAr,
+    options_es: optsEs,
+    options_en: optsEn,
+    options_ar: optsAr,
+    correct_index: correctIdx
+  };
 
   if (editingId) {
     const { error } = await supabaseClient
       .from("questions")
-      .update({
-        question_es: qEs,
-        question_en: qEn,
-        question_ar: qAr,
-        options_es: optsEs,
-        options_en: optsEn,
-        options_ar: optsAr
-      })
+      .update(payloadData)
       .eq("id", editingId);
 
     if (error) {
@@ -1795,15 +1822,8 @@ async function guardarPreguntaSupabase() {
       loadAdminQuestionsForMode();
     }
   } else {
-    const { error } = await supabaseClient.from("questions").insert([{
-      question_es: qEs,
-      question_en: qEn,
-      question_ar: qAr,
-      options_es: optsEs,
-      options_en: optsEn,
-      options_ar: optsAr,
-      mode_id: String(selectedAdminMode)
-    }]);
+    payloadData.mode_id = String(selectedAdminMode);
+    const { error } = await supabaseClient.from("questions").insert([payloadData]);
 
     if (error) {
       alert("Hubo un error al guardar en la base de datos.");
