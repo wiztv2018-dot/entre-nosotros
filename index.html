@@ -577,7 +577,7 @@
     <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
 
     <div id="adminOptionsContainer">
-      <label>Opciones (Separadas por comas en Español, Inglés y Árabe ordenadas):</label>
+      <label>Opciones (Separadas por comas):</label>
       <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
     </div>
 
@@ -762,8 +762,8 @@ let selectedAnswer = null;
 let userAnswers = {};
 
 let selectedAdminMode = 1;
-let selectedGameMode = 1; // Modo seleccionado en el Lobby
-let activeQuestions = [];  // Preguntas descargadas para la partida actual
+let selectedGameMode = 1; 
+let activeQuestions = [];  
 
 /* =========================================================
    TRADUCCIONES DE LA INTERFAZ
@@ -870,10 +870,20 @@ async function createRoom() {
   if (!name) return showError("Escribe tu nombre primero.");
 
   const code = generateRoomCode();
-  const { data: room, error } = await supabaseClient.from("rooms").insert({ code, status: "waiting", game_mode: selectedGameMode }).select().single();
+  const { data: room, error } = await supabaseClient
+    .from("rooms")
+    .insert({ code, status: "waiting", game_mode: selectedGameMode })
+    .select()
+    .single();
+    
   if (error) return showError("Error al crear la sala.");
 
-  const { data: player, error: pErr } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage }).select().single();
+  const { data: player, error: pErr } = await supabaseClient
+    .from("players")
+    .insert({ room_id: room.id, name, language: currentLanguage })
+    .select()
+    .single();
+    
   if (pErr) return showError("Error de registro del jugador.");
 
   currentRoom = room;
@@ -908,7 +918,7 @@ async function joinRoom() {
 
   currentRoom = room;
   currentPlayer = player;
-  selectedGameMode = room.game_mode || 1; // Sincronizar el modo elegido por el creador
+  selectedGameMode = room.game_mode || 1; 
 
   document.getElementById("roomCode").textContent = room.code;
   document.getElementById("roomBadge").textContent = "SALA " + room.code;
@@ -984,23 +994,16 @@ async function fetchQuestionsForGame() {
     .eq("mode_id", String(selectedGameMode));
 
   if (error || !data || data.length === 0) {
-    alert("No hay suficientes preguntas guardadas para este modo en la base de datos. Por favor agrégalas con la llavecita 🔑.");
-    activeQuestions = getDefaultFallbackQuestions(); // Respaldo por seguridad
-  } else {
-    activeQuestions = data;
-  }
-}
-
-function getDefaultFallbackQuestions() {
-  // Preguntas predeterminadas por si la base de datos está vacía temporalmente
-  return [
-    {
+    alert("No hay preguntas registradas para este modo en Supabase. Agrega algunas usando la llave 🔑.");
+    activeQuestions = [{
       question_es: "¿Cuál elegirías para una cita perfecta?",
       question_en: "What would you choose for a perfect date?",
       question_ar: "ماذا ستختار لموعد مثالي؟",
       options_es: "Una noche viendo películas,Una cena elegante,Una caminata por la playa,Una aventura espontánea"
-    }
-  ];
+    }];
+  } else {
+    activeQuestions = data;
+  }
 }
 
 /* =========================================================
@@ -1009,7 +1012,6 @@ function getDefaultFallbackQuestions() {
 
 async function startGame() {
   if (!currentRoom) return;
-  // Actualizar tanto el estado como el modo de juego elegido en la sala
   await supabaseClient.from("rooms").update({ status: "starting", game_mode: selectedGameMode }).eq("id", currentRoom.id);
   await fetchQuestionsForGame();
   startCountdown();
@@ -1064,7 +1066,6 @@ function renderQuestion() {
   const container = document.getElementById("answers");
   container.innerHTML = "";
 
-  // Procesar opciones separadas por coma guardadas desde la interfaz de admin
   let rawOpts = q.options_es ? q.options_es.split(",") : ["Opción A", "Opción B", "Opción C", "Opción D"];
 
   rawOpts.forEach((optText, index) => {
@@ -1264,7 +1265,7 @@ async function guardarPreguntaSupabase() {
     question_en: qEn,
     question_ar: qAr,
     options_es: optsEs,
-    mode_id: String(selectedAdminMode) // Esto garantiza que se guarde exclusivamente en el modo seleccionado
+    mode_id: String(selectedAdminMode) 
   }]);
 
   if (error) {
