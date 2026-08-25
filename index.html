@@ -16,7 +16,7 @@
 
     body {
       min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Comic Sans MS', 'Bubblegum Sans', 'Montserrat', Arial, Helvetica, sans-serif;
       color: white;
       background:
         radial-gradient(circle at top, #442052 0%, #1b1325 45%, #0c0910 100%);
@@ -94,6 +94,8 @@
       border-radius: 28px;
       box-shadow: 0 30px 80px rgba(0,0,0,.45);
       backdrop-filter: blur(15px);
+      /* Transición cartoon de entrada para las tarjetas */
+      animation: cardPopUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
 
     .card h2 {
@@ -137,16 +139,21 @@
       margin-top: 15px;
       padding: 15px;
       border: none;
-      border-radius: 15px;
+      border-radius: 20px;
       color: white;
       font-weight: 800;
       background: linear-gradient(100deg, #ff67aa, #9b82ff);
-      box-shadow: 0 10px 35px rgba(255,100,170,.18);
-      transition: .2s;
+      box-shadow: 0 10px 35px rgba(255,100,170,.25);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .button:hover:not(:disabled) {
-      transform: translateY(-2px);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 15px 40px rgba(255,100,170,.4);
+    }
+
+    .button:active:not(:disabled) {
+      transform: scale(0.95);
     }
 
     .button:disabled {
@@ -209,6 +216,7 @@
       font-weight: 900;
       letter-spacing: 8px;
       margin: 20px 0;
+      animation: bouncePulse 2s infinite ease-in-out;
     }
 
     .share {
@@ -229,6 +237,7 @@
       border-radius: 17px;
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.1);
+      animation: popIn 0.3s ease;
     }
 
     .player small {
@@ -255,7 +264,7 @@
     }
 
     .progress {
-      height: 6px;
+      height: 8px;
       background: rgba(255,255,255,.1);
       border-radius: 10px;
       overflow: hidden;
@@ -265,7 +274,7 @@
       height: 100%;
       width: 10%;
       background: linear-gradient(90deg, #ff67aa, #9b82ff);
-      transition: .4s;
+      transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .meta {
@@ -276,9 +285,14 @@
       font-size: 12px;
     }
 
+    /* Transición cartoon suave al cambiar de pregunta */
+    .question-box-anim {
+      animation: questionSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
     .question {
       text-align: center;
-      font-size: clamp(25px, 5vw, 40px);
+      font-size: clamp(23px, 4.5vw, 36px);
       line-height: 1.15;
       margin-bottom: 28px;
     }
@@ -286,48 +300,58 @@
     .answers {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
     .answer {
-      padding: 17px;
-      min-height: 70px;
+      padding: 18px;
+      min-height: 75px;
       text-align: left;
       color: white;
       background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 17px;
-      transition: .2s;
+      border: 2px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .answer:hover {
-      transform: translateY(-2px);
-      background: rgba(255,255,255,.1);
+      transform: translateY(-4px) scale(1.02);
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,112,177,.5);
     }
 
+    /* Animación elástica cartoon cuando seleccionas una respuesta (tipo quiz app) */
     .answer.selected {
-      background: rgba(255,100,170,.18);
+      background: rgba(255,100,170,.25);
       border-color: #ff70b1;
+      transform: scale(1.04);
+      box-shadow: 0 0 25px rgba(255,112,177,0.5);
+      animation: bounceAnswer 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .answer small {
       display: block;
-      color: #999;
-      margin-bottom: 5px;
+      color: #ff70b1;
+      font-weight: bold;
+      margin-bottom: 4px;
     }
 
     .status {
       margin-top: 15px;
       color: #aaa2b2;
       font-size: 12px;
+      text-align: center;
     }
 
     .result {
       text-align: center;
+      animation: cardPopUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
 
     .result .big {
-      font-size: 60px;
+      font-size: 65px;
+      animation: floating 2s infinite ease-in-out;
     }
 
     /* ESTILOS DE LA TABLITA / DESGLOSE */
@@ -358,6 +382,7 @@
       border-radius: 14px;
       padding: 10px 14px;
       font-size: 12px;
+      animation: popIn 0.3s ease;
     }
 
     .breakdown-item.match {
@@ -419,7 +444,7 @@
       font-weight: 900;
       line-height: .9;
       text-shadow: 0 0 60px rgba(255,100,170,.7);
-      animation: numberPop .35s ease;
+      animation: numberPop .35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     #countdownText {
@@ -472,6 +497,7 @@
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
       max-height: 90vh;
       overflow-y: auto;
+      animation: cardPopUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
     }
 
     .admin-content h3 {
@@ -582,21 +608,24 @@
     .mode-card {
       background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,.12);
-      border-radius: 14px;
-      padding: 12px;
+      border-radius: 16px;
+      padding: 14px;
       text-align: left;
       cursor: pointer;
-      transition: .2s;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .mode-card:hover {
       border-color: #ff70b1;
       background: rgba(255,112,177,.08);
+      transform: translateY(-3px);
     }
 
     .mode-card.selected {
       border-color: #ff70b1;
       background: rgba(255,112,177,.2);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(255,112,177,0.3);
     }
 
     .mode-card h4 {
@@ -610,7 +639,9 @@
       line-height: 1.3;
     }
 
+    /* KEYFRAMES ANIMACIONES CARTOON / PLAYQUIZ */
     @keyframes floating {
+      0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-8px) scale(1.05); }
     }
 
@@ -623,13 +654,29 @@
     }
 
     @keyframes numberPop {
-      from { transform: scale(.7); opacity: .2; }
-      to { transform: scale(1); opacity: 1; }
+      0% { transform: scale(0.4); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    @keyframes countdownFade {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    @keyframes cardPopUp {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes questionSlideIn {
+      0% { transform: translateY(15px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes bounceAnswer {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1.04); }
     }
 
     [dir="rtl"] { text-align: right; }
@@ -838,8 +885,11 @@
       <span id="category">❤️ Modo de Juego</span>
     </div>
 
-    <div class="question" id="question"></div>
-    <div class="answers" id="answers"></div>
+    <div id="questionContainer" class="question-box-anim">
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
+    </div>
+
     <div class="status" id="status">Elige una respuesta.</div>
 
     <button class="button" id="next" disabled onclick="nextQuestion()">
@@ -1241,7 +1291,7 @@ function startCountdown() {
         num.textContent = count;
         num.style.animation = "none";
         void num.offsetWidth;
-        num.style.animation = "numberPop .35s ease";
+        num.style.animation = "numberPop .35s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
       }
     }
     if (count === 0) {
@@ -1259,6 +1309,12 @@ function startCountdown() {
 function renderQuestion() {
   selectedAnswer = null;
   if (!activeQuestions || activeQuestions.length === 0) return;
+
+  // Efecto dinámico de rebote al entrar cada pregunta
+  const qBox = document.getElementById("questionContainer");
+  qBox.style.animation = "none";
+  void qBox.offsetWidth;
+  qBox.style.animation = "questionSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) both";
 
   const q = activeQuestions[currentQuestion % activeQuestions.length];
   const totalQ = Math.min(activeQuestions.length, 10);
@@ -1386,7 +1442,6 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
   for (let i = 0; i < totalQ; i++) {
     const qObj = activeQuestions[i % activeQuestions.length];
     
-    // Extraer pregunta en el idioma actual del usuario
     let qText = qObj ? qObj.question_es : `Question ${i+1}`;
     let optsRaw = qObj ? qObj.options_es : "A,B,C,D";
 
@@ -1443,7 +1498,7 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
 
   let feedbackText = "";
   if (matches === totalQ) {
-    feedbackText = currentLanguage === "ar" ? "اتصال كامل يا تdm! لقد أجبتم على كل شيء بشكل مطبق تماماً." : currentLanguage === "en" ? "Total connection, tdm! You answered everything exactly the same." : "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
+    feedbackText = currentLanguage === "ar" ? "اتصال كامل يا tdm! لقد أجبتم على كل شيء بشكل مطبق تماماً." : currentLanguage === "en" ? "Total connection, tdm! You answered everything exactly the same." : "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
   } else if (matches >= Math.ceil(totalQ * 0.7)) {
     feedbackText = currentLanguage === "ar" ? "ديكم كيمياء رائعة! أنتم متطابقون جداً." : currentLanguage === "en" ? "You have great chemistry! You are super aligned." : "¡Tienen muchísima química! Están super alineados.";
   } else {
