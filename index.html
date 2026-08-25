@@ -1741,9 +1741,15 @@ function subscribeToRoom(roomId) {
 
 async function startGame() {
 
-  if (!currentRoom) return;
+  if (!currentRoom) {
+    showError("No hay una sala conectada.");
+    return;
+  }
 
-  // Avisamos a la sala que la partida comenzará
+  // Iniciamos el contador en este dispositivo
+  startCountdown();
+
+  // Avisamos al otro jugador
   const { error } = await supabaseClient
     .from("rooms")
     .update({
@@ -1752,9 +1758,17 @@ async function startGame() {
     .eq("id", currentRoom.id);
 
   if (error) {
-    console.error(error);
+
+    console.error("Error iniciando partida:", error);
+
+    showError(
+      "No se pudo sincronizar el inicio con el otro jugador."
+    );
+
     return;
   }
+
+}
 
 }
 
