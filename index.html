@@ -414,7 +414,7 @@
       color: white;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.6);
       max-height: 90vh;
       overflow-y: auto;
@@ -422,39 +422,39 @@
 
     .admin-content h3 {
       font-size: 20px;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
       color: #ff70b1;
     }
 
     .admin-content label {
-      font-size: 12px;
+      font-size: 11px;
       color: #aaa1b4;
     }
 
-    .admin-content input, .admin-content select {
+    .admin-content input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 8px 12px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.2);
       background: #100b16;
       color: white;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .admin-mode-tabs {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
     }
 
     .admin-tab-btn {
       background: rgba(255,255,255,.08);
       border: 1px solid rgba(255,255,255,.15);
       color: white;
-      padding: 8px 12px;
+      padding: 6px 10px;
       border-radius: 10px;
-      font-size: 12px;
+      font-size: 11px;
       white-space: nowrap;
     }
 
@@ -468,19 +468,19 @@
       background: rgba(0,0,0,0.3);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 14px;
-      padding: 12px;
-      max-height: 220px;
+      padding: 10px;
+      max-height: 160px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .question-admin-item {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 10px;
-      padding: 10px;
+      padding: 8px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -488,7 +488,7 @@
     }
 
     .question-admin-info {
-      font-size: 13px;
+      font-size: 12px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -501,8 +501,8 @@
     }
 
     .action-mini-btn {
-      padding: 5px 10px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
       font-size: 11px;
       border: none;
       font-weight: bold;
@@ -601,7 +601,7 @@
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
-    <p style="font-size: 12px; color: #bbb;">Selecciona el modo para ver, editar o agregar preguntas:</p>
+    <p style="font-size: 11px; color: #bbb;">Gestiona preguntas y opciones en los tres idiomas:</p>
     
     <div class="admin-mode-tabs">
       <button class="admin-tab-btn active" onclick="switchAdminMode(1, this)">❤️ Modo 1</button>
@@ -612,37 +612,54 @@
       <button class="admin-tab-btn" onclick="switchAdminMode(6, this)">🔥 Modo 6</button>
     </div>
 
-    <div style="font-size: 12px; color: #ff70b1; font-weight: bold;" id="adminCurrentModeLabel">Preguntas del Modo 1</div>
+    <div style="font-size: 11px; color: #ff70b1; font-weight: bold;" id="adminCurrentModeLabel">Preguntas del Modo 1</div>
 
-    <!-- LISTA DE PREGUNTAS DEL MODO SELECCIONADO -->
     <div class="questions-list-box" id="adminQuestionsList">
-      <div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">Cargando preguntas...</div>
+      <div style="text-align: center; color: #888; font-size: 11px; padding: 10px;">Cargando preguntas...</div>
     </div>
 
-    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2px 0;">
 
-    <h4 id="formTitle" style="font-size: 14px; color: #fff;">➕ Agregar nueva pregunta</h4>
+    <h4 id="formTitle" style="font-size: 13px; color: #fff;">➕ Agregar nueva pregunta</h4>
     
     <input type="hidden" id="editing_id" value="">
 
-    <label>Pregunta (Español):</label>
-    <input type="text" id="admin_es" placeholder="Ej: ¿Qué prefieres...?" />
-
-    <label>Pregunta (Inglés):</label>
-    <input type="text" id="admin_en" placeholder="Ej: What do you prefer...?" />
-
-    <label>Pregunta (Árabe):</label>
-    <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
-
-    <label>Opciones (Separadas por comas):</label>
-    <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
-
-    <div style="display: flex; gap: 10px; margin-top: 5px;">
-      <button class="button" id="saveQuestionBtn" onclick="guardarPreguntaSupabase()" style="margin-top:0;">Guardar Pregunta 💾</button>
-      <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; padding: 0 15px;">Cancelar</button>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
+      <div>
+        <label>Pregunta (Español):</label>
+        <input type="text" id="admin_es" placeholder="¿Qué prefieres...?" />
+      </div>
+      <div>
+        <label>Pregunta (Inglés):</label>
+        <input type="text" id="admin_en" placeholder="What do you prefer...?" />
+      </div>
+      <div>
+        <label>Pregunta (Árabe):</label>
+        <input type="text" id="admin_ar" placeholder="ماذا تفضل...؟" />
+      </div>
     </div>
 
-    <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cerrar panel</button>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:6px;">
+      <div>
+        <label>Opciones (Español):</label>
+        <input type="text" id="admin_opts_es" placeholder="Op A, Op B, Op C, Op D" />
+      </div>
+      <div>
+        <label>Opciones (Inglés):</label>
+        <input type="text" id="admin_opts_en" placeholder="Opt A, Opt B, Opt C, Opt D" />
+      </div>
+      <div>
+        <label>Opciones (Árabe):</label>
+        <input type="text" id="admin_opts_ar" placeholder="الخيار أ, ب, ج, د" />
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 8px; margin-top: 4px;">
+      <button class="button" id="saveQuestionBtn" onclick="guardarPreguntaSupabase()" style="margin-top:0; padding:10px;">Guardar Pregunta 💾</button>
+      <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; padding: 0 12px; font-size: 12px;">Cancelar</button>
+    </div>
+
+    <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 2px; font-size: 11px; cursor: pointer;">Cerrar panel</button>
   </div>
 </div>
 
@@ -824,6 +841,7 @@ let userAnswers = {};
 let selectedAdminMode = 1;
 let selectedGameMode = 1; 
 let activeQuestions = [];  
+let adminQuestionsCache = []; // Caché global para edición segura
 
 /* =========================================================
    TRADUCCIONES DE LA INTERFAZ
@@ -1058,7 +1076,9 @@ async function fetchQuestionsForGame() {
       question_es: "¿Cuál elegirías para una cita perfecta?",
       question_en: "What would you choose for a perfect date?",
       question_ar: "ماذا ستختار لموعد مثالي؟",
-      options_es: "Una noche viendo películas,Una cena elegante,Una caminata por la playa,Una aventura espontánea"
+      options_es: "Una noche viendo películas,Una cena elegante,Una caminata por la playa,Una aventura espontánea",
+      options_en: "Movie night,Elegant dinner,Beach walk,Spontaneous adventure",
+      options_ar: "ليلة أفلام,عشاء أنيق,نزهة على الشاطئ,مغامرة عفوية"
     }];
   } else {
     activeQuestions = data;
@@ -1114,8 +1134,15 @@ function renderQuestion() {
   const totalQ = Math.min(activeQuestions.length, 10);
 
   let textToShow = q.question_es;
-  if (currentLanguage === "en" && q.question_en) textToShow = q.question_en;
-  if (currentLanguage === "ar" && q.question_ar) textToShow = q.question_ar;
+  let optsRaw = q.options_es;
+
+  if (currentLanguage === "en") {
+    if (q.question_en) textToShow = q.question_en;
+    if (q.options_en) optsRaw = q.options_en;
+  } else if (currentLanguage === "ar") {
+    if (q.question_ar) textToShow = q.question_ar;
+    if (q.options_ar) optsRaw = q.options_ar;
+  }
 
   document.getElementById("question").textContent = textToShow;
   document.getElementById("round").textContent = `${translations[currentLanguage].round} ${currentQuestion + 1} / ${totalQ}`;
@@ -1125,7 +1152,7 @@ function renderQuestion() {
   const container = document.getElementById("answers");
   container.innerHTML = "";
 
-  let rawOpts = q.options_es ? q.options_es.split(",") : ["Opción A", "Opción B", "Opción C", "Opción D"];
+  let rawOpts = optsRaw ? optsRaw.split(",") : ["Opción A", "Opción B", "Opción C", "Opción D"];
 
   rawOpts.forEach((optText, index) => {
     const button = document.createElement("button");
@@ -1239,7 +1266,7 @@ function calculateFinalScore(allAnswers, totalQ) {
 }
 
 /* =========================================================
-   PANEL ADMIN & GESTIÓN DE PREGUNTAS (CRUD)
+   PANEL ADMIN & GESTIÓN DE PREGUNTAS (CRUD SEGURO)
    ========================================================= */
 
 function showOnly(section) {
@@ -1317,7 +1344,7 @@ function selectGameMode(mode, card) {
 
 async function loadAdminQuestionsForMode() {
   const listContainer = document.getElementById("adminQuestionsList");
-  listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">Cargando preguntas...</div>`;
+  listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 11px; padding: 10px;">Cargando preguntas...</div>`;
 
   const { data, error } = await supabaseClient
     .from("questions")
@@ -1326,23 +1353,25 @@ async function loadAdminQuestionsForMode() {
     .order("id", { ascending: false });
 
   if (error) {
-    listContainer.innerHTML = `<div style="text-align: center; color: #ffb5c4; font-size: 12px; padding: 15px;">Error al cargar preguntas.</div>`;
+    listContainer.innerHTML = `<div style="text-align: center; color: #ffb5c4; font-size: 11px; padding: 10px;">Error al cargar preguntas.</div>`;
     return;
   }
 
-  if (!data || data.length === 0) {
-    listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">No hay preguntas creadas en este modo aún.</div>`;
+  adminQuestionsCache = data || [];
+
+  if (adminQuestionsCache.length === 0) {
+    listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 11px; padding: 10px;">No hay preguntas creadas en este modo aún.</div>`;
     return;
   }
 
   listContainer.innerHTML = "";
-  data.forEach(q => {
+  adminQuestionsCache.forEach(q => {
     const item = document.createElement("div");
     item.className = "question-admin-item";
     item.innerHTML = `
-      <div class="question-admin-info" title="${q.question_es}">🇪🇸 ${q.question_es}</div>
+      <div class="question-admin-info" title="${q.question_es || ''}">🇪🇸 ${q.question_es || '(Sin texto)'}</div>
       <div class="question-admin-actions">
-        <button class="action-mini-btn btn-edit" onclick="editQuestion(${q.id}, '${q.question_es.replace(/'/g, "\\'")}', '${(q.question_en || '').replace(/'/g, "\\'")}', '${(q.question_ar || '').replace(/'/g, "\\'")}', '${(q.options_es || '').replace(/'/g, "\\'")}')">Editar</button>
+        <button class="action-mini-btn btn-edit" onclick="editQuestionById(${q.id})">Editar</button>
         <button class="action-mini-btn btn-delete" onclick="deleteQuestion(${q.id})">Eliminar</button>
       </div>
     `;
@@ -1350,14 +1379,19 @@ async function loadAdminQuestionsForMode() {
   });
 }
 
-function editQuestion(id, qEs, qEn, qAr, optsEs) {
-  document.getElementById("editing_id").value = id;
-  document.getElementById("admin_es").value = qEs;
-  document.getElementById("admin_en").value = qEn;
-  document.getElementById("admin_ar").value = qAr;
-  document.getElementById("admin_opts_es").value = optsEs;
+function editQuestionById(id) {
+  const q = adminQuestionsCache.find(item => item.id === id);
+  if (!q) return;
 
-  document.getElementById("formTitle").textContent = "✏️ Editando pregunta ID: " + id;
+  document.getElementById("editing_id").value = q.id;
+  document.getElementById("admin_es").value = q.question_es || "";
+  document.getElementById("admin_en").value = q.question_en || "";
+  document.getElementById("admin_ar").value = q.question_ar || "";
+  document.getElementById("admin_opts_es").value = q.options_es || "";
+  document.getElementById("admin_opts_en").value = q.options_en || "";
+  document.getElementById("admin_opts_ar").value = q.options_ar || "";
+
+  document.getElementById("formTitle").textContent = "✏️ Editando pregunta ID: " + q.id;
   document.getElementById("saveQuestionBtn").textContent = "Actualizar Pregunta 💾";
   document.getElementById("cancelEditBtn").classList.remove("hidden");
 }
@@ -1368,6 +1402,8 @@ function resetAdminForm() {
   document.getElementById("admin_en").value = "";
   document.getElementById("admin_ar").value = "";
   document.getElementById("admin_opts_es").value = "";
+  document.getElementById("admin_opts_en").value = "";
+  document.getElementById("admin_opts_ar").value = "";
 
   document.getElementById("formTitle").textContent = "➕ Agregar nueva pregunta";
   document.getElementById("saveQuestionBtn").textContent = "Guardar Pregunta 💾";
@@ -1380,18 +1416,21 @@ async function guardarPreguntaSupabase() {
   const qEn = document.getElementById("admin_en").value.trim();
   const qAr = document.getElementById("admin_ar").value.trim();
   const optsEs = document.getElementById("admin_opts_es").value.trim();
+  const optsEn = document.getElementById("admin_opts_en").value.trim();
+  const optsAr = document.getElementById("admin_opts_ar").value.trim();
 
   if (!qEs) return alert("Ingresa al menos la pregunta en español.");
 
   if (editingId) {
-    // Actualizar existente
     const { error } = await supabaseClient
       .from("questions")
       .update({
         question_es: qEs,
         question_en: qEn,
         question_ar: qAr,
-        options_es: optsEs
+        options_es: optsEs,
+        options_en: optsEn,
+        options_ar: optsAr
       })
       .eq("id", editingId);
 
@@ -1403,12 +1442,13 @@ async function guardarPreguntaSupabase() {
       loadAdminQuestionsForMode();
     }
   } else {
-    // Crear nueva
     const { error } = await supabaseClient.from("questions").insert([{
       question_es: qEs,
       question_en: qEn,
       question_ar: qAr,
       options_es: optsEs,
+      options_en: optsEn,
+      options_ar: optsAr,
       mode_id: String(selectedAdminMode)
     }]);
 
