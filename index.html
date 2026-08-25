@@ -1,214 +1,1855 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Entre Nosotros 💗</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:#fff;background:radial-gradient(circle at top,#442052 0%,#1b1325 45%,#0c0910 100%);overflow-x:hidden}
-    button,input,select,textarea{font:inherit} button{cursor:pointer}
-    .app{width:min(900px,92%);margin:auto;padding:25px 0 60px}
-    .nav{display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .logo{font-size:22px;font-weight:800}.logo span{color:#ff70b1}
-    .nav-right{display:flex;align-items:center;gap:8px}
-    .room-badge{padding:8px 13px;border:1px solid rgba(255,255,255,.15);border-radius:50px;background:rgba(255,255,255,.05);font-size:12px;color:#bbb}
-    .admin-key{display:none;width:38px;height:38px;border:1px solid rgba(255,255,255,.14);border-radius:50%;background:rgba(255,255,255,.06);color:#fff;font-size:18px;transition:.2s}.admin-key:hover{transform:scale(1.06);background:rgba(255,112,177,.14)}
-    .hero{text-align:center;padding:70px 0 35px}.heart{font-size:55px;animation:floating 2.5s ease-in-out infinite}.hero h1{margin-top:15px;font-size:clamp(45px,9vw,80px);line-height:.95;letter-spacing:-5px}.hero p{max-width:560px;margin:20px auto 0;color:#bdb5c7;line-height:1.6}
-    .card{max-width:650px;margin:auto;padding:30px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:28px;box-shadow:0 30px 80px rgba(0,0,0,.45);backdrop-filter:blur(15px)}
-    .card h2{font-size:25px;margin-bottom:20px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:7px}.field label,.admin-label{color:#aaa1b4;font-size:12px}
-    input,select,textarea{width:100%;padding:14px;color:#fff;background:#100b16;border:1px solid rgba(255,255,255,.14);border-radius:14px;outline:none}input:focus,select:focus,textarea:focus{border-color:#ff70b1}textarea{min-height:105px;resize:vertical;line-height:1.5}
-    .button{width:100%;margin-top:15px;padding:15px;border:none;border-radius:15px;color:white;font-weight:800;background:linear-gradient(100deg,#ff67aa,#9b82ff);box-shadow:0 10px 35px rgba(255,100,170,.18);transition:.2s}.button:hover:not(:disabled){transform:translateY(-2px)}.button:disabled{opacity:.45;cursor:not-allowed}
-    .button.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);box-shadow:none}.button.danger{background:rgba(255,70,100,.14);border:1px solid rgba(255,70,100,.25);box-shadow:none;color:#ffb5c4}
-    .join-box{margin-top:25px;padding-top:25px;border-top:1px solid rgba(255,255,255,.1)}.join-title{font-size:15px;color:#aaa1b4;margin-bottom:10px}.join-row{display:grid;grid-template-columns:1fr auto;gap:10px}.join-row .button{width:auto;margin-top:0;padding:0 22px}
-    .error,.success{margin-top:15px;padding:12px;border-radius:12px;font-size:13px;display:none}.error{background:rgba(255,70,100,.12);border:1px solid rgba(255,70,100,.25);color:#ffb5c4}.success{background:rgba(80,220,160,.1);border:1px solid rgba(80,220,160,.2);color:#a8f5d5}.hidden{display:none!important}
-    .code{text-align:center;font-size:38px;font-weight:900;letter-spacing:8px;margin:20px 0}.share{text-align:center;color:#aaa2b2;line-height:1.6}.players{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.player{padding:18px;border-radius:17px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}.player small{display:block;color:#999;margin-top:5px}.waiting{margin-top:20px;text-align:center;color:#aaa2b2;font-size:13px}.dot{display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#ff70b1;animation:pulse 1.3s infinite}
-    .progress{height:6px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}.bar{height:100%;width:10%;background:linear-gradient(90deg,#ff67aa,#9b82ff);transition:.4s}.meta{display:flex;justify-content:space-between;margin:12px 0 25px;color:#aaa2b2;font-size:12px}.question{text-align:center;font-size:clamp(25px,5vw,40px);line-height:1.15;margin-bottom:28px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer{padding:17px;min-height:70px;text-align:left;color:white;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:17px;transition:.2s}.answer:hover{transform:translateY(-2px);background:rgba(255,255,255,.1)}.answer.selected{background:rgba(255,100,170,.18);border-color:#ff70b1}.answer small{display:block;color:#999;margin-bottom:5px}.status{margin-top:15px;color:#aaa2b2;font-size:12px}.result{text-align:center}.result .big{font-size:80px}.score{font-size:65px;font-weight:900;margin:5px 0}
-    #countdownScreen{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at center,#442052 0%,#180d20 45%,#070509 100%);animation:countdownFade .25s ease}#countdownHeart{font-size:65px;margin-bottom:15px;animation:heartBeat .8s infinite}#countdownNumber{font-size:clamp(120px,25vw,230px);font-weight:900;line-height:.9;text-shadow:0 0 60px rgba(255,100,170,.7);animation:numberPop .35s ease}#countdownText{margin-top:25px;color:#bbb;font-size:18px}
-    /* ADMIN */
-    .admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.admin-head h2{margin:0}.admin-close{border:0;background:rgba(255,255,255,.08);color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px}.admin-note{color:#aaa2b2;font-size:13px;line-height:1.5;margin-bottom:20px}.admin-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.question-list{display:grid;gap:10px}.question-item{padding:16px;border-radius:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1)}.question-item-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.question-item-title{font-weight:700;line-height:1.45}.question-item-cat{font-size:11px;color:#ff9ac5;margin-top:7px}.question-item-buttons{display:flex;gap:7px;flex-shrink:0}.icon-btn{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff;border-radius:10px;padding:8px 10px}.icon-btn.delete{color:#ffb5c4}.admin-form{display:grid;gap:13px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}.admin-form h3{font-size:18px}.option-grid{display:grid;gap:10px}.option-row{display:grid;grid-template-columns:36px 1fr 1fr 1fr;gap:8px;align-items:center}.option-number{height:100%;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.05);color:#ff9ac5;font-weight:800}.admin-actions-bottom{display:grid;grid-template-columns:1fr 1fr;gap:10px}.small-note{font-size:11px;color:#8f8797;line-height:1.4}.admin-empty{text-align:center;color:#aaa2b2;padding:25px 10px}.loading{color:#aaa2b2;text-align:center;padding:20px}
-    @keyframes floating{50%{transform:translateY(-8px) scale(1.05)}}@keyframes pulse{50%{opacity:.3}}@keyframes heartBeat{50%{transform:scale(1.18)}}@keyframes numberPop{from{transform:scale(.7);opacity:.2}to{transform:scale(1);opacity:1}}@keyframes countdownFade{from{opacity:0}to{opacity:1}}
-    [dir="rtl"]{text-align:right}[dir="rtl"] .hero,[dir="rtl"] .question,[dir="rtl"] .result{text-align:center}[dir="rtl"] .answer{text-align:right}
-    @media(max-width:650px){.fields,.players,.answers,.admin-actions,.admin-actions-bottom{grid-template-columns:1fr}.join-row{grid-template-columns:1fr}.join-row .button{width:100%;padding:15px}.card{padding:22px}.hero{padding-top:50px}.option-row{grid-template-columns:32px 1fr}.option-row input:nth-child(3),.option-row input:nth-child(4){grid-column:2}.question-item-top{flex-direction:column}.question-item-buttons{width:100%}.question-item-buttons .icon-btn{flex:1}}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+      background:
+        radial-gradient(circle at top, #442052 0%, #1b1325 45%, #0c0910 100%);
+      overflow-x: hidden;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(900px, 92%);
+      margin: auto;
+      padding: 30px 0 60px;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .logo span {
+      color: #ff70b1;
+    }
+
+    .room-badge {
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 50px;
+      background: rgba(255,255,255,.05);
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 70px 0 35px;
+    }
+
+    .heart {
+      font-size: 55px;
+      animation: floating 2.5s ease-in-out infinite;
+    }
+
+    .hero h1 {
+      margin-top: 15px;
+      font-size: clamp(45px, 9vw, 80px);
+      line-height: .95;
+      letter-spacing: -5px;
+    }
+
+    .hero p {
+      max-width: 560px;
+      margin: 20px auto 0;
+      color: #bdb5c7;
+      line-height: 1.6;
+    }
+
+    .card {
+      max-width: 650px;
+      margin: auto;
+      padding: 30px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+      backdrop-filter: blur(15px);
+    }
+
+    .card h2 {
+      font-size: 25px;
+      margin-bottom: 20px;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      color: #aaa1b4;
+      font-size: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px;
+      color: white;
+      background: #100b16;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #ff70b1;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 15px;
+      border: none;
+      border-radius: 15px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(100deg, #ff67aa, #9b82ff);
+      box-shadow: 0 10px 35px rgba(255,100,170,.18);
+      transition: .2s;
+    }
+
+    .button:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .join-box {
+      margin-top: 25px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255,255,255,.1);
+    }
+
+    .join-title {
+      font-size: 15px;
+      color: #aaa1b4;
+      margin-bottom: 10px;
+    }
+
+    .join-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .join-row .button {
+      width: auto;
+      margin-top: 0;
+      padding: 0 22px;
+    }
+
+    .error,
+    .success {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .error {
+      background: rgba(255,70,100,.12);
+      border: 1px solid rgba(255,70,100,.25);
+      color: #ffb5c4;
+    }
+
+    .success {
+      background: rgba(80,220,160,.1);
+      border: 1px solid rgba(80,220,160,.2);
+      color: #a8f5d5;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .code {
+      text-align: center;
+      font-size: 38px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      margin: 20px 0;
+    }
+
+    .share {
+      text-align: center;
+      color: #aaa2b2;
+      line-height: 1.6;
+    }
+
+    .players {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .player {
+      padding: 18px;
+      border-radius: 17px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .player small {
+      display: block;
+      color: #999;
+      margin-top: 5px;
+    }
+
+    .waiting {
+      margin-top: 20px;
+      text-align: center;
+      color: #aaa2b2;
+      font-size: 13px;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      margin-right: 5px;
+      border-radius: 50%;
+      background: #ff70b1;
+      animation: pulse 1.3s infinite;
+    }
+
+    .progress {
+      height: 6px;
+      background: rgba(255,255,255,.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, #ff67aa, #9b82ff);
+      transition: .4s;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      margin: 12px 0 25px;
+      color: #aaa2b2;
+      font-size: 12px;
+    }
+
+    .question {
+      text-align: center;
+      font-size: clamp(25px, 5vw, 40px);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .answer {
+      padding: 17px;
+      min-height: 70px;
+      text-align: left;
+      color: white;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 17px;
+      transition: .2s;
+    }
+
+    .answer:hover {
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.1);
+    }
+
+    .answer.selected {
+      background: rgba(255,100,170,.18);
+      border-color: #ff70b1;
+    }
+
+    .answer small {
+      display: block;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .status {
+      margin-top: 15px;
+      color: #aaa2b2;
+      font-size: 12px;
+    }
+
+    .result {
+      text-align: center;
+    }
+
+    .result .big {
+      font-size: 80px;
+    }
+
+    .score {
+      font-size: 65px;
+      font-weight: 900;
+      margin: 5px 0;
+    }
+
+    /* CONTADOR */
+
+    #countdownScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, #442052 0%, #180d20 45%, #070509 100%);
+      animation: countdownFade .25s ease;
+    }
+
+    #countdownHeart {
+      font-size: 65px;
+      margin-bottom: 15px;
+      animation: heartBeat .8s infinite;
+    }
+
+    #countdownNumber {
+      font-size: clamp(120px, 25vw, 230px);
+      font-weight: 900;
+      line-height: .9;
+      text-shadow: 0 0 60px rgba(255,100,170,.7);
+      animation: numberPop .35s ease;
+    }
+
+    #countdownText {
+      margin-top: 25px;
+      color: #bbb;
+      font-size: 18px;
+    }
+
+    @keyframes floating {
+      50% {
+        transform: translateY(-8px) scale(1.05);
+      }
+    }
+
+    @keyframes pulse {
+      50% {
+        opacity: .3;
+      }
+    }
+
+    @keyframes heartBeat {
+      50% {
+        transform: scale(1.18);
+      }
+    }
+
+    @keyframes numberPop {
+      from {
+        transform: scale(.7);
+        opacity: .2;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes countdownFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    [dir="rtl"] {
+      text-align: right;
+    }
+
+    [dir="rtl"] .hero,
+    [dir="rtl"] .question,
+    [dir="rtl"] .result {
+      text-align: center;
+    }
+
+    @media(max-width:650px) {
+      .fields,
+      .players,
+      .answers {
+        grid-template-columns: 1fr;
+      }
+
+      .join-row {
+        grid-template-columns: 1fr;
+      }
+
+      .join-row .button {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .card {
+        padding: 22px;
+      }
+
+      .hero {
+        padding-top: 50px;
+      }
+    }
   </style>
+
 </head>
+
 <body>
+
 <div class="app">
+
   <nav class="nav">
-    <div class="logo"><span>Entre Nosotros</span> ♡</div>
-    <div class="nav-right">
-      <button class="admin-key" id="adminKey" onclick="openAdminLogin()" aria-label="Administrar">🔑</button>
-      <div class="room-badge" id="roomBadge">NUEVA SALA</div>
+    <div class="logo">
+      <span>Entre Nosotros</span> ♡
     </div>
+
+<div class="room-badge" id="roomBadge">
+  NUEVA SALA
+</div>
+
   </nav>
 
+  <!-- INICIO -->
+
   <section class="hero" id="home">
-    <div class="heart">💗</div>
-    <h1 id="title">Entre<br>Nosotros</h1>
-    <p id="subtitle">Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.</p>
+
+<div class="heart">💗</div>
+
+<h1 id="title">
+  Entre<br>Nosotros
+</h1>
+
+<p id="subtitle">
+  Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.
+</p>
+
   </section>
+
+  <!-- CONFIGURACIÓN -->
 
   <section class="card" id="setup">
-    <h2 id="setupTitle">Crear una partida</h2>
-    <div class="fields">
-      <div class="field"><label id="nameLabel">Tu nombre</label><input id="name" value="Carlos" placeholder="Escribe tu nombre"></div>
-      <div class="field"><label id="languageLabel">Tu idioma</label><select id="language"><option value="es">🇪🇸 Español</option><option value="ar">🇸🇦 العربية</option><option value="en">🇬🇧 English</option></select></div>
-    </div>
-    <button class="button" id="createButton" onclick="createRoom()">Crear sala 💗</button>
-    <div class="join-box"><div class="join-title" id="joinTitle">¿Ya tienes un código?</div><div class="join-row"><input id="joinCode" maxlength="5" placeholder="K7X92" style="text-transform:uppercase"><button class="button" id="joinButton" onclick="joinRoom()">Unirse ❤️</button></div></div>
-    <div class="error" id="error"></div><div class="success" id="success"></div>
+
+<h2 id="setupTitle">
+  Crear una partida
+</h2>
+
+<div class="fields">
+
+  <div class="field">
+
+    <label id="nameLabel">
+      Tu nombre
+    </label>
+
+    <input
+      id="name"
+      value="Carlos"
+      placeholder="Escribe tu nombre"
+    >
+
+  </div>
+
+  <div class="field">
+
+    <label id="languageLabel">
+      Tu idioma
+    </label>
+
+    <select id="language">
+
+      <option value="es">🇪🇸 Español</option>
+      <option value="ar">🇸🇦 العربية</option>
+      <option value="en">🇬🇧 English</option>
+
+    </select>
+
+  </div>
+
+</div>
+
+<button
+  class="button"
+  id="createButton"
+  onclick="createRoom()"
+>
+  Crear sala 💗
+</button>
+
+
+<div class="join-box">
+
+  <div
+    class="join-title"
+    id="joinTitle"
+  >
+    ¿Ya tienes un código?
+  </div>
+
+  <div class="join-row">
+
+    <input
+      id="joinCode"
+      maxlength="5"
+      placeholder="K7X92"
+      style="text-transform:uppercase"
+    >
+
+    <button
+      class="button"
+      id="joinButton"
+      onclick="joinRoom()"
+    >
+      Unirse ❤️
+    </button>
+
+  </div>
+
+</div>
+
+<div class="error" id="error"></div>
+<div class="success" id="success"></div>
+
   </section>
+
+  <!-- SALA -->
 
   <section class="card hidden" id="lobby">
-    <h2 id="lobbyTitle" style="text-align:center">Tu sala está lista</h2><div class="code" id="roomCode">K7X92</div><p class="share" id="shareText">Comparte este código con tu pareja.</p>
-    <div class="players"><div class="player"><span id="player1Flag">🇨🇴</span> <b id="playerOne">Carlos</b><small id="playerOneLang">Español</small></div><div class="player"><span id="player2Flag">❤️</span> <b id="playerTwo">Esperando...</b><small id="playerTwoLang">Segundo jugador</small></div></div>
-    <div class="waiting" id="waiting"><span class="dot"></span>Esperando a tu pareja...</div>
-    <button class="button" id="startButton" onclick="startGame()" disabled>Esperando jugador 2...</button>
+
+<h2 id="lobbyTitle" style="text-align:center">
+  Tu sala está lista
+</h2>
+
+<div class="code" id="roomCode">
+  K7X92
+</div>
+
+<p class="share" id="shareText">
+  Comparte este código con tu pareja.
+</p>
+
+<div class="players">
+
+  <div class="player">
+
+    <span id="player1Flag">🇨🇴</span>
+
+    <b id="playerOne">
+      Carlos
+    </b>
+
+    <small id="playerOneLang">
+      Español
+    </small>
+
+  </div>
+
+
+  <div class="player">
+
+    <span id="player2Flag">❤️</span>
+
+    <b id="playerTwo">
+      Esperando...
+    </b>
+
+    <small id="playerTwoLang">
+      Segundo jugador
+    </small>
+
+  </div>
+
+</div>
+
+
+<div class="waiting" id="waiting">
+
+  <span class="dot"></span>
+  Esperando a tu pareja...
+
+</div>
+
+
+<button
+  class="button"
+  id="startButton"
+  onclick="startGame()"
+  disabled
+>
+  Esperando jugador 2...
+</button>
+
   </section>
+
+  <!-- JUEGO -->
 
   <section class="card hidden" id="game">
-    <div class="progress"><div class="bar" id="bar"></div></div><div class="meta"><span id="round">Ronda 1 / 10</span><span id="category">❤️ Conóceme</span></div><div class="question" id="question"></div><div class="answers" id="answers"></div><div class="status" id="status">Elige una respuesta.</div><button class="button" id="next" disabled onclick="nextQuestion()">Siguiente →</button>
+
+<div class="progress">
+
+  <div class="bar" id="bar"></div>
+
+</div>
+
+<div class="meta">
+
+  <span id="round">
+    Ronda 1 / 10
+  </span>
+
+  <span id="category">
+    ❤️ Conóceme
+  </span>
+
+</div>
+
+<div class="question" id="question"></div>
+
+<div class="answers" id="answers"></div>
+
+<div class="status" id="status">
+  Elige una respuesta.
+</div>
+
+<button
+  class="button"
+  id="next"
+  disabled
+  onclick="nextQuestion()"
+>
+  Siguiente →
+</button>
+
   </section>
 
-  <section class="card hidden result" id="result"><div class="big">💞</div><div class="score" id="score">—%</div><h2 id="resultTitle">¡Hay mucho por descubrir!</h2><p id="resultText" style="color:#aaa2b2">Estamos preparando tu resultado.</p><button class="button" onclick="location.reload()" id="againButton">Jugar otra vez</button></section>
+  <!-- RESULTADO -->
 
-  <section class="card hidden" id="adminLogin">
-    <div class="admin-head"><h2>🔐 Administración</h2><button class="admin-close" onclick="closeAdmin()">✕</button></div>
-    <p class="admin-note">Esta zona es para administrar las preguntas del juego.</p>
-    <div class="field"><label class="admin-label">Contraseña</label><input id="adminPassword" type="password" inputmode="numeric" maxlength="1" placeholder="•"></div>
-    <button class="button" onclick="checkAdminPassword()">Entrar 🔑</button>
-    <div class="error" id="adminError"></div>
+  <section class="card hidden result" id="result">
+
+<div class="big">
+  💞
+</div>
+
+<div class="score">
+  80%
+</div>
+
+<h2 id="resultTitle">
+  ¡Hay mucho por descubrir!
+</h2>
+
+<p id="resultText" style="color:#aaa2b2">
+  Esta es nuestra primera versión.
+</p>
+
+<button
+  class="button"
+  onclick="location.reload()"
+  id="againButton"
+>
+  Jugar otra vez
+</button>
+
   </section>
 
-  <section class="card hidden" id="admin">
-    <div class="admin-head"><div><h2>🔑 Preguntas</h2><p class="small-note" id="adminCount">Cargando...</p></div><button class="admin-close" onclick="closeAdmin()">✕</button></div>
-    <div class="admin-actions"><button class="button" style="margin:0" onclick="newQuestion()">＋ Nueva pregunta</button><button class="button secondary" style="margin:0" onclick="loadAdminQuestions()">↻ Actualizar</button></div>
-    <div id="questionList" class="question-list"><div class="loading">Cargando preguntas...</div></div>
-    <div id="adminForm" class="admin-form hidden">
-      <h3 id="formTitle">Nueva pregunta</h3>
-      <input type="hidden" id="editQuestionId">
-      <div class="field"><label class="admin-label">Pregunta 🇪🇸 Español</label><textarea id="qEs" placeholder="Escribe la pregunta en español"></textarea></div>
-      <div class="field"><label class="admin-label">Pregunta 🇸🇦 العربية</label><textarea id="qAr" placeholder="اكتب السؤال بالعربية"></textarea></div>
-      <div class="field"><label class="admin-label">Pregunta 🇬🇧 English</label><textarea id="qEn" placeholder="Write the question in English"></textarea></div>
-      <div class="field"><label class="admin-label">Categoría</label><input id="qCategory" placeholder="couple, general, funny..."></div>
-      <div class="field"><label class="admin-label">Respuestas</label><div class="option-grid" id="optionGrid"></div></div>
-      <p class="small-note">Cada opción necesita sus tres idiomas. Estas respuestas se guardan dentro de la pregunta y no tendrás que volver a tocar el código.</p>
-      <div class="admin-actions-bottom"><button class="button secondary" style="margin:0" onclick="cancelQuestionEdit()">Cancelar</button><button class="button" style="margin:0" onclick="saveQuestion()">💾 Guardar</button></div>
-      <div class="error" id="adminSaveError"></div><div class="success" id="adminSaveSuccess"></div>
-    </div>
-  </section>
 </div>
 
 <script>
-const SUPABASE_URL="https://czxfitmwbwjhureyualf.supabase.co";
-const SUPABASE_KEY="sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let currentRoom=null,currentPlayer=null,roomSubscription=null,playerSubscription=null,currentLanguage="es",currentQuestion=0,selectedAnswer=null,countdownRunning=false,questions=[],answerSubscription=null;
 
-const translations={
- es:{title:"Entre<br>Nosotros",subtitle:"Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",setupTitle:"Crear una partida",nameLabel:"Tu nombre",languageLabel:"Tu idioma",create:"Crear sala 💗",joinTitle:"¿Ya tienes un código?",join:"Unirse ❤️",lobby:"Tu sala está lista",share:"Comparte este código con tu pareja.",waiting:"Esperando a tu pareja...",secondPlayer:"Segundo jugador",start:"Empezar partida →",waitingStart:"Esperando jugador 2...",round:"Ronda",category:"❤️ Conóceme",choose:"Elige una respuesta.",saved:"Respuesta seleccionada ✓",next:"Siguiente →",result:"¡Hay mucho por descubrir!",resultText:"Esta es nuestra primera versión.",again:"Jugar otra vez",invalid:"Escribe un código de sala.",notFound:"No encontramos esa sala.",full:"Esta sala ya tiene dos jugadores.",connection:"No pudimos conectar con la sala.",getReady:"Prepárense..."},
- ar:{title:"بيننا",subtitle:"لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",setupTitle:"إنشاء لعبة",nameLabel:"اسمك",languageLabel:"لغتك",create:"إنشاء غرفة 💗",joinTitle:"هل لديك رمز الغرفة؟",join:"انضم ❤️",lobby:"غرفتك جاهزة",share:"شارك هذا الرمز مع شريكك.",waiting:"في انتظار شريكك...",secondPlayer:"اللاعب الثاني",start:"ابدأ اللعبة →",waitingStart:"في انتظار اللاعب الثاني...",round:"الجولة",category:"❤️ لنتعرف على بعضنا",choose:"اختر إجابة.",saved:"تم اختيار الإجابة ✓",next:"التالي →",result:"لا يزال هناك الكثير لاكتشافه!",resultText:"هذه هي نسختنا الأولى.",again:"العب مرة أخرى",invalid:"اكتب رمز الغرفة.",notFound:"لم نجد هذه الغرفة.",full:"هذه الغرفة تحتوي بالفعل على لاعبين.",connection:"تعذر الاتصال بالغرفة.",getReady:"استعدوا..."},
- en:{title:"Between<br>Us",subtitle:"A little game to get to know each other, laugh together and discover how much we have in common.",setupTitle:"Create a game",nameLabel:"Your name",languageLabel:"Your language",create:"Create room 💗",joinTitle:"Already have a room code?",join:"Join ❤️",lobby:"Your room is ready",share:"Share this code with your partner.",waiting:"Waiting for your partner...",secondPlayer:"Second player",start:"Start game →",waitingStart:"Waiting for player 2...",round:"Round",category:"❤️ Get to know me",choose:"Choose an answer.",saved:"Answer selected ✓",next:"Next →",result:"There is still so much to discover!",resultText:"This is our first version.",again:"Play again",invalid:"Enter a room code.",notFound:"We couldn't find that room.",full:"This room already has two players.",connection:"We couldn't connect to the room.",getReady:"Get ready..."}
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+const SUPABASE_URL =
+  "https://czxfitmwbwjhureyualf.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+/* =========================================================
+   ESTADO
+   ========================================================= */
+
+let currentRoom = null;
+let currentPlayer = null;
+
+let roomSubscription = null;
+let playerSubscription = null;
+
+let currentLanguage = "es";
+
+let currentQuestion = 0;
+let selectedAnswer = null;
+
+let countdownRunning = false;
+
+
+/* =========================================================
+   TRADUCCIONES
+   ========================================================= */
+
+const translations = {
+
+  es: {
+    title: "Entre<br>Nosotros",
+    subtitle: "Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",
+    setupTitle: "Crear una partida",
+    nameLabel: "Tu nombre",
+    languageLabel: "Tu idioma",
+    create: "Crear sala 💗",
+    joinTitle: "¿Ya tienes un código?",
+    join: "Unirse ❤️",
+    lobby: "Tu sala está lista",
+    share: "Comparte este código con tu pareja.",
+    waiting: "Esperando a tu pareja...",
+    secondPlayer: "Segundo jugador",
+    start: "Empezar partida →",
+    waitingStart: "Esperando jugador 2...",
+    round: "Ronda",
+    category: "❤️ Conóceme",
+    choose: "Elige una respuesta.",
+    saved: "Respuesta guardada ✓",
+    next: "Siguiente →",
+    result: "¡Hay mucho por descubrir!",
+    resultText: "Esta es nuestra primera versión.",
+    again: "Jugar otra vez",
+    invalid: "Escribe un código de sala.",
+    notFound: "No encontramos esa sala.",
+    full: "Esta sala ya tiene dos jugadores.",
+    connection: "No pudimos conectar con la sala.",
+    getReady: "Prepárense..."
+  },
+
+  ar: {
+    title: "بيننا",
+    subtitle: "لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",
+    setupTitle: "إنشاء لعبة",
+    nameLabel: "اسمك",
+    languageLabel: "لغتك",
+    create: "إنشاء غرفة 💗",
+    joinTitle: "هل لديك رمز الغرفة؟",
+    join: "انضم ❤️",
+    lobby: "غرفتك جاهزة",
+    share: "شارك هذا الرمز مع شريكك.",
+    waiting: "في انتظار شريكك...",
+    secondPlayer: "اللاعب الثاني",
+    start: "ابدأ اللعبة →",
+    waitingStart: "في انتظار اللاعب الثاني...",
+    round: "الجولة",
+    category: "❤️ لنتعرف على بعضنا",
+    choose: "اختر إجابة.",
+    saved: "تم حفظ الإجابة ✓",
+    next: "التالي →",
+    result: "لا يزال هناك الكثير لاكتشافه!",
+    resultText: "هذه هي نسختنا الأولى.",
+    again: "العب مرة أخرى",
+    invalid: "اكتب رمز الغرفة.",
+    notFound: "لم نجد هذه الغرفة.",
+    full: "هذه الغرفة تحتوي بالفعل على لاعبين.",
+    connection: "تعذر الاتصال بالغرفة.",
+    getReady: "استعدوا..."
+  },
+
+  en: {
+    title: "Between<br>Us",
+    subtitle: "A little game to get to know each other, laugh together and discover how much we have in common.",
+    setupTitle: "Create a game",
+    nameLabel: "Your name",
+    languageLabel: "Your language",
+    create: "Create room 💗",
+    joinTitle: "Already have a room code?",
+    join: "Join ❤️",
+    lobby: "Your room is ready",
+    share: "Share this code with your partner.",
+    waiting: "Waiting for your partner...",
+    secondPlayer: "Second player",
+    start: "Start game →",
+    waitingStart: "Waiting for player 2...",
+    round: "Round",
+    category: "❤️ Get to know me",
+    choose: "Choose an answer.",
+    saved: "Answer saved ✓",
+    next: "Next →",
+    result: "There is still so much to discover!",
+    resultText: "This is our first version.",
+    again: "Play again",
+    invalid: "Enter a room code.",
+    notFound: "We couldn't find that room.",
+    full: "This room already has two players.",
+    connection: "We couldn't connect to the room.",
+    getReady: "Get ready..."
+  }
+
 };
 
-const fallbackQuestions=[
- {es:"¿Cuál elegirías para una cita perfecta?",ar:"ماذا ستختار لموعد مثالي؟",en:"What would you choose for a perfect date?",category:"couple",answers:[["Una noche viendo películas","ليلة لمشاهدة الأفلام","A night watching movies"],["Una cena elegante","عشاء فاخر","A fancy dinner"],["Una caminata por la playa","نزهة على الشاطئ","A walk on the beach"],["Una aventura espontánea","مغامرة عفوية","A spontaneous adventure"]]},
- {es:"¿Qué te hace sentir más querido/a?",ar:"ما الذي يجعلك تشعر بأنك محبوب أكثر؟",en:"What makes you feel most loved?",category:"couple",answers:[["Palabras bonitas","كلمات جميلة","Sweet words"],["Tiempo juntos","قضاء الوقت معًا","Quality time"],["Pequeños detalles","التفاصيل الصغيرة","Little gestures"],["Abrazos y cariño","العناق والمودة","Hugs and affection"]]},
- {es:"Si pudiéramos viajar mañana, ¿a dónde iríamos?",ar:"لو كان بإمكاننا السفر غدًا، إلى أين سنذهب؟",en:"If we could travel tomorrow, where would we go?",category:"couple",answers:[["Japón 🇯🇵","اليابان 🇯🇵","Japan 🇯🇵"],["Italia 🇮🇹","إيطاليا 🇮🇹","Italy 🇮🇹"],["Una isla tropical 🏝️","جزيرة استوائية 🏝️","A tropical island 🏝️"],["Un lugar completamente nuevo 🌎","مكان جديد تمامًا 🌎","Somewhere completely new 🌎"]]},
- {es:"¿Qué plan suena mejor un viernes por la noche?",ar:"ما الخطة الأفضل ليوم الجمعة مساءً؟",en:"What sounds like the best Friday night plan?",category:"couple",answers:[["Quedarnos hablando","البقاء والتحدث معًا","Staying up talking"],["Salir a comer","الخروج لتناول الطعام","Going out to eat"],["Jugar algo juntos","اللعب معًا","Playing something together"],["Ver una película","مشاهدة فيلم","Watching a movie"]]},
- {es:"¿Qué prefieres recibir?",ar:"ماذا تفضل أن تتلقى؟",en:"What would you rather receive?",category:"couple",answers:[["Una carta 💌","رسالة 💌","A letter 💌"],["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]]},
- {es:"¿Qué describe mejor una relación ideal?",ar:"ما الوصف الأفضل للعلاقة المثالية؟",en:"What best describes an ideal relationship?",category:"couple",answers:[["Tranquila","هادئة","Peaceful"],["Divertida","ممتعة","Fun"],["Aventurera","مليئة بالمغامرات","Adventurous"],["Profunda","عميقة","Deep"]]},
- {es:"¿Qué pequeño gesto puede mejorar tu día?",ar:"ما التصرف الصغير الذي يمكن أن يجعل يومك أفضل؟",en:"What small gesture can make your day better?",category:"couple",answers:[["Un mensaje","رسالة","A message"],["Un abrazo","عناق","A hug"],["Que me escuchen","أن يستمع إليّ أحد","Being listened to"],["Una sorpresa","مفاجأة","A surprise"]]},
- {es:"¿Qué escogerías para una tarde juntos?",ar:"ماذا ستختار لقضاء فترة بعد الظهر معًا؟",en:"What would you choose for an afternoon together?",category:"couple",answers:[["Cocinar","الطبخ","Cooking"],["Pasear","التنزه","Going for a walk"],["Jugar","اللعب","Playing"],["Dormir","النوم","Sleeping"]]},
- {es:"¿Qué te gustaría hacer conmigo algún día?",ar:"ماذا تود أن تفعل معي يومًا ما؟",en:"What would you like to do with me someday?",category:"couple",answers:[["Viajar","السفر","Travel"],["Aprender algo juntos","تعلم شيء معًا","Learn something together"],["Crear un proyecto","إنشاء مشروع","Create a project"],["Vivir una aventura","عيش مغامرة","Live an adventure"]]},
- {es:"¿Qué valoras más en una persona?",ar:"ما الشيء الذي تقدّره أكثر في الشخص؟",en:"What do you value most in a person?",category:"general",answers:[["Honestidad","الصدق","Honesty"],["Lealtad","الوفاء","Loyalty"],["Humor","روح الدعابة","Humor"],["Comprensión","التفهم","Understanding"]]}
+
+/* =========================================================
+   PREGUNTAS
+   ========================================================= */
+
+const questions = [
+
+  {
+    es: "¿Cuál elegirías para una cita perfecta?",
+    ar: "ماذا ستختار لموعد مثالي؟",
+    en: "What would you choose for a perfect date?",
+    answers: [
+      ["Una noche viendo películas","ليلة لمشاهدة الأفلام","A night watching movies"],
+      ["Una cena elegante","عشاء فاخر","A fancy dinner"],
+      ["Una caminata por la playa","نزهة على الشاطئ","A walk on the beach"],
+      ["Una aventura espontánea","مغامرة عفوية","A spontaneous adventure"]
+    ]
+  },
+
+  {
+    es: "¿Qué te hace sentir más querido/a?",
+    ar: "ما الذي يجعلك تشعر بأنك محبوب أكثر؟",
+    en: "What makes you feel most loved?",
+    answers: [
+      ["Palabras bonitas","كلمات جميلة","Sweet words"],
+      ["Tiempo juntos","قضاء الوقت معًا","Quality time"],
+      ["Pequeños detalles","التفاصيل الصغيرة","Little gestures"],
+      ["Abrazos y cariño","العناق والمودة","Hugs and affection"]
+    ]
+  },
+
+  {
+    es: "Si pudiéramos viajar mañana, ¿a dónde iríamos?",
+    ar: "لو كان بإمكاننا السفر غدًا، إلى أين سنذهب؟",
+    en: "If we could travel tomorrow, where would we go?",
+    answers: [
+      ["Japón 🇯🇵","اليابان 🇯🇵","Japan 🇯🇵"],
+      ["Italia 🇮🇹","إيطاليا 🇮🇹","Italy 🇮🇹"],
+      ["Una isla tropical 🏝️","جزيرة استوائية 🏝️","A tropical island 🏝️"],
+      ["Un lugar completamente nuevo 🌎","مكان جديد تمامًا 🌎","Somewhere completely new 🌎"]
+    ]
+  },
+
+  {
+    es: "¿Qué plan suena mejor un viernes por la noche?",
+    ar: "ما الخطة الأفضل ليوم الجمعة مساءً؟",
+    en: "What sounds like the best Friday night plan?",
+    answers: [
+      ["Quedarnos hablando","البقاء والتحدث معًا","Staying up talking"],
+      ["Salir a comer","الخروج لتناول الطعام","Going out to eat"],
+      ["Jugar algo juntos","اللعب معًا","Playing something together"],
+      ["Ver una película","مشاهدة فيلم","Watching a movie"]
+    ]
+  },
+
+  {
+    es: "¿Qué prefieres recibir?",
+    ar: "ماذا تفضل أن تتلقى؟",
+    en: "What would you rather receive?",
+    answers: [
+      ["Una carta 💌","رسالة 💌","A letter 💌"],
+      ["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],
+      ["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],
+      ["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]
+    ]
+  },
+
+  {
+    es: "¿Qué describe mejor una relación ideal?",
+    ar: "ما الوصف الأفضل للعلاقة المثالية؟",
+    en: "What best describes an ideal relationship?",
+    answers: [
+      ["Tranquila","هادئة","Peaceful"],
+      ["Divertida","ممتعة","Fun"],
+      ["Aventurera","مليئة بالمغامرات","Adventurous"],
+      ["Profunda","عميقة","Deep"]
+    ]
+  },
+
+  {
+    es: "¿Qué pequeño gesto puede mejorar tu día?",
+    ar: "ما التصرف الصغير الذي يمكن أن يجعل يومك أفضل؟",
+    en: "What small gesture can make your day better?",
+    answers: [
+      ["Un mensaje","رسالة","A message"],
+      ["Un abrazo","عناق","A hug"],
+      ["Que me escuchen","أن يستمع إليّ أحد","Being listened to"],
+      ["Una sorpresa","مفاجأة","A surprise"]
+    ]
+  },
+
+  {
+    es: "¿Qué escogerías para una tarde juntos?",
+    ar: "ماذا ستختار لقضاء فترة بعد الظهر معًا؟",
+    en: "What would you choose for an afternoon together?",
+    answers: [
+      ["Cocinar","الطبخ","Cooking"],
+      ["Pasear","التنزه","Going for a walk"],
+      ["Jugar","اللعب","Playing"],
+      ["Dormir","النوم","Sleeping"]
+    ]
+  },
+
+  {
+    es: "¿Qué te gustaría hacer conmigo algún día?",
+    ar: "ماذا تود أن تفعل معي يومًا ما؟",
+    en: "What would you like to do with me someday?",
+    answers: [
+      ["Viajar","السفر","Travel"],
+      ["Aprender algo juntos","تعلم شيء معًا","Learn something together"],
+      ["Crear un proyecto","إنشاء مشروع","Create a project"],
+      ["Vivir una aventura","عيش مغامرة","Live an adventure"]
+    ]
+  },
+
+  {
+    es: "¿Qué valoras más en una persona?",
+    ar: "ما الشيء الذي تقدّره أكثر في الشخص؟",
+    en: "What do you value most in a person?",
+    answers: [
+      ["Honestidad","الصدق","Honesty"],
+      ["Lealtad","الوفاء","Loyalty"],
+      ["Humor","روح الدعابة","Humor"],
+      ["Comprensión","التفهم","Understanding"]
+    ]
+  }
+
 ];
 
-function normalizeQuestion(q){
- const rawOptions=Array.isArray(q.options)?q.options:[];
- let answers=rawOptions.map(o=>[o.es||o.option_es||"",o.ar||o.option_ar||"",o.en||o.option_en||""]).filter(o=>o[0]||o[1]||o[2]);
- if(!answers.length){
-   const fallback=fallbackQuestions.find(f=>f.es===q.question_es);
-   if(fallback) answers=fallback.answers;
- }
- return {id:q.id,es:q.question_es||q.es||"",ar:q.question_ar||q.ar||"",en:q.question_en||q.en||"",category:q.category||"general",answers};
+
+/* =========================================================
+   IDIOMA
+   ========================================================= */
+
+document
+  .getElementById("language")
+  .addEventListener("change", function() {
+
+    currentLanguage = this.value;
+
+    updateInterface();
+
+  });
+
+
+function updateInterface() {
+
+  const t = translations[currentLanguage];
+
+  document.documentElement.lang =
+    currentLanguage;
+
+  document.documentElement.dir =
+    currentLanguage === "ar" ? "rtl" : "ltr";
+
+  document.getElementById("title").innerHTML =
+    t.title;
+
+  document.getElementById("subtitle").textContent =
+    t.subtitle;
+
+  document.getElementById("setupTitle").textContent =
+    t.setupTitle;
+
+  document.getElementById("nameLabel").textContent =
+    t.nameLabel;
+
+  document.getElementById("languageLabel").textContent =
+    t.languageLabel;
+
+  document.getElementById("createButton").textContent =
+    t.create;
+
+  document.getElementById("joinTitle").textContent =
+    t.joinTitle;
+
+  document.getElementById("joinButton").textContent =
+    t.join;
+
+  document.getElementById("lobbyTitle").textContent =
+    t.lobby;
+
+  document.getElementById("shareText").textContent =
+    t.share;
+
+  document.getElementById("waiting").innerHTML =
+    `<span class="dot"></span>${t.waiting}`;
+
+  updateStartButton();
+
+  if (!document.getElementById("game").classList.contains("hidden")) {
+    renderQuestion();
+  }
+
 }
 
-async function loadQuestions(){
- const {data,error}=await supabaseClient.from("questions").select("*").order("created_at",{ascending:true});
- if(error){console.error("No se pudieron cargar las preguntas:",error);questions=fallbackQuestions.map((q,i)=>({...q,id:"fallback-"+i}));return false}
- if(data&&data.length){questions=data.map(normalizeQuestion)}else{questions=fallbackQuestions.map((q,i)=>({...q,id:"fallback-"+i}))}
- return true;
+
+/* =========================================================
+   CREAR SALA
+   ========================================================= */
+
+async function createRoom() {
+
+  clearMessages();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  currentLanguage =
+    document.getElementById("language").value;
+
+  if (!name) {
+
+    showError(
+      currentLanguage === "ar"
+        ? "اكتب اسمك أولاً."
+        : currentLanguage === "en"
+          ? "Enter your name first."
+          : "Escribe tu nombre primero."
+    );
+
+    return;
+  }
+
+  const code = generateRoomCode();
+
+  const { data: room, error } =
+    await supabaseClient
+      .from("rooms")
+      .insert({
+        code: code,
+        status: "waiting"
+      })
+      .select()
+      .single();
+
+  if (error) {
+
+    console.error(error);
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+    return;
+  }
+
+  const { data: player, error: playerError } =
+    await supabaseClient
+      .from("players")
+      .insert({
+        room_id: room.id,
+        name: name,
+        language: currentLanguage
+      })
+      .select()
+      .single();
+
+  if (playerError) {
+
+    console.error(playerError);
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+    return;
+  }
+
+  currentRoom = room;
+  currentPlayer = player;
+
+  document.getElementById("playerOne").textContent =
+    name;
+
+  document.getElementById("playerOneLang").textContent =
+    getLanguageName(currentLanguage);
+
+  document.getElementById("player1Flag").textContent =
+    getFlag(currentLanguage);
+
+  document.getElementById("roomCode").textContent =
+    code;
+
+  document.getElementById("roomBadge").textContent =
+    "SALA " + code;
+
+  showOnly("lobby");
+
+  subscribeToRoom(room.id);
+  subscribeToPlayers(room.id);
+
+  await loadPlayers(room.id);
+
 }
 
-function getOptionText(option){return option[currentLanguage==="ar"?1:currentLanguage==="en"?2:0]||option[0]||""}
 
-function updateInterface(){
- const t=translations[currentLanguage];document.documentElement.lang=currentLanguage;document.documentElement.dir=currentLanguage==="ar"?"rtl":"ltr";
- document.getElementById("title").innerHTML=t.title;document.getElementById("subtitle").textContent=t.subtitle;document.getElementById("setupTitle").textContent=t.setupTitle;document.getElementById("nameLabel").textContent=t.nameLabel;document.getElementById("languageLabel").textContent=t.languageLabel;document.getElementById("createButton").textContent=t.create;document.getElementById("joinTitle").textContent=t.joinTitle;document.getElementById("joinButton").textContent=t.join;document.getElementById("lobbyTitle").textContent=t.lobby;document.getElementById("shareText").textContent=t.share;document.getElementById("waiting").innerHTML=`<span class="dot"></span>${t.waiting}`;updateStartButton();
- if(!document.getElementById("game").classList.contains("hidden")&&questions.length)renderQuestion();
+/* =========================================================
+   UNIRSE
+   ========================================================= */
+
+async function joinRoom() {
+
+  clearMessages();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const code =
+    document.getElementById("joinCode").value.trim().toUpperCase();
+
+  currentLanguage =
+    document.getElementById("language").value;
+
+  if (!name) {
+
+    showError(
+      currentLanguage === "ar"
+        ? "اكتب اسمك أولاً."
+        : currentLanguage === "en"
+          ? "Enter your name first."
+          : "Escribe tu nombre primero."
+    );
+
+    return;
+  }
+
+  if (!code) {
+
+    showError(
+      translations[currentLanguage].invalid
+    );
+
+    return;
+  }
+
+  const { data: room, error } =
+    await supabaseClient
+      .from("rooms")
+      .select("*")
+      .eq("code", code)
+      .maybeSingle();
+
+  if (error) {
+
+    console.error(error);
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+    return;
+  }
+
+  if (!room) {
+
+    showError(
+      translations[currentLanguage].notFound
+    );
+
+    return;
+  }
+
+  const { data: existingPlayers, error: playersError } =
+    await supabaseClient
+      .from("players")
+      .select("*")
+      .eq("room_id", room.id);
+
+  if (playersError) {
+
+    console.error(playersError);
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+    return;
+  }
+
+  if (existingPlayers.length >= 2) {
+
+    showError(
+      translations[currentLanguage].full
+    );
+
+    return;
+  }
+
+  const { data: player, error: playerError } =
+    await supabaseClient
+      .from("players")
+      .insert({
+        room_id: room.id,
+        name: name,
+        language: currentLanguage
+      })
+      .select()
+      .single();
+
+  if (playerError) {
+
+    console.error(playerError);
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+    return;
+  }
+
+  currentRoom = room;
+  currentPlayer = player;
+
+  document.getElementById("roomCode").textContent =
+    room.code;
+
+  document.getElementById("roomBadge").textContent =
+    "SALA " + room.code;
+
+  showOnly("lobby");
+
+  subscribeToRoom(room.id);
+  subscribeToPlayers(room.id);
+
+  await loadPlayers(room.id);
+
 }
 
-document.getElementById("language").addEventListener("change",function(){currentLanguage=this.value;updateInterface()});
 
-async function createRoom(){
- clearMessages();const name=document.getElementById("name").value.trim();currentLanguage=document.getElementById("language").value;if(!name){showError(currentLanguage==="ar"?"اكتب اسمك أولاً.":currentLanguage==="en"?"Enter your name first.":"Escribe tu nombre primero.");return}
- const code=generateRoomCode();const {data:room,error}=await supabaseClient.from("rooms").insert({code,status:"waiting"}).select().single();if(error){console.error(error);showError(translations[currentLanguage].connection);return}
- const {data:player,error:playerError}=await supabaseClient.from("players").insert({room_id:room.id,name,language:currentLanguage}).select().single();if(playerError){console.error(playerError);showError(translations[currentLanguage].connection);return}
- currentRoom=room;currentPlayer=player;document.getElementById("roomCode").textContent=code;document.getElementById("roomBadge").textContent="SALA "+code;showOnly("lobby");subscribeToRoom(room.id);subscribeToPlayers(room.id);await loadPlayers(room.id);
+/* =========================================================
+   CÓDIGO
+   ========================================================= */
+
+function generateRoomCode() {
+
+  const characters =
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let result = "";
+
+  for (let i = 0; i < 5; i++) {
+
+    result +=
+      characters[
+        Math.floor(
+          Math.random() * characters.length
+        )
+      ];
+
+  }
+
+  return result;
+
 }
 
-async function joinRoom(){
- clearMessages();const name=document.getElementById("name").value.trim();const code=document.getElementById("joinCode").value.trim().toUpperCase();currentLanguage=document.getElementById("language").value;if(!name){showError(currentLanguage==="ar"?"اكتب اسمك أولاً.":currentLanguage==="en"?"Enter your name first.":"Escribe tu nombre primero.");return}if(!code){showError(translations[currentLanguage].invalid);return}
- const {data:room,error}=await supabaseClient.from("rooms").select("*").eq("code",code).maybeSingle();if(error){console.error(error);showError(translations[currentLanguage].connection);return}if(!room){showError(translations[currentLanguage].notFound);return}
- const {data:existingPlayers,error:playersError}=await supabaseClient.from("players").select("*").eq("room_id",room.id);if(playersError){console.error(playersError);showError(translations[currentLanguage].connection);return}if(existingPlayers.length>=2){showError(translations[currentLanguage].full);return}
- const {data:player,error:playerError}=await supabaseClient.from("players").insert({room_id:room.id,name,language:currentLanguage}).select().single();if(playerError){console.error(playerError);showError(translations[currentLanguage].connection);return}
- currentRoom=room;currentPlayer=player;document.getElementById("roomCode").textContent=room.code;document.getElementById("roomBadge").textContent="SALA "+room.code;showOnly("lobby");subscribeToRoom(room.id);subscribeToPlayers(room.id);await loadPlayers(room.id);
+
+/* =========================================================
+   JUGADORES
+   ========================================================= */
+
+async function loadPlayers(roomId) {
+
+  const { data: players, error } =
+    await supabaseClient
+      .from("players")
+      .select("*")
+      .eq("room_id", roomId)
+      .order("joined_at", {
+        ascending: true
+      });
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+  }
+
+  updatePlayers(players);
+
 }
 
-function generateRoomCode(){const characters="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let result="";for(let i=0;i<5;i++)result+=characters[Math.floor(Math.random()*characters.length)];return result}
 
-async function loadPlayers(roomId){const {data:players,error}=await supabaseClient.from("players").select("*").eq("room_id",roomId).order("joined_at",{ascending:true});if(error){console.error(error);return}updatePlayers(players)}
-function updatePlayers(players){if(!players||!players.length)return;const p1=players[0],p2=players[1];document.getElementById("playerOne").textContent=p1.name;document.getElementById("playerOneLang").textContent=getLanguageName(p1.language);document.getElementById("player1Flag").textContent=getFlag(p1.language);if(p2){document.getElementById("playerTwo").textContent=p2.name;document.getElementById("playerTwoLang").textContent=getLanguageName(p2.language);document.getElementById("player2Flag").textContent=getFlag(p2.language);document.getElementById("waiting").innerHTML="❤️ "+(currentLanguage==="ar"?"انضم شريكك!":currentLanguage==="en"?"Your partner joined!":"¡Tu pareja se unió!");const b=document.getElementById("startButton");b.disabled=false;b.textContent=translations[currentLanguage].start}}
+function updatePlayers(players) {
 
-function subscribeToPlayers(roomId){if(playerSubscription)supabaseClient.removeChannel(playerSubscription);playerSubscription=supabaseClient.channel("players-"+roomId).on("postgres_changes",{event:"*",schema:"public",table:"players",filter:"room_id=eq."+roomId},async()=>{await loadPlayers(roomId)}).subscribe()}
-function subscribeToRoom(roomId){if(roomSubscription)supabaseClient.removeChannel(roomSubscription);roomSubscription=supabaseClient.channel("room-"+roomId).on("postgres_changes",{event:"UPDATE",schema:"public",table:"rooms",filter:"id=eq."+roomId},payload=>{currentRoom=payload.new;if(payload.new.status==="starting")startCountdown()}).subscribe()}
+  if (!players || players.length === 0) {
+    return;
+  }
 
-async function startGame(){if(!currentRoom){showError("No hay una sala conectada.");return}const {error}=await supabaseClient.from("rooms").update({status:"starting"}).eq("id",currentRoom.id);if(error){console.error(error);showError(translations[currentLanguage].connection)}}
-function startCountdown(){if(countdownRunning)return;countdownRunning=true;const screen=document.createElement("div");screen.id="countdownScreen";const heart=document.createElement("div");heart.id="countdownHeart";heart.textContent="💗";const number=document.createElement("div");number.id="countdownNumber";number.textContent="5";const text=document.createElement("div");text.id="countdownText";text.textContent=translations[currentLanguage].getReady;screen.append(heart,number,text);document.body.appendChild(screen);let count=5;const interval=setInterval(()=>{count--;if(count>=0){number.textContent=count;number.style.animation="none";void number.offsetWidth;number.style.animation="numberPop .35s ease"}if(count===0){clearInterval(interval);setTimeout(async()=>{screen.remove();countdownRunning=false;currentQuestion=0;await loadQuestions();showOnly("game");renderQuestion()},500)}},1000)}
+  const player1 = players[0];
+  const player2 = players[1];
 
-function renderQuestion(){if(!questions.length)return;selectedAnswer=null;const q=questions[currentQuestion];document.getElementById("question").textContent=q[currentLanguage]||q.es;document.getElementById("round").textContent=translations[currentLanguage].round+" "+(currentQuestion+1)+" / "+questions.length;document.getElementById("category").textContent="❤️ "+(q.category||"general");document.getElementById("bar").style.width=((currentQuestion+1)/questions.length*100)+"%";const container=document.getElementById("answers");container.innerHTML="";(q.answers||[]).forEach((answer,index)=>{const button=document.createElement("button");button.className="answer";const small=document.createElement("small");small.textContent=String.fromCharCode(65+index);button.appendChild(small);button.appendChild(document.createTextNode(getOptionText(answer)));button.onclick=()=>{document.querySelectorAll(".answer").forEach(e=>e.classList.remove("selected"));button.classList.add("selected");selectedAnswer=index;document.getElementById("next").disabled=false;document.getElementById("status").textContent=translations[currentLanguage].saved};container.appendChild(button)});document.getElementById("next").textContent=translations[currentLanguage].next;document.getElementById("next").disabled=true}
-function nextQuestion(){if(selectedAnswer===null)return;if(currentQuestion<questions.length-1){currentQuestion++;renderQuestion()}else{document.getElementById("score").textContent="—%";showOnly("result")}}
+  document.getElementById("playerOne").textContent =
+    player1.name;
 
-/* ADMIN */
-function openAdminLogin(){if(!["home","setup"].some(id=>!document.getElementById(id).classList.contains("hidden")))return;document.getElementById("adminPassword").value="";document.getElementById("adminError").style.display="none";showOnly("adminLogin");setTimeout(()=>document.getElementById("adminPassword").focus(),100)}
-function checkAdminPassword(){if(document.getElementById("adminPassword").value==="7"){showOnly("admin");loadAdminQuestions()}else{const e=document.getElementById("adminError");e.textContent="Contraseña incorrecta.";e.style.display="block"}}
-function closeAdmin(){document.getElementById("adminForm").classList.add("hidden");document.getElementById("adminLogin").classList.add("hidden");document.getElementById("admin").classList.add("hidden");showOnly("setup");document.getElementById("adminKey").style.display="block"}
-async function loadAdminQuestions(){const list=document.getElementById("questionList");list.innerHTML='<div class="loading">Cargando preguntas...</div>';const {data,error}=await supabaseClient.from("questions").select("*").order("created_at",{ascending:true});if(error){list.innerHTML='<div class="admin-empty">No se pudieron cargar las preguntas.</div>';console.error(error);return}document.getElementById("adminCount").textContent=(data?data.length:0)+" preguntas";if(!data||!data.length){list.innerHTML='<div class="admin-empty">Todavía no hay preguntas. Crea la primera. 💗</div>';return}list.innerHTML="";data.forEach(q=>{const item=document.createElement("div");item.className="question-item";const top=document.createElement("div");top.className="question-item-top";const info=document.createElement("div");const title=document.createElement("div");title.className="question-item-title";title.textContent=q.question_es||"Sin pregunta en español";const cat=document.createElement("div");cat.className="question-item-cat";cat.textContent="# "+(q.category||"general");info.append(title,cat);const buttons=document.createElement("div");buttons.className="question-item-buttons";const edit=document.createElement("button");edit.className="icon-btn";edit.textContent="✏️";edit.onclick=()=>editQuestion(q);const del=document.createElement("button");del.className="icon-btn delete";del.textContent="🗑️";del.onclick=()=>deleteQuestion(q.id);buttons.append(edit,del);top.append(info,buttons);item.appendChild(top);list.appendChild(item)})}
-function makeOptionInputs(values=[]){const grid=document.getElementById("optionGrid");grid.innerHTML="";for(let i=0;i<4;i++){const row=document.createElement("div");row.className="option-row";const n=document.createElement("div");n.className="option-number";n.textContent=String.fromCharCode(65+i);const es=document.createElement("input");es.placeholder="Español";es.className="opt-es";es.value=values[i]?.es||values[i]?.option_es||"";const ar=document.createElement("input");ar.placeholder="العربية";ar.className="opt-ar";ar.value=values[i]?.ar||values[i]?.option_ar||"";const en=document.createElement("input");en.placeholder="English";en.className="opt-en";en.value=values[i]?.en||values[i]?.option_en||"";row.append(n,es,ar,en);grid.appendChild(row)}}
-function newQuestion(){document.getElementById("formTitle").textContent="Nueva pregunta";document.getElementById("editQuestionId").value="";document.getElementById("qEs").value="";document.getElementById("qAr").value="";document.getElementById("qEn").value="";document.getElementById("qCategory").value="couple";makeOptionInputs();document.getElementById("adminForm").classList.remove("hidden");document.getElementById("adminForm").scrollIntoView({behavior:"smooth",block:"start"})}
-function editQuestion(q){document.getElementById("formTitle").textContent="Editar pregunta";document.getElementById("editQuestionId").value=q.id;document.getElementById("qEs").value=q.question_es||"";document.getElementById("qAr").value=q.question_ar||"";document.getElementById("qEn").value=q.question_en||"";document.getElementById("qCategory").value=q.category||"general";makeOptionInputs(Array.isArray(q.options)?q.options:[]);document.getElementById("adminForm").classList.remove("hidden");document.getElementById("adminForm").scrollIntoView({behavior:"smooth",block:"start"})}
-function cancelQuestionEdit(){document.getElementById("adminForm").classList.add("hidden");clearAdminMessages()}
-async function saveQuestion(){clearAdminMessages();const id=document.getElementById("editQuestionId").value;const question_es=document.getElementById("qEs").value.trim();const question_ar=document.getElementById("qAr").value.trim();const question_en=document.getElementById("qEn").value.trim();const category=document.getElementById("qCategory").value.trim()||"general";const options=[...document.querySelectorAll("#optionGrid .option-row")].map(row=>({es:row.querySelector(".opt-es").value.trim(),ar:row.querySelector(".opt-ar").value.trim(),en:row.querySelector(".opt-en").value.trim()})).filter(o=>o.es||o.ar||o.en);if(!question_es||!question_ar||!question_en){showAdminSaveError("Completa la pregunta en los tres idiomas.");return}if(options.length<2){showAdminSaveError("Añade al menos 2 respuestas.");return}if(options.some(o=>!o.es||!o.ar||!o.en)){showAdminSaveError("Completa los tres idiomas de cada respuesta.");return}const payload={question_es,question_ar,question_en,category,options};let result;if(id){result=await supabaseClient.from("questions").update(payload).eq("id",id)}else{result=await supabaseClient.from("questions").insert(payload)}if(result.error){console.error(result.error);showAdminSaveError("No se pudo guardar. Revisa las políticas de la tabla questions.");return}showAdminSaveSuccess("Pregunta guardada correctamente. ❤️");document.getElementById("adminForm").classList.add("hidden");await loadAdminQuestions();await loadQuestions()}
-async function deleteQuestion(id){if(!confirm("¿Eliminar esta pregunta?"))return;const {error}=await supabaseClient.from("questions").delete().eq("id",id);if(error){console.error(error);alert("No se pudo eliminar la pregunta.");return}await loadAdminQuestions();await loadQuestions()}
-function clearAdminMessages(){["adminSaveError","adminSaveSuccess"].forEach(id=>document.getElementById(id).style.display="none")}
-function showAdminSaveError(m){const e=document.getElementById("adminSaveError");e.textContent=m;e.style.display="block"}
-function showAdminSaveSuccess(m){const e=document.getElementById("adminSaveSuccess");e.textContent=m;e.style.display="block"}
+  document.getElementById("playerOneLang").textContent =
+    getLanguageName(player1.language);
 
-function showOnly(section){["home","setup","lobby","game","result","adminLogin","admin"].forEach(id=>document.getElementById(id).classList.add("hidden"));document.getElementById(section).classList.remove("hidden");const key=document.getElementById("adminKey");key.style.display=(section==="home"||section==="setup")?"block":"none"}
-function getLanguageName(language){if(language==="ar")return"العربية";if(language==="en")return"English";return"Español"}
-function getFlag(language){if(language==="ar")return"🇸🇦";if(language==="en")return"🇬🇧";return"🇪🇸"}
-function updateStartButton(){const b=document.getElementById("startButton");if(!b.disabled)b.textContent=translations[currentLanguage].start}
-function clearMessages(){document.getElementById("error").style.display="none";document.getElementById("success").style.display="none"}
-function showError(message){const e=document.getElementById("error");e.textContent=message;e.style.display="block"}
+  document.getElementById("player1Flag").textContent =
+    getFlag(player1.language);
 
-async function init(){
- document.getElementById("adminKey").style.display="block";
- updateInterface();
- await loadQuestions();
+  if (player2) {
+
+    document.getElementById("playerTwo").textContent =
+      player2.name;
+
+    document.getElementById("playerTwoLang").textContent =
+      getLanguageName(player2.language);
+
+    document.getElementById("player2Flag").textContent =
+      getFlag(player2.language);
+
+    document.getElementById("waiting").innerHTML =
+      "❤️ " +
+      (
+        currentLanguage === "ar"
+          ? "انضم شريكك!"
+          : currentLanguage === "en"
+            ? "Your partner joined!"
+            : "¡Tu pareja se unió!"
+      );
+
+    const startButton =
+      document.getElementById("startButton");
+
+    startButton.disabled = false;
+
+    startButton.textContent =
+      translations[currentLanguage].start;
+  }
+
 }
-init();
+
+
+/* =========================================================
+   REALTIME JUGADORES
+   ========================================================= */
+
+function subscribeToPlayers(roomId) {
+
+  if (playerSubscription) {
+
+    supabaseClient.removeChannel(
+      playerSubscription
+    );
+
+  }
+
+  playerSubscription =
+    supabaseClient
+      .channel("players-" + roomId)
+
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "players",
+          filter: "room_id=eq." + roomId
+        },
+        async () => {
+
+          await loadPlayers(roomId);
+
+        }
+      )
+
+      .subscribe();
+
+}
+
+
+/* =========================================================
+   REALTIME SALA
+   ========================================================= */
+
+function subscribeToRoom(roomId) {
+
+  if (roomSubscription) {
+
+    supabaseClient.removeChannel(
+      roomSubscription
+    );
+
+  }
+
+  roomSubscription =
+    supabaseClient
+      .channel("room-" + roomId)
+
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "rooms",
+          filter: "id=eq." + roomId
+        },
+        payload => {
+
+          currentRoom = payload.new;
+
+          if (
+            payload.new.status === "starting"
+          ) {
+
+            startCountdown();
+
+          }
+
+        }
+      )
+
+      .subscribe();
+
+}
+
+
+/* =========================================================
+   INICIO DE PARTIDA
+   ========================================================= */
+
+async function startGame() {
+
+  if (!currentRoom) {
+
+    showError(
+      "No hay una sala conectada."
+    );
+
+    return;
+  }
+
+  /*
+    MUY IMPORTANTE:
+
+    El contador NO se inicia localmente
+    aquí.
+
+    Primero escribimos "starting"
+    en Supabase.
+
+    Ambos dispositivos reciben
+    exactamente el mismo evento.
+  */
+
+  const { error } =
+    await supabaseClient
+      .from("rooms")
+      .update({
+        status: "starting"
+      })
+      .eq("id", currentRoom.id);
+
+  if (error) {
+
+    console.error(
+      "Error iniciando partida:",
+      error
+    );
+
+    showError(
+      translations[currentLanguage].connection
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CONTADOR SINCRONIZADO
+   ========================================================= */
+
+function startCountdown() {
+
+  if (countdownRunning) {
+    return;
+  }
+
+  countdownRunning = true;
+
+  /*
+    Creamos la pantalla
+    del contador.
+  */
+
+  const screen =
+    document.createElement("div");
+
+  screen.id =
+    "countdownScreen";
+
+
+  const heart =
+    document.createElement("div");
+
+  heart.id =
+    "countdownHeart";
+
+  heart.textContent =
+    "💗";
+
+
+  const number =
+    document.createElement("div");
+
+  number.id =
+    "countdownNumber";
+
+  number.textContent =
+    "5";
+
+
+  const text =
+    document.createElement("div");
+
+  text.id =
+    "countdownText";
+
+  text.textContent =
+    translations[currentLanguage].getReady;
+
+
+  screen.appendChild(heart);
+  screen.appendChild(number);
+  screen.appendChild(text);
+
+  document.body.appendChild(screen);
+
+
+  /*
+    5
+    4
+    3
+    2
+    1
+    0
+  */
+
+  let count = 5;
+
+  const interval =
+    setInterval(() => {
+
+      count--;
+
+      if (count >= 0) {
+
+        number.textContent =
+          count;
+
+        /*
+          Reiniciamos la animación
+          del número.
+        */
+
+        number.style.animation = "none";
+
+        void number.offsetWidth;
+
+        number.style.animation =
+          "numberPop .35s ease";
+
+      }
+
+      if (count === 0) {
+
+        clearInterval(interval);
+
+        setTimeout(() => {
+
+          screen.remove();
+
+          countdownRunning = false;
+
+          /*
+            Cambiamos a la pregunta
+            automáticamente.
+          */
+
+          currentQuestion = 0;
+
+          showOnly("game");
+
+          renderQuestion();
+
+        }, 500);
+
+      }
+
+    }, 1000);
+
+}
+
+
+/* =========================================================
+   PREGUNTAS
+   ========================================================= */
+
+function renderQuestion() {
+
+  selectedAnswer = null;
+
+  const q =
+    questions[currentQuestion];
+
+  document.getElementById("question").textContent =
+    q[currentLanguage];
+
+  document.getElementById("round").textContent =
+    translations[currentLanguage].round +
+    " " +
+    (currentQuestion + 1) +
+    " / 10";
+
+  document.getElementById("category").textContent =
+    translations[currentLanguage].category;
+
+  document.getElementById("bar").style.width =
+    ((currentQuestion + 1) * 10) +
+    "%";
+
+  const container =
+    document.getElementById("answers");
+
+  container.innerHTML = "";
+
+  q.answers.forEach(
+    (answer, index) => {
+
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "answer";
+
+      button.innerHTML =
+        "<small>" +
+        String.fromCharCode(65 + index) +
+        "</small>" +
+        answer[
+          currentLanguage === "ar"
+            ? 1
+            : currentLanguage === "en"
+              ? 2
+              : 0
+        ];
+
+      button.onclick = () => {
+
+        document
+          .querySelectorAll(".answer")
+          .forEach(
+            element =>
+              element.classList.remove(
+                "selected"
+              )
+          );
+
+        button.classList.add("selected");
+
+        selectedAnswer =
+          index;
+
+        document.getElementById("next").disabled =
+          false;
+
+        document.getElementById("status").textContent =
+          translations[currentLanguage].saved;
+
+      };
+
+      container.appendChild(button);
+
+    }
+  );
+
+  document.getElementById("next").disabled =
+    true;
+
+}
+
+
+function nextQuestion() {
+
+  if (selectedAnswer === null) {
+    return;
+  }
+
+  if (currentQuestion < 9) {
+
+    currentQuestion++;
+
+    renderQuestion();
+
+  } else {
+
+    showOnly("result");
+
+  }
+
+}
+
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+
+function showOnly(section) {
+
+  [
+    "home",
+    "setup",
+    "lobby",
+    "game",
+    "result"
+  ].forEach(id => {
+
+    document
+      .getElementById(id)
+      .classList
+      .add("hidden");
+
+  });
+
+  document
+    .getElementById(section)
+    .classList
+    .remove("hidden");
+
+}
+
+
+function getLanguageName(language) {
+
+  if (language === "ar") {
+    return "العربية";
+  }
+
+  if (language === "en") {
+    return "English";
+  }
+
+  return "Español";
+
+}
+
+
+function getFlag(language) {
+
+  if (language === "ar") {
+    return "🇸🇦";
+  }
+
+  if (language === "en") {
+    return "🇬🇧";
+  }
+
+  return "🇪🇸";
+
+}
+
+
+function updateStartButton() {
+
+  const button =
+    document.getElementById("startButton");
+
+  if (!button.disabled) {
+
+    button.textContent =
+      translations[currentLanguage].start;
+
+  }
+
+}
+
+
+function clearMessages() {
+
+  document.getElementById("error").style.display =
+    "none";
+
+  document.getElementById("success").style.display =
+    "none";
+
+}
+
+
+function showError(message) {
+
+  const element =
+    document.getElementById("error");
+
+  element.textContent =
+    message;
+
+  element.style.display =
+    "block";
+
+}
+
+
+/* =========================================================
+   INICIO
+   ========================================================= */
+
+updateInterface();
+
 </script>
+
 </body>
 </html>
