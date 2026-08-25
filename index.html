@@ -1166,7 +1166,8 @@ async function createRoom() {
       .from("rooms")
       .insert({
         code: code,
-        status: "waiting"
+        status: "waiting",
+        current_question: 0
       })
       .select()
       .single();
@@ -1535,7 +1536,7 @@ function subscribeToAnswers(roomId) {
 
 
 /* =========================================================
-   REALTIME SALA
+   REALTIME SALA Y SINCRONIZACIÓN
    ========================================================= */
 
 function subscribeToRoom(roomId) {
@@ -1562,14 +1563,22 @@ function subscribeToRoom(roomId) {
         },
         payload => {
 
+          const oldRoom = currentRoom;
           currentRoom = payload.new;
 
-          if (
-            payload.new.status === "starting"
-          ) {
-
+          if (payload.new.status === "starting" && oldRoom.status !== "starting") {
             startCountdown();
+          }
 
+          if (payload.new.status === "playing") {
+            if (payload.new.current_question !== currentQuestion) {
+              currentQuestion = payload.new.current_question;
+              renderQuestion();
+            }
+          }
+
+          if (payload.new.status === "finished") {
+            finishGame();
           }
 
         }
@@ -1599,7 +1608,8 @@ async function startGame() {
     await supabaseClient
       .from("rooms")
       .update({
-        status: "starting"
+        status: "starting",
+        current_question: 0
       })
       .eq("id", currentRoom.id);
 
@@ -1699,7 +1709,7 @@ function startCountdown() {
 
         clearInterval(interval);
 
-        setTimeout(() => {
+        setTimeout(async () => {
 
           screen.remove();
 
@@ -1710,6 +1720,13 @@ function startCountdown() {
           showOnly("game");
 
           renderQuestion();
+
+          if (currentRoom) {
+            await supabaseClient
+              .from("rooms")
+              .update({ status: "playing", current_question: 0 })
+              .eq("id", currentRoom.id);
+          }
 
         }, 500);
 
@@ -1775,7 +1792,7 @@ function renderQuestion() {
 
       button.onclick = () => {
 
-        if (selectedAnswer !== null) return; // Bloquear si ya seleccionó
+        if (selectedAnswer !== null) return;
 
         document
           .querySelectorAll(".answer")
@@ -1790,13 +1807,11 @@ function renderQuestion() {
 
         selectedAnswer = index;
 
-        // Deshabilitar todos los botones para que no cambie de opinión
         document.querySelectorAll(".answer").forEach(btn => btn.style.pointerEvents = "none");
 
         document.getElementById("status").textContent =
           translations[currentLanguage].saved;
 
-        // Guardar la respuesta en Supabase
         saveAnswerToDatabase(index);
 
       };
@@ -1843,17 +1858,28 @@ async function checkBothAnswered() {
 }
 
 
-function nextQuestion() {
+async function nextQuestion() {
 
   if (currentQuestion < 9) {
 
-    currentQuestion++;
+    const nextQ = currentQuestion + 1;
 
-    renderQuestion();
+    await supabaseClient
+      .from("rooms")
+      .update({
+        current_question: nextQ,
+        status: "playing"
+      })
+      .eq("id", currentRoom.id);
 
   } else {
 
-    finishGame();
+    await supabaseClient
+      .from("rooms")
+      .update({
+        status: "finished"
+      })
+      .eq("id", currentRoom.id);
 
   }
 
@@ -1870,9 +1896,7 @@ async function finishGame() {
   document.getElementById("resultText").textContent = "Procesando las respuestas de ambos...";
   document.getElementById("finalScore").textContent = "⏳";
 
-  // Esperar 5 segundos exactos
   setTimeout(async () => {
-    // Calcular el porcentaje real
     const { data: allAnswers } = await supabaseClient
       .from("answers")
       .select("*")
@@ -1924,7 +1948,6 @@ function showOnly(section) {
     .classList
     .remove("hidden");
 
-  // La llave 🔑 solo se muestra en la pantalla de inicio ("home" o "setup")
   const keyBtn = document.getElementById("adminKeyBtn");
   if (keyBtn) {
     if (section === "home" || section === "setup") {
