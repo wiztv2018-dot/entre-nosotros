@@ -508,8 +508,8 @@
       font-weight: bold;
     }
 
-    .btn-edit { background: #3b82f6; color: white; }
-    .btn-delete { background: #ef4444; color: white; }
+    .btn-edit { background: #3b82f6; color: white; cursor: pointer; }
+    .btn-delete { background: #ef4444; color: white; cursor: pointer; }
 
     .modes-selector-title {
       font-size: 14px;
@@ -656,7 +656,7 @@
 
     <div style="display: flex; gap: 8px; margin-top: 4px;">
       <button class="button" id="saveQuestionBtn" onclick="guardarPreguntaSupabase()" style="margin-top:0; padding:10px;">Guardar Pregunta 💾</button>
-      <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; padding: 0 12px; font-size: 12px;">Cancelar</button>
+      <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: white; padding: 0 12px; font-size: 12px; cursor: pointer;">Cancelar</button>
     </div>
 
     <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 2px; font-size: 11px; cursor: pointer;">Cerrar panel</button>
@@ -841,7 +841,7 @@ let userAnswers = {};
 let selectedAdminMode = 1;
 let selectedGameMode = 1; 
 let activeQuestions = [];  
-let adminQuestionsCache = []; // Caché global para edición segura
+let adminQuestionsCache = []; 
 
 /* =========================================================
    TRADUCCIONES DE LA INTERFAZ
@@ -1266,7 +1266,7 @@ function calculateFinalScore(allAnswers, totalQ) {
 }
 
 /* =========================================================
-   PANEL ADMIN & GESTIÓN DE PREGUNTAS (CRUD SEGURO)
+   PANEL ADMIN & GESTIÓN DE PREGUNTAS (ROBUSTO Y SEGURO)
    ========================================================= */
 
 function showOnly(section) {
@@ -1365,22 +1365,46 @@ async function loadAdminQuestionsForMode() {
   }
 
   listContainer.innerHTML = "";
+  
+  // Construcción segura de elementos del DOM por nodos para evitar bloqueos en botones
   adminQuestionsCache.forEach(q => {
     const item = document.createElement("div");
     item.className = "question-admin-item";
-    item.innerHTML = `
-      <div class="question-admin-info" title="${q.question_es || ''}">🇪🇸 ${q.question_es || '(Sin texto)'}</div>
-      <div class="question-admin-actions">
-        <button class="action-mini-btn btn-edit" onclick="editQuestionById(${q.id})">Editar</button>
-        <button class="action-mini-btn btn-delete" onclick="deleteQuestion(${q.id})">Eliminar</button>
-      </div>
-    `;
+
+    const info = document.createElement("div");
+    info.className = "question-admin-info";
+    info.textContent = "🇪🇸 " + (q.question_es || "(Sin texto)");
+    info.title = q.question_es || "";
+
+    const actions = document.createElement("div");
+    actions.className = "question-admin-actions";
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "action-mini-btn btn-edit";
+    editBtn.textContent = "Editar";
+    editBtn.onclick = function() {
+      editQuestionById(q.id);
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "action-mini-btn btn-delete";
+    deleteBtn.textContent = "Eliminar";
+    deleteBtn.onclick = function() {
+      deleteQuestion(q.id);
+    };
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+
+    item.appendChild(info);
+    item.appendChild(actions);
+
     listContainer.appendChild(item);
   });
 }
 
 function editQuestionById(id) {
-  const q = adminQuestionsCache.find(item => item.id === id);
+  const q = adminQuestionsCache.find(item => Number(item.id) === Number(id));
   if (!q) return;
 
   document.getElementById("editing_id").value = q.id;
