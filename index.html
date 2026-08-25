@@ -513,10 +513,8 @@
 
 <body>
 
-<!-- BOTÓN FLOTANTE DE LA LLAVE 🔑 (SOLO SE MUESTRA AL INICIO) -->
 <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">🔑</button>
 
-<!-- MODAL DE ADMINISTRACIÓN PARA AGREGAR PREGUNTAS -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
@@ -546,252 +544,111 @@
       <span>Entre Nosotros</span> ♡
     </div>
 
-<div class="room-badge" id="roomBadge">
-  NUEVA SALA
-</div>
-
+    <div class="room-badge" id="roomBadge">
+      NUEVA SALA
+    </div>
   </nav>
 
   <!-- INICIO -->
-
   <section class="hero" id="home">
-
-<div class="heart">💗</div>
-
-<h1 id="title">
-  Entre<br>Nosotros
-</h1>
-
-<p id="subtitle">
-  Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.
-</p>
-
+    <div class="heart">💗</div>
+    <h1 id="title">Entre<br>Nosotros</h1>
+    <p id="subtitle">Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.</p>
   </section>
 
   <!-- CONFIGURACIÓN -->
-
   <section class="card" id="setup">
+    <h2 id="setupTitle">Crear una partida</h2>
 
-<h2 id="setupTitle">
-  Crear una partida
-</h2>
+    <div class="fields">
+      <div class="field">
+        <label id="nameLabel">Tu nombre</label>
+        <input id="name" value="Carlos" placeholder="Escribe tu nombre">
+      </div>
 
-<div class="fields">
+      <div class="field">
+        <label id="languageLabel">Tu idioma</label>
+        <select id="language">
+          <option value="es">🇪🇸 Español</option>
+          <option value="ar">🇸🇦 العربية</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+      </div>
+    </div>
 
-  <div class="field">
+    <button class="button" id="createButton" onclick="createRoom()">Crear sala 💗</button>
 
-    <label id="nameLabel">
-      Tu nombre
-    </label>
+    <div class="join-box">
+      <div class="join-title" id="joinTitle">¿Ya tienes un código?</div>
+      <div class="join-row">
+        <input id="joinCode" maxlength="5" placeholder="K7X92" style="text-transform:uppercase">
+        <button class="button" id="joinButton" onclick="joinRoom()">Unirse ❤️</button>
+      </div>
+    </div>
 
-    <input
-      id="name"
-      value="Carlos"
-      placeholder="Escribe tu nombre"
-    >
-
-  </div>
-
-  <div class="field">
-
-    <label id="languageLabel">
-      Tu idioma
-    </label>
-
-    <select id="language">
-
-      <option value="es">🇪🇸 Español</option>
-      <option value="ar">🇸🇦 العربية</option>
-      <option value="en">🇬🇧 English</option>
-
-    </select>
-
-  </div>
-
-</div>
-
-<button
-  class="button"
-  id="createButton"
-  onclick="createRoom()"
->
-  Crear sala 💗
-</button>
-
-
-<div class="join-box">
-
-  <div
-    class="join-title"
-    id="joinTitle"
-  >
-    ¿Ya tienes un código?
-  </div>
-
-  <div class="join-row">
-
-    <input
-      id="joinCode"
-      maxlength="5"
-      placeholder="K7X92"
-      style="text-transform:uppercase"
-    >
-
-    <button
-      class="button"
-      id="joinButton"
-      onclick="joinRoom()"
-    >
-      Unirse ❤️
-    </button>
-
-  </div>
-
-</div>
-
-<div class="error" id="error"></div>
-<div class="success" id="success"></div>
-
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
   </section>
 
-  <!-- SALA -->
-
+  <!-- SALA DE ESPERA -->
   <section class="card hidden" id="lobby">
+    <h2 id="lobbyTitle" style="text-align:center">Tu sala está lista</h2>
+    <div class="code" id="roomCode">K7X92</div>
+    <p class="share" id="shareText">Comparte este código con tu pareja.</p>
 
-<h2 id="lobbyTitle" style="text-align:center">
-  Tu sala está lista
-</h2>
+    <div class="players">
+      <div class="player">
+        <span id="player1Flag">🇨🇴</span>
+        <b id="playerOne">Carlos</b>
+        <small id="playerOneLang">Español</small>
+      </div>
 
-<div class="code" id="roomCode">
-  K7X92
-</div>
+      <div class="player">
+        <span id="player2Flag">❤️</span>
+        <b id="playerTwo">Esperando...</b>
+        <small id="playerTwoLang">Segundo jugador</small>
+      </div>
+    </div>
 
-<p class="share" id="shareText">
-  Comparte este código con tu pareja.
-</p>
+    <div class="waiting" id="waiting">
+      <span class="dot"></span>Esperando a tu pareja...
+    </div>
 
-<div class="players">
-
-  <div class="player">
-
-    <span id="player1Flag">🇨🇴</span>
-
-    <b id="playerOne">
-      Carlos
-    </b>
-
-    <small id="playerOneLang">
-      Español
-    </small>
-
-  </div>
-
-
-  <div class="player">
-
-    <span id="player2Flag">❤️</span>
-
-    <b id="playerTwo">
-      Esperando...
-    </b>
-
-    <small id="playerTwoLang">
-      Segundo jugador
-    </small>
-
-  </div>
-
-</div>
-
-
-<div class="waiting" id="waiting">
-
-  <span class="dot"></span>
-  Esperando a tu pareja...
-
-</div>
-
-
-<button
-  class="button"
-  id="startButton"
-  onclick="startGame()"
-  disabled
->
-  Esperando jugador 2...
-</button>
-
+    <button class="button" id="startButton" onclick="startGame()" disabled>
+      Esperando jugador 2...
+    </button>
   </section>
 
   <!-- JUEGO -->
-
   <section class="card hidden" id="game">
+    <div class="progress">
+      <div class="bar" id="bar"></div>
+    </div>
 
-<div class="progress">
+    <div class="meta">
+      <span id="round">Ronda 1 / 10</span>
+      <span id="category">❤️ Conóceme</span>
+    </div>
 
-  <div class="bar" id="bar"></div>
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div class="status" id="status">Elige una respuesta.</div>
 
-</div>
-
-<div class="meta">
-
-  <span id="round">
-    Ronda 1 / 10
-  </span>
-
-  <span id="category">
-    ❤️ Conóceme
-  </span>
-
-</div>
-
-<div class="question" id="question"></div>
-
-<div class="answers" id="answers"></div>
-
-<div class="status" id="status">
-  Elige una respuesta.
-</div>
-
-<button
-  class="button"
-  id="next"
-  disabled
-  onclick="nextQuestion()"
->
-  Siguiente →
-</button>
-
+    <button class="button" id="next" disabled onclick="nextQuestion()">
+      Siguiente →
+    </button>
   </section>
 
   <!-- RESULTADO -->
-
   <section class="card hidden result" id="result">
+    <div class="big">💞</div>
+    <div class="score" id="finalScore">⏳</div>
+    <h2 id="resultTitle">¡Calculando compatibilidad!</h2>
+    <p id="resultText" style="color:#aaa2b2">Procesando las respuestas de ambos...</p>
 
-<div class="big">
-  💞
-</div>
-
-<div class="score" id="finalScore">
-  0%
-</div>
-
-<h2 id="resultTitle">
-  ¡Calculando compatibilidad!
-</h2>
-
-<p id="resultText" style="color:#aaa2b2">
-  Descubriendo qué tanto coinciden...
-</p>
-
-<button
-  class="button"
-  onclick="location.reload()"
-  id="againButton"
->
-  Jugar otra vez
-</button>
-
+    <button class="button hidden" onclick="location.reload()" id="againButton">
+      Jugar otra vez
+    </button>
   </section>
 
 </div>
@@ -799,53 +656,33 @@
 <script>
 
 /* =========================================================
-   SUPABASE
+   SUPABASE & ESTADO
    ========================================================= */
 
-const SUPABASE_URL =
-  "https://czxfitmwbwjhureyualf.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
-
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================================================
-   ESTADO
-   ========================================================= */
+const SUPABASE_URL = "https://czxfitmwbwjhureyualf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentRoom = null;
 let currentPlayer = null;
-
 let roomSubscription = null;
 let playerSubscription = null;
-let answersSubscription = null;
 
 let currentLanguage = "es";
-
 let currentQuestion = 0;
 let selectedAnswer = null;
+let userAnswers = {}; // Guardar localmente las respuestas seleccionadas
 
-let countdownRunning = false;
-
-// Función para transformar el número de pregunta en un UUID válido para Supabase
 function getQuestionUUID(index) {
   const hex = index.toString(16).padStart(12, '0');
   return `00000000-0000-0000-0000-${hex}`;
 }
 
-
 /* =========================================================
-   TRADUCCIONES
+   TRADUCCIONES & PREGUNTAS
    ========================================================= */
 
 const translations = {
-
   es: {
     title: "Entre<br>Nosotros",
     subtitle: "Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",
@@ -860,23 +697,15 @@ const translations = {
     waiting: "Esperando a tu pareja...",
     secondPlayer: "Segundo jugador",
     start: "Empezar partida →",
-    waitingStart: "Esperando jugador 2...",
     round: "Ronda",
     category: "❤️ Conóceme",
     choose: "Elige una respuesta.",
-    saved: "Respuesta enviada. Esperando a tu pareja...",
-    bothAnswered: "¡Ambos respondieron! Haz clic en Siguiente.",
     next: "Siguiente →",
     result: "¡Hay mucho por descubrir!",
     resultText: "Esta es su compatibilidad final.",
     again: "Jugar otra vez",
-    invalid: "Escribe un código de sala.",
-    notFound: "No encontramos esa sala.",
-    full: "Esta sala ya tiene dos jugadores.",
-    connection: "No pudimos conectar con la sala.",
     getReady: "Prepárense..."
   },
-
   ar: {
     title: "بيننا",
     subtitle: "لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",
@@ -891,23 +720,15 @@ const translations = {
     waiting: "في انتظار شريكك...",
     secondPlayer: "اللاعب الثاني",
     start: "ابدأ اللعبة →",
-    waitingStart: "في انتظار اللاعب الثاني...",
     round: "الجولة",
     category: "❤️ لنتعرف على بعضنا",
     choose: "اختر إجابة.",
-    saved: "تم إرسال الإجابة. في انتظار شريكك...",
-    bothAnswered: "أجاب كلاهما! انقر على التالي.",
     next: "التالي →",
     result: "لا يزال هناك الكثير لاكتشافه!",
     resultText: "هذه هي النسبة النهائية للفقاتكم.",
     again: "العب مرة أخرى",
-    invalid: "اكتب رمز الغرفة.",
-    notFound: "لم نجد هذه الغرفة.",
-    full: "هذه الغرفة تحتوي بالفعل على لاعبين.",
-    connection: "تعذر الاتصال بالغرفة.",
     getReady: "استعدوا..."
   },
-
   en: {
     title: "Between<br>Us",
     subtitle: "A little game to get to know each other, laugh together and discover how much we have in common.",
@@ -922,975 +743,272 @@ const translations = {
     waiting: "Waiting for your partner...",
     secondPlayer: "Second player",
     start: "Start game →",
-    waitingStart: "Waiting for player 2...",
     round: "Round",
     category: "❤️ Get to know me",
     choose: "Choose an answer.",
-    saved: "Answer sent. Waiting for your partner...",
-    bothAnswered: "Both answered! Click Next.",
     next: "Next →",
     result: "There is still so much to discover!",
     resultText: "This is your final compatibility score.",
     again: "Play again",
-    invalid: "Enter a room code.",
-    notFound: "We couldn't find that room.",
-    full: "This room already has two players.",
-    connection: "We couldn't connect to the room.",
     getReady: "Get ready..."
   }
-
 };
 
-
-/* =========================================================
-   PREGUNTAS
-   ========================================================= */
-
 const questions = [
-
-  {
-    es: "¿Cuál elegirías para una cita perfecta?",
-    ar: "ماذا ستختار لموعد مثالي؟",
-    en: "What would you choose for a perfect date?",
-    answers: [
-      ["Una noche viendo películas","ليلة لمشاهدة الأفلام","A night watching movies"],
-      ["Una cena elegante","عشاء فاخر","A fancy dinner"],
-      ["Una caminata por la playa","نزهة على الشاطئ","A walk on the beach"],
-      ["Una aventura espontánea","مغامرة عفوية","A spontaneous adventure"]
-    ]
-  },
-
-  {
-    es: "¿Qué te hace sentir más querido/a?",
-    ar: "ما الذي يجعلك تشعر بأنك محبوب أكثر؟",
-    en: "What makes you feel most loved?",
-    answers: [
-      ["Palabras bonitas","كلمات جميلة","Sweet words"],
-      ["Tiempo juntos","قضاء الوقت معًا","Quality time"],
-      ["Pequeños detalles","التفاصيل الصغيرة","Little gestures"],
-      ["Abrazos y cariño","العناق والمودة","Hugs and affection"]
-    ]
-  },
-
-  {
-    es: "Si pudiéramos viajar mañana, ¿a dónde iríamos?",
-    ar: "لو كان بإمكاننا السفر غدًا، إلى أين سنذهب؟",
-    en: "If we could travel tomorrow, where would we go?",
-    answers: [
-      ["Japón 🇯🇵","اليابان 🇯🇵","Japan 🇯🇵"],
-      ["Italia 🇮🇹","إيطاليا 🇮🇹","Italy 🇮🇹"],
-      ["Una isla tropical 🏝️","جزيرة استوائية 🏝️","A tropical island 🏝️"],
-      ["Un lugar completamente nuevo 🌎","مكان جديد تمامًا 🌎","Somewhere completely new 🌎"]
-    ]
-  },
-
-  {
-    es: "¿Qué plan suena mejor un viernes por la noche?",
-    ar: "ما الخطة الأفضل ليوم الجمعة مساءً؟",
-    en: "What sounds like the best Friday night plan?",
-    answers: [
-      ["Quedarnos hablando","البقاء والتحدث معًا","Staying up talking"],
-      ["Salir a comer","الخروج لتناول الطعام","Going out to eat"],
-      ["Jugar algo juntos","اللعب معًا","Playing something together"],
-      ["Ver una película","مشاهدة فيلم","Watching a movie"]
-    ]
-  },
-
-  {
-    es: "¿Qué prefieres recibir?",
-    ar: "ماذا تفضل أن تتلقى؟",
-    en: "What would you rather receive?",
-    answers: [
-      ["Una carta 💌","رسالة 💌","A letter 💌"],
-      ["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],
-      ["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],
-      ["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]
-    ]
-  },
-
-  {
-    es: "¿Qué describe mejor una relación ideal?",
-    ar: "ما الوصف الأفضل للعلاقة المثالية؟",
-    en: "What best describes an ideal relationship?",
-    answers: [
-      ["Tranquila","هادئة","Peaceful"],
-      ["Divertida","ممتعة","Fun"],
-      ["Aventurera","مليئة بالمغامرات","Adventurous"],
-      ["Profunda","عميقة","Deep"]
-    ]
-  },
-
-  {
-    es: "¿Qué pequeño gesto puede mejorar tu día?",
-    ar: "ما التصرف الصغير الذي يمكن أن يجعل يومك أفضل؟",
-    en: "What small gesture can make your day better?",
-    answers: [
-      ["Un mensaje","رسالة","A message"],
-      ["Un abrazo","عناق","A hug"],
-      ["Que me escuchen","أن يستمع إليّ أحد","Being listened to"],
-      ["Una sorpresa","مفاجأة","A surprise"]
-    ]
-  },
-
-  {
-    es: "¿Qué escogerías para una tarde juntos?",
-    ar: "ماذا ستختار لقضاء فترة بعد الظهر معًا؟",
-    en: "What would you choose for an afternoon together?",
-    answers: [
-      ["Cocinar","الطبخ","Cooking"],
-      ["Pasear","التنزه","Going for a walk"],
-      ["Jugar","اللعب","Playing"],
-      ["Dormir","النوم","Sleeping"]
-    ]
-  },
-
-  {
-    es: "¿Qué te gustaría hacer conmigo algún día?",
-    ar: "ماذا تود أن تفعل معي يومًا ما؟",
-    en: "What would you like to do with me someday?",
-    answers: [
-      ["Viajar","السفر","Travel"],
-      ["Aprender algo juntos","تعلم شيء معًا","Learn something together"],
-      ["Crear un proyecto","إنشاء مشروع","Create a project"],
-      ["Vivir una aventura","عيش مغامرة","Live an adventure"]
-    ]
-  },
-
-  {
-    es: "¿Qué valoras más en una persona?",
-    ar: "ما الشيء الذي تقدّره أكثر في الشخص؟",
-    en: "What do you value most in a person?",
-    answers: [
-      ["Honestidad","الصدق","Honesty"],
-      ["Lealtad","الوفاء","Loyalty"],
-      ["Humor","روح الدعابة","Humor"],
-      ["Comprensión","التفهم","Understanding"]
-    ]
-  }
-
+  { es: "¿Cuál elegirías para una cita perfecta?", ar: "ماذا ستختار لموعد مثالي؟", en: "What would you choose for a perfect date?", answers: [["Una noche viendo películas","ليلة لمشاهدة الأفلام","A night watching movies"],["Una cena elegante","عشاء فاخر","A fancy dinner"],["Una caminata por la playa","نزهة على الشاطئ","A walk on the beach"],["Una aventura espontánea","مغامرة عفوية","A spontaneous adventure"]] },
+  { es: "¿Qué te hace sentir más querido/a?", ar: "ما الذي يجعلك تشعر بأنك محبوب أكثر؟", en: "What makes you feel most loved?", answers: [["Palabras bonitas","كلمات جميلة","Sweet words"],["Tiempo juntos","قضاء الوقت معًا","Quality time"],["Pequeños detalles","التفاصيل الصغيرة","Little gestures"],["Abrazos y cariño","العناق والمودة","Hugs and affection"]] },
+  { es: "Si pudiéramos viajar mañana, ¿a dónde iríamos?", ar: "لو كان بإمكاننا السفر غدًا، إلى أين سنذهب؟", en: "If we could travel tomorrow, where would we go?", answers: [["Japón 🇯🇵","اليابان 🇯🇵","Japan 🇯🇵"],["Italia 🇮🇹","إيطاليا 🇮🇹","Italy 🇮🇹"],["Una isla tropical 🏝️","جزيرة استوائية 🏝️","A tropical island 🏝️"],["Un lugar completamente nuevo 🌎","مكان جديد تمامًا 🌎","Somewhere completely new 🌎"]] },
+  { es: "¿Qué plan suena mejor un viernes por la noche?", ar: "ما الخطة الأفضل ليوم الجمعة مساءً؟", en: "What sounds like the best Friday night plan?", answers: [["Quedarnos hablando","البقاء والتحدث معًا","Staying up talking"],["Salir a comer","الخروج لتناول الطعام","Going out to eat"],["Jugar algo juntos","اللعب معًا","Playing something together"],["Ver una película","مشاهدة فيلم","Watching a movie"]] },
+  { es: "¿Qué prefieres recibir?", ar: "ماذا تفضل أن تتلقى؟", en: "What would you rather receive?", answers: [["Una carta 💌","رسالة 💌","A letter 💌"],["Un regalo inesperado 🎁","هدية مفاجئة 🎁","An unexpected gift 🎁"],["Una foto juntos 📸","صورة لنا معًا 📸","A photo together 📸"],["Una experiencia ✈️","تجربة مميزة ✈️","An experience"]] },
+  { es: "¿Qué describe mejor una relación ideal?", ar: "ما الوصف الأفضل للعلاقة المثالية؟", en: "What best describes an ideal relationship?", answers: [["Tranquila","هادئة","Peaceful"],["Divertida","ممتعة","Fun"],["Aventurera","مليئة بالمغامرات","Adventurous"],["Profunda","عميقة","Deep"]] },
+  { es: "¿Qué pequeño gesto puede mejorar tu día?", ar: "ما التصرف الصغير الذي يمكن أن يجعل يومك أفضل؟", en: "What small gesture can make your day better?", answers: [["Un mensaje","رسالة","A message"],["Un abrazo","عناق","A hug"],["Que me escuchen","أن يستمع إليّ أحد","Being listened to"],["Una sorpresa","مفاجأة","A surprise"]] },
+  { es: "¿Qué escogerías para una tarde juntos?", ar: "ماذا ستختار لقضاء فترة بعد الظهر معًا؟", en: "What would you choose for an afternoon together?", answers: [["Cocinar","الطبخ","Cooking"],["Pasear","التنزه","Going for a walk"],["Jugar","اللعب","Playing"],["Dormir","النوم","Sleeping"]] },
+  { es: "¿Qué te gustaría hacer conmigo algún día?", ar: "ماذا تود أن تفعل معي يومًا ما؟", en: "What would you like to do with me someday?", answers: [["Viajar","السفر","Travel"],["Aprender algo juntos","تعلم شيء معًا","Learn something together"],["Crear un proyecto","إنشاء مشروع","Create a project"],["Vivir una aventura","عيش مغامرة","Live an adventure"]] },
+  { es: "¿Qué valoras más en una persona?", ar: "ما الشيء الذي تقدّره أكثر في الشخص؟", en: "What do you value most in a person?", answers: [["Honestidad","الصدق","Honesty"],["Lealtad","الوفاء","Loyalty"],["Humor","روح الدعابة","Humor"],["Comprensión","التفهم","Understanding"]] }
 ];
-
 
 /* =========================================================
    IDIOMA
    ========================================================= */
 
-document
-  .getElementById("language")
-  .addEventListener("change", function() {
-
-    currentLanguage = this.value;
-
-    updateInterface();
-
-  });
-
+document.getElementById("language").addEventListener("change", function() {
+  currentLanguage = this.value;
+  updateInterface();
+});
 
 function updateInterface() {
-
   const t = translations[currentLanguage];
+  document.documentElement.lang = currentLanguage;
+  document.documentElement.dir = currentLanguage === "ar" ? "rtl" : "ltr";
 
-  document.documentElement.lang =
-    currentLanguage;
-
-  document.documentElement.dir =
-    currentLanguage === "ar" ? "rtl" : "ltr";
-
-  document.getElementById("title").innerHTML =
-    t.title;
-
-  document.getElementById("subtitle").textContent =
-    t.subtitle;
-
-  document.getElementById("setupTitle").textContent =
-    t.setupTitle;
-
-  document.getElementById("nameLabel").textContent =
-    t.nameLabel;
-
-  document.getElementById("languageLabel").textContent =
-    t.languageLabel;
-
-  document.getElementById("createButton").textContent =
-    t.create;
-
-  document.getElementById("joinTitle").textContent =
-    t.joinTitle;
-
-  document.getElementById("joinButton").textContent =
-    t.join;
-
-  document.getElementById("lobbyTitle").textContent =
-    t.lobby;
-
-  document.getElementById("shareText").textContent =
-    t.share;
-
-  document.getElementById("waiting").innerHTML =
-    `<span class="dot"></span>${t.waiting}`;
-
-  updateStartButton();
-
-  if (!document.getElementById("game").classList.contains("hidden")) {
-    renderQuestion();
-  }
-
+  document.getElementById("title").innerHTML = t.title;
+  document.getElementById("subtitle").textContent = t.subtitle;
+  document.getElementById("setupTitle").textContent = t.setupTitle;
+  document.getElementById("nameLabel").textContent = t.nameLabel;
+  document.getElementById("languageLabel").textContent = t.languageLabel;
+  document.getElementById("createButton").textContent = t.create;
+  document.getElementById("joinTitle").textContent = t.joinTitle;
+  document.getElementById("joinButton").textContent = t.join;
+  document.getElementById("lobbyTitle").textContent = t.lobby;
+  document.getElementById("shareText").textContent = t.share;
+  document.getElementById("waiting").innerHTML = `<span class="dot"></span>${t.waiting}`;
 }
 
-
 /* =========================================================
-   CREAR SALA
+   SALAS & CONEXIÓN
    ========================================================= */
 
 async function createRoom() {
-
   clearMessages();
-
-  const name =
-    document.getElementById("name").value.trim();
-
-  currentLanguage =
-    document.getElementById("language").value;
-
-  if (!name) {
-
-    showError(
-      currentLanguage === "ar"
-        ? "اكتب اسمك أولاً."
-        : currentLanguage === "en"
-          ? "Enter your name first."
-          : "Escribe tu nombre primero."
-    );
-
-    return;
-  }
+  const name = document.getElementById("name").value.trim();
+  currentLanguage = document.getElementById("language").value;
+  if (!name) return showError("Escribe tu nombre primero.");
 
   const code = generateRoomCode();
+  const { data: room, error } = await supabaseClient.from("rooms").insert({ code, status: "waiting" }).select().single();
+  if (error) return showError("Error de conexión.");
 
-  const { data: room, error } =
-    await supabaseClient
-      .from("rooms")
-      .insert({
-        code: code,
-        status: "waiting"
-      })
-      .select()
-      .single();
-
-  if (error) {
-
-    console.error(error);
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-    return;
-  }
-
-  const { data: player, error: playerError } =
-    await supabaseClient
-      .from("players")
-      .insert({
-        room_id: room.id,
-        name: name,
-        language: currentLanguage
-      })
-      .select()
-      .single();
-
-  if (playerError) {
-
-    console.error(playerError);
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-    return;
-  }
+  const { data: player, error: pErr } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage }).select().single();
+  if (pErr) return showError("Error de conexión.");
 
   currentRoom = room;
   currentPlayer = player;
 
-  document.getElementById("playerOne").textContent =
-    name;
-
-  document.getElementById("playerOneLang").textContent =
-    getLanguageName(currentLanguage);
-
-  document.getElementById("player1Flag").textContent =
-    getFlag(currentLanguage);
-
-  document.getElementById("roomCode").textContent =
-    code;
-
-  document.getElementById("roomBadge").textContent =
-    "SALA " + code;
+  document.getElementById("playerOne").textContent = name;
+  document.getElementById("playerOneLang").textContent = getLanguageName(currentLanguage);
+  document.getElementById("player1Flag").textContent = getFlag(currentLanguage);
+  document.getElementById("roomCode").textContent = code;
+  document.getElementById("roomBadge").textContent = "SALA " + code;
 
   showOnly("lobby");
-
   subscribeToRoom(room.id);
   subscribeToPlayers(room.id);
-  subscribeToAnswers(room.id);
-
   await loadPlayers(room.id);
-
 }
-
-
-/* =========================================================
-   UNIRSE
-   ========================================================= */
 
 async function joinRoom() {
-
   clearMessages();
+  const name = document.getElementById("name").value.trim();
+  const code = document.getElementById("joinCode").value.trim().toUpperCase();
+  currentLanguage = document.getElementById("language").value;
+  if (!name || !code) return showError("Completa todos los campos.");
 
-  const name =
-    document.getElementById("name").value.trim();
+  const { data: room } = await supabaseClient.from("rooms").select("*").eq("code", code).maybeSingle();
+  if (!room) return showError("No encontramos esa sala.");
 
-  const code =
-    document.getElementById("joinCode").value.trim().toUpperCase();
+  const { data: players } = await supabaseClient.from("players").select("*").eq("room_id", room.id);
+  if (players.length >= 2) return showError("La sala está llena.");
 
-  currentLanguage =
-    document.getElementById("language").value;
-
-  if (!name) {
-
-    showError(
-      currentLanguage === "ar"
-        ? "اكتب اسمك أولاً."
-        : currentLanguage === "en"
-          ? "Enter your name first."
-          : "Escribe tu nombre primero."
-    );
-
-    return;
-  }
-
-  if (!code) {
-
-    showError(
-      translations[currentLanguage].invalid
-    );
-
-    return;
-  }
-
-  const { data: room, error } =
-    await supabaseClient
-      .from("rooms")
-      .select("*")
-      .eq("code", code)
-      .maybeSingle();
-
-  if (error) {
-
-    console.error(error);
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-    return;
-  }
-
-  if (!room) {
-
-    showError(
-      translations[currentLanguage].notFound
-    );
-
-    return;
-  }
-
-  const { data: existingPlayers, error: playersError } =
-    await supabaseClient
-      .from("players")
-      .select("*")
-      .eq("room_id", room.id);
-
-  if (playersError) {
-
-    console.error(playersError);
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-    return;
-  }
-
-  if (existingPlayers.length >= 2) {
-
-    showError(
-      translations[currentLanguage].full
-    );
-
-    return;
-  }
-
-  const { data: player, error: playerError } =
-    await supabaseClient
-      .from("players")
-      .insert({
-        room_id: room.id,
-        name: name,
-        language: currentLanguage
-      })
-      .select()
-      .single();
-
-  if (playerError) {
-
-    console.error(playerError);
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-    return;
-  }
+  const { data: player } = await supabaseClient.from("players").insert({ room_id: room.id, name, language: currentLanguage }).select().single();
 
   currentRoom = room;
   currentPlayer = player;
 
-  document.getElementById("roomCode").textContent =
-    room.code;
-
-  document.getElementById("roomBadge").textContent =
-    "SALA " + room.code;
+  document.getElementById("roomCode").textContent = room.code;
+  document.getElementById("roomBadge").textContent = "SALA " + room.code;
 
   showOnly("lobby");
-
   subscribeToRoom(room.id);
   subscribeToPlayers(room.id);
-  subscribeToAnswers(room.id);
-
   await loadPlayers(room.id);
-
 }
-
-
-/* =========================================================
-   CÓDIGO
-   ========================================================= */
 
 function generateRoomCode() {
-
-  const characters =
-    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-
-  let result = "";
-
-  for (let i = 0; i < 5; i++) {
-
-    result +=
-      characters[
-        Math.floor(
-          Math.random() * characters.length
-        )
-      ];
-
-  }
-
-  return result;
-
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let res = "";
+  for (let i = 0; i < 5; i++) res += chars[Math.floor(Math.random() * chars.length)];
+  return res;
 }
-
-
-/* =========================================================
-   JUGADORES
-   ========================================================= */
 
 async function loadPlayers(roomId) {
-
-  const { data: players, error } =
-    await supabaseClient
-      .from("players")
-      .select("*")
-      .eq("room_id", roomId)
-      .order("joined_at", {
-        ascending: true
-      });
-
-  if (error) {
-
-    console.error(error);
-
-    return;
-  }
-
+  const { data: players } = await supabaseClient.from("players").select("*").eq("room_id", roomId).order("joined_at", { ascending: true });
   updatePlayers(players);
-
 }
 
-
 function updatePlayers(players) {
-
-  if (!players || players.length === 0) {
-    return;
-  }
-
+  if (!players || players.length === 0) return;
   const player1 = players[0];
   const player2 = players[1];
 
-  document.getElementById("playerOne").textContent =
-    player1.name;
-
-  document.getElementById("playerOneLang").textContent =
-    getLanguageName(player1.language);
-
-  document.getElementById("player1Flag").textContent =
-    getFlag(player1.language);
+  document.getElementById("playerOne").textContent = player1.name;
+  document.getElementById("playerOneLang").textContent = getLanguageName(player1.language);
+  document.getElementById("player1Flag").textContent = getFlag(player1.language);
 
   if (player2) {
+    document.getElementById("playerTwo").textContent = player2.name;
+    document.getElementById("playerTwoLang").textContent = getLanguageName(player2.language);
+    document.getElementById("player2Flag").textContent = getFlag(player2.language);
+    document.getElementById("waiting").innerHTML = "❤️ ¡Tu pareja se unió!";
 
-    document.getElementById("playerTwo").textContent =
-      player2.name;
-
-    document.getElementById("playerTwoLang").textContent =
-      getLanguageName(player2.language);
-
-    document.getElementById("player2Flag").textContent =
-      getFlag(player2.language);
-
-    document.getElementById("waiting").innerHTML =
-      "❤️ " +
-      (
-        currentLanguage === "ar"
-          ? "انضم شريكك!"
-          : currentLanguage === "en"
-            ? "Your partner joined!"
-            : "¡Tu pareja se unió!"
-      );
-
-    const startButton =
-      document.getElementById("startButton");
-
-    startButton.disabled = false;
-
-    startButton.textContent =
-      translations[currentLanguage].start;
+    const btn = document.getElementById("startButton");
+    btn.disabled = false;
+    btn.textContent = translations[currentLanguage].start;
   }
-
 }
-
-
-/* =========================================================
-   REALTIME JUGADORES Y RESPUESTAS
-   ========================================================= */
 
 function subscribeToPlayers(roomId) {
-
-  if (playerSubscription) {
-
-    supabaseClient.removeChannel(
-      playerSubscription
-    );
-
-  }
-
-  playerSubscription =
-    supabaseClient
-      .channel("players-" + roomId)
-
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "players",
-          filter: "room_id=eq." + roomId
-        },
-        async () => {
-
-          await loadPlayers(roomId);
-
-        }
-      )
-
-      .subscribe();
-
-}
-
-function subscribeToAnswers(roomId) {
-
-  if (answersSubscription) {
-    supabaseClient.removeChannel(answersSubscription);
-  }
-
-  answersSubscription = supabaseClient
-    .channel("answers-" + roomId)
-    .on(
-      "postgres_changes",
-      {
-        event: "*", // Escucha INSERT, UPDATE o cualquier cambio
-        schema: "public",
-        table: "answers",
-        filter: "room_id=eq." + roomId
-      },
-      async () => {
-        await checkBothAnswered();
-      }
-    )
+  if (playerSubscription) supabaseClient.removeChannel(playerSubscription);
+  playerSubscription = supabaseClient.channel("players-" + roomId)
+    .on("postgres_changes", { event: "*", schema: "public", table: "players", filter: "room_id=eq." + roomId }, async () => { await loadPlayers(roomId); })
     .subscribe();
-
 }
-
-
-/* =========================================================
-   REALTIME SALA
-   ========================================================= */
 
 function subscribeToRoom(roomId) {
-
-  if (roomSubscription) {
-
-    supabaseClient.removeChannel(
-      roomSubscription
-    );
-
-  }
-
-  roomSubscription =
-    supabaseClient
-      .channel("room-" + roomId)
-
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "rooms",
-          filter: "id=eq." + roomId
-        },
-        payload => {
-
-          currentRoom = payload.new;
-
-          if (
-            payload.new.status === "starting"
-          ) {
-
-            startCountdown();
-
-          }
-
-        }
-      )
-
-      .subscribe();
-
+  if (roomSubscription) supabaseClient.removeChannel(roomSubscription);
+  roomSubscription = supabaseClient.channel("room-" + roomId)
+    .on("postgres_changes", { event: "UPDATE", schema: "public", table: "rooms", filter: "id=eq." + roomId }, payload => {
+      currentRoom = payload.new;
+      if (payload.new.status === "starting") startCountdown();
+    })
+    .subscribe();
 }
 
-
 /* =========================================================
-   INICIO DE PARTIDA
+   INICIO & JUEGO LOCAL
    ========================================================= */
 
 async function startGame() {
-
-  if (!currentRoom) {
-
-    showError(
-      "No hay una sala conectada."
-    );
-
-    return;
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("rooms")
-      .update({
-        status: "starting"
-      })
-      .eq("id", currentRoom.id);
-
-  if (error) {
-
-    console.error(
-      "Error iniciando partida:",
-      error
-    );
-
-    showError(
-      translations[currentLanguage].connection
-    );
-
-  }
-
+  if (!currentRoom) return;
+  await supabaseClient.from("rooms").update({ status: "starting" }).eq("id", currentRoom.id);
 }
 
-
-/* =========================================================
-   CONTADOR SINCRONIZADO
-   ========================================================= */
-
 function startCountdown() {
-
-  if (countdownRunning) {
-    return;
-  }
-
-  countdownRunning = true;
-
-  const screen =
-    document.createElement("div");
-
-  screen.id =
-    "countdownScreen";
-
-
-  const heart =
-    document.createElement("div");
-
-  heart.id =
-    "countdownHeart";
-
-  heart.textContent =
-    "💗";
-
-
-  const number =
-    document.createElement("div");
-
-  number.id =
-    "countdownNumber";
-
-  number.textContent =
-    "5";
-
-
-  const text =
-    document.createElement("div");
-
-  text.id =
-    "countdownText";
-
-  text.textContent =
-    translations[currentLanguage].getReady;
-
-
-  screen.appendChild(heart);
-  screen.appendChild(number);
-  screen.appendChild(text);
-
+  const screen = document.createElement("div");
+  screen.id = "countdownScreen";
+  screen.innerHTML = `<div id="countdownHeart">💗</div><div id="countdownNumber">5</div><div id="countdownText">${translations[currentLanguage].getReady}</div>`;
   document.body.appendChild(screen);
 
   let count = 5;
-
-  const interval =
-    setInterval(() => {
-
-      count--;
-
-      if (count >= 0) {
-
-        number.textContent =
-          count;
-
-        number.style.animation = "none";
-
-        void number.offsetWidth;
-
-        number.style.animation =
-          "numberPop .35s ease";
-
+  const interval = setInterval(() => {
+    count--;
+    if (count >= 0) {
+      const num = document.getElementById("countdownNumber");
+      if (num) {
+        num.textContent = count;
+        num.style.animation = "none";
+        void num.offsetWidth;
+        num.style.animation = "numberPop .35s ease";
       }
-
-      if (count === 0) {
-
-        clearInterval(interval);
-
-        setTimeout(() => {
-
-          screen.remove();
-
-          countdownRunning = false;
-
-          currentQuestion = 0;
-
-          showOnly("game");
-
-          renderQuestion();
-
-        }, 500);
-
-      }
-
-    }, 1000);
-
+    }
+    if (count === 0) {
+      clearInterval(interval);
+      setTimeout(() => {
+        screen.remove();
+        currentQuestion = 0;
+        showOnly("game");
+        renderQuestion();
+      }, 500);
+    }
+  }, 1000);
 }
 
-
-/* =========================================================
-   PREGUNTAS Y VERIFICACIÓN EN TIEMPO REAL
-   ========================================================= */
-
 function renderQuestion() {
-
   selectedAnswer = null;
+  const q = questions[currentQuestion];
 
-  const q =
-    questions[currentQuestion];
+  document.getElementById("question").textContent = q[currentLanguage];
+  document.getElementById("round").textContent = `${translations[currentLanguage].round} ${currentQuestion + 1} / 10`;
+  document.getElementById("category").textContent = translations[currentLanguage].category;
+  document.getElementById("bar").style.width = ((currentQuestion + 1) * 10) + "%";
 
-  document.getElementById("question").textContent =
-    q[currentLanguage];
-
-  document.getElementById("round").textContent =
-    translations[currentLanguage].round +
-    " " +
-    (currentQuestion + 1) +
-    " / 10";
-
-  document.getElementById("category").textContent =
-    translations[currentLanguage].category;
-
-  document.getElementById("bar").style.width =
-    ((currentQuestion + 1) * 10) +
-    "%";
-
-  const container =
-    document.getElementById("answers");
-
+  const container = document.getElementById("answers");
   container.innerHTML = "";
 
-  q.answers.forEach(
-    (answer, index) => {
+  q.answers.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.innerHTML = `<small>${String.fromCharCode(65 + index)}</small>${answer[currentLanguage === "ar" ? 1 : currentLanguage === "en" ? 2 : 0]}`;
 
-      const button =
-        document.createElement("button");
+    button.onclick = () => {
+      document.querySelectorAll(".answer").forEach(btn => btn.classList.remove("selected"));
+      button.classList.add("selected");
+      selectedAnswer = index;
+      document.getElementById("next").disabled = false;
+    };
 
-      button.className =
-        "answer";
-
-      button.innerHTML =
-        "<small>" +
-        String.fromCharCode(65 + index) +
-        "</small>" +
-        answer[
-          currentLanguage === "ar"
-            ? 1
-            : currentLanguage === "en"
-              ? 2
-              : 0
-        ];
-
-      button.onclick = () => {
-
-        if (selectedAnswer !== null) return;
-
-        document
-          .querySelectorAll(".answer")
-          .forEach(
-            element =>
-              element.classList.remove(
-                "selected"
-              )
-          );
-
-        button.classList.add("selected");
-
-        selectedAnswer = index;
-
-        document.querySelectorAll(".answer").forEach(btn => btn.style.pointerEvents = "none");
-
-        document.getElementById("status").textContent =
-          translations[currentLanguage].saved;
-
-        saveAnswerToDatabase(index);
-
-      };
-
-      container.appendChild(button);
-
-    }
-  );
+    container.appendChild(button);
+  });
 
   document.getElementById("next").disabled = true;
   document.getElementById("status").textContent = translations[currentLanguage].choose;
-
-  checkBothAnswered();
 }
-
-async function saveAnswerToDatabase(ansIndex) {
-  if (!currentRoom || !currentPlayer) return;
-
-  const qUUID = getQuestionUUID(currentQuestion);
-
-  const { error } = await supabaseClient
-    .from("answers")
-    .insert({
-      room_id: currentRoom.id,
-      player_id: currentPlayer.id,
-      question_id: qUUID,
-      original_text: String(ansIndex),
-      original_language: currentLanguage || "es"
-    });
-
-  if (error) {
-    console.error("Error guardando respuesta:", error);
-    return;
-  }
-
-  await checkBothAnswered();
-}
-
-async function checkBothAnswered() {
-  if (!currentRoom) return;
-
-  const qUUID = getQuestionUUID(currentQuestion);
-
-  const { data: currentAnswers, error } = await supabaseClient
-    .from("answers")
-    .select("player_id")
-    .eq("room_id", currentRoom.id)
-    .eq("question_id", qUUID);
-
-  if (error) {
-    console.error("Error consultando respuestas:", error);
-    return;
-  }
-
-  if (currentAnswers && currentAnswers.length >= 2) {
-    document.getElementById("next").disabled = false;
-    document.getElementById("status").textContent = translations[currentLanguage].bothAnswered;
-  } else if (selectedAnswer !== null) {
-    document.getElementById("status").textContent = translations[currentLanguage].saved;
-  }
-}
-
 
 function nextQuestion() {
+  if (selectedAnswer === null) return;
+
+  // Guardar respuesta elegida
+  userAnswers[currentQuestion] = selectedAnswer;
 
   if (currentQuestion < 9) {
-
     currentQuestion++;
-
     renderQuestion();
-
   } else {
-
-    finishGame();
-
+    submitAllAnswersAndFinish();
   }
-
 }
 
 /* =========================================================
-   PANTALLA DE RESULTADOS & CÁLCULO DE RESULTADO
+   CÁLCULO Y RESULTADOS (SINOPSIS Y ESPERA DE 5 SEG)
    ========================================================= */
 
-async function finishGame() {
+async function submitAllAnswersAndFinish() {
   showOnly("result");
 
-  document.getElementById("resultTitle").textContent = "¡Calculando compatibilidad!";
-  document.getElementById("resultText").textContent = "Procesando las respuestas de ambos...";
-  document.getElementById("finalScore").textContent = "⏳";
+  // Guardar las 10 respuestas en Supabase
+  const rowsToInsert = [];
+  for (let i = 0; i < 10; i++) {
+    rowsToInsert.push({
+      room_id: currentRoom.id,
+      player_id: currentPlayer.id,
+      question_id: getQuestionUUID(i),
+      original_text: String(userAnswers[i]),
+      original_language: currentLanguage
+    });
+  }
 
+  await supabaseClient.from("answers").insert(rowsToInsert);
+
+  // Esperar 5 segundos exactos antes de hacer el cálculo
   setTimeout(async () => {
     const { data: allAnswers } = await supabaseClient
       .from("answers")
@@ -1902,6 +1020,8 @@ async function finishGame() {
     for (let i = 0; i < 10; i++) {
       const qUUID = getQuestionUUID(i);
       const qAns = allAnswers ? allAnswers.filter(a => a.question_id === qUUID) : [];
+      
+      // Si ambos han respondido esta pregunta y coinciden
       if (qAns.length >= 2) {
         if (qAns[0].original_text === qAns[1].original_text) {
           matches++;
@@ -1914,121 +1034,46 @@ async function finishGame() {
     document.getElementById("finalScore").textContent = matchPercent + "%";
     document.getElementById("resultTitle").textContent = translations[currentLanguage].result;
     document.getElementById("resultText").textContent = translations[currentLanguage].resultText;
+    document.getElementById("againButton").classList.remove("hidden");
   }, 5000);
 }
 
-
 /* =========================================================
-   UTILIDADES & VISIBILIDAD DE LA LLAVE 🔑
+   UTILIDADES & PANEL
    ========================================================= */
 
 function showOnly(section) {
-
-  [
-    "home",
-    "setup",
-    "lobby",
-    "game",
-    "result"
-  ].forEach(id => {
-
-    document
-      .getElementById(id)
-      .classList
-      .add("hidden");
-
+  ["home", "setup", "lobby", "game", "result"].forEach(id => {
+    document.getElementById(id).classList.add("hidden");
   });
-
-  document
-    .getElementById(section)
-    .classList
-    .remove("hidden");
+  document.getElementById(section).classList.remove("hidden");
 
   const keyBtn = document.getElementById("adminKeyBtn");
-  if (keyBtn) {
-    if (section === "home" || section === "setup") {
-      keyBtn.style.display = "block";
-    } else {
-      keyBtn.style.display = "none";
-    }
-  }
-
+  if (keyBtn) keyBtn.style.display = (section === "home" || section === "setup") ? "block" : "none";
 }
 
-
-function getLanguageName(language) {
-
-  if (language === "ar") {
-    return "العربية";
-  }
-
-  if (language === "en") {
-    return "English";
-  }
-
+function getLanguageName(lang) {
+  if (lang === "ar") return "العربية";
+  if (lang === "en") return "English";
   return "Español";
-
 }
 
-
-function getFlag(language) {
-
-  if (language === "ar") {
-    return "🇸🇦";
-  }
-
-  if (language === "en") {
-    return "🇬🇧";
-  }
-
+function getFlag(lang) {
+  if (lang === "ar") return "🇸🇦";
+  if (lang === "en") return "🇬🇧";
   return "🇪🇸";
-
 }
-
-
-function updateStartButton() {
-
-  const button =
-    document.getElementById("startButton");
-
-  if (!button.disabled) {
-
-    button.textContent =
-      translations[currentLanguage].start;
-
-  }
-
-}
-
 
 function clearMessages() {
-
-  document.getElementById("error").style.display =
-    "none";
-
-  document.getElementById("success").style.display =
-    "none";
-
+  document.getElementById("error").style.display = "none";
+  document.getElementById("success").style.display = "none";
 }
 
-
-function showError(message) {
-
-  const element =
-    document.getElementById("error");
-
-  element.textContent =
-    message;
-
-  element.style.display =
-    "block";
-
+function showError(msg) {
+  const el = document.getElementById("error");
+  el.textContent = msg;
+  el.style.display = "block";
 }
-
-
-/* =========================================================
-   LÓGICA DEL PANEL DE ADMINISTRACIÓN Y CONTRASEÑA 🔑
-   ========================================================= */
 
 function openAdminPrompt() {
   const pass = prompt("Acceso restringido. Escribe la contraseña de administrador:");
@@ -2049,24 +1094,16 @@ async function guardarPreguntaSupabase() {
   const qAr = document.getElementById("admin_ar").value.trim();
   const optsEs = document.getElementById("admin_opts_es").value.trim();
 
-  if (!qEs) {
-    alert("Ingresa al menos la pregunta en español.");
-    return;
-  }
+  if (!qEs) return alert("Ingresa al menos la pregunta en español.");
 
-  const { data, error } = await supabaseClient
-    .from("questions")
-    .insert([
-      {
-        question_es: qEs,
-        question_en: qEn,
-        question_ar: qAr,
-        options_es: optsEs
-      }
-    ]);
+  const { error } = await supabaseClient.from("questions").insert([{
+    question_es: qEs,
+    question_en: qEn,
+    question_ar: qAr,
+    options_es: optsEs
+  }]);
 
   if (error) {
-    console.error("Error al guardar en Supabase:", error);
     alert("Hubo un error al guardar en la base de datos.");
   } else {
     alert("¡Pregunta agregada con éxito!");
@@ -2078,14 +1115,8 @@ async function guardarPreguntaSupabase() {
   }
 }
 
-
-/* =========================================================
-   INICIO
-   ========================================================= */
-
 updateInterface();
 
 </script>
-
 </body>
 </html>
