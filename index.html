@@ -409,8 +409,8 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 25px;
       border-radius: 20px;
-      width: 90%;
-      max-width: 520px;
+      width: 95%;
+      max-width: 650px;
       color: white;
       display: flex;
       flex-direction: column;
@@ -463,6 +463,53 @@
       border-color: #ff70b1;
       font-weight: bold;
     }
+
+    .questions-list-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .question-admin-item {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .question-admin-info {
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .question-admin-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-mini-btn {
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      border: none;
+      font-weight: bold;
+    }
+
+    .btn-edit { background: #3b82f6; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
 
     .modes-selector-title {
       font-size: 14px;
@@ -554,7 +601,7 @@
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
-    <p style="font-size: 12px; color: #bbb;">Selecciona el modo donde deseas agregar la pregunta:</p>
+    <p style="font-size: 12px; color: #bbb;">Selecciona el modo para ver, editar o agregar preguntas:</p>
     
     <div class="admin-mode-tabs">
       <button class="admin-tab-btn active" onclick="switchAdminMode(1, this)">❤️ Modo 1</button>
@@ -565,7 +612,18 @@
       <button class="admin-tab-btn" onclick="switchAdminMode(6, this)">🔥 Modo 6</button>
     </div>
 
-    <div style="font-size: 12px; color: #ff70b1; font-weight: bold;" id="adminCurrentModeLabel">Cargando para: Modo 1 (Conóceme)</div>
+    <div style="font-size: 12px; color: #ff70b1; font-weight: bold;" id="adminCurrentModeLabel">Preguntas del Modo 1</div>
+
+    <!-- LISTA DE PREGUNTAS DEL MODO SELECCIONADO -->
+    <div class="questions-list-box" id="adminQuestionsList">
+      <div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">Cargando preguntas...</div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 5px 0;">
+
+    <h4 id="formTitle" style="font-size: 14px; color: #fff;">➕ Agregar nueva pregunta</h4>
+    
+    <input type="hidden" id="editing_id" value="">
 
     <label>Pregunta (Español):</label>
     <input type="text" id="admin_es" placeholder="Ej: ¿Qué prefieres...?" />
@@ -576,13 +634,15 @@
     <label>Pregunta (Árabe):</label>
     <input type="text" id="admin_ar" placeholder="Ej: ماذا تفضل...؟" />
 
-    <div id="adminOptionsContainer">
-      <label>Opciones (Separadas por comas):</label>
-      <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
+    <label>Opciones (Separadas por comas):</label>
+    <input type="text" id="admin_opts_es" placeholder="Opción A, Opción B, Opción C, Opción D" />
+
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
+      <button class="button" id="saveQuestionBtn" onclick="guardarPreguntaSupabase()" style="margin-top:0;">Guardar Pregunta 💾</button>
+      <button id="cancelEditBtn" class="hidden" onclick="resetAdminForm()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; padding: 0 15px;">Cancelar</button>
     </div>
 
-    <button class="button" onclick="guardarPreguntaSupabase()">Guardar Pregunta en este Modo 💾</button>
-    <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cancelar</button>
+    <button onclick="closeAdminModal()" style="background: transparent; border: none; color: #aaa; margin-top: 5px; cursor: pointer;">Cerrar panel</button>
   </div>
 </div>
 
@@ -994,7 +1054,6 @@ async function fetchQuestionsForGame() {
     .eq("mode_id", String(selectedGameMode));
 
   if (error || !data || data.length === 0) {
-    alert("No hay preguntas registradas para este modo en Supabase. Agrega algunas usando la llave 🔑.");
     activeQuestions = [{
       question_es: "¿Cuál elegirías para una cita perfecta?",
       question_en: "What would you choose for a perfect date?",
@@ -1180,7 +1239,7 @@ function calculateFinalScore(allAnswers, totalQ) {
 }
 
 /* =========================================================
-   PANEL ADMIN & UTILIDADES
+   PANEL ADMIN & GESTIÓN DE PREGUNTAS (CRUD)
    ========================================================= */
 
 function showOnly(section) {
@@ -1220,6 +1279,7 @@ function openAdminPrompt() {
   const pass = prompt("Acceso restringido. Escribe la contraseña de administrador:");
   if (pass === "1234567.") {
     document.getElementById("adminModal").style.display = "flex";
+    loadAdminQuestionsForMode();
   } else if (pass !== null) {
     alert("Contraseña incorrecta.");
   }
@@ -1227,9 +1287,10 @@ function openAdminPrompt() {
 
 function closeAdminModal() {
   document.getElementById("adminModal").style.display = "none";
+  resetAdminForm();
 }
 
-function switchAdminMode(mode, btn) {
+async function switchAdminMode(mode, btn) {
   selectedAdminMode = mode;
   document.querySelectorAll(".admin-tab-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
@@ -1243,7 +1304,9 @@ function switchAdminMode(mode, btn) {
     6: "Modo 6 (Adivina mi respuesta)"
   };
 
-  document.getElementById("adminCurrentModeLabel").textContent = `Cargando para: ${modeNames[mode]}`;
+  document.getElementById("adminCurrentModeLabel").textContent = `Preguntas del ${modeNames[mode]}`;
+  resetAdminForm();
+  await loadAdminQuestionsForMode();
 }
 
 function selectGameMode(mode, card) {
@@ -1252,7 +1315,67 @@ function selectGameMode(mode, card) {
   card.classList.add("selected");
 }
 
+async function loadAdminQuestionsForMode() {
+  const listContainer = document.getElementById("adminQuestionsList");
+  listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">Cargando preguntas...</div>`;
+
+  const { data, error } = await supabaseClient
+    .from("questions")
+    .select("*")
+    .eq("mode_id", String(selectedAdminMode))
+    .order("id", { ascending: false });
+
+  if (error) {
+    listContainer.innerHTML = `<div style="text-align: center; color: #ffb5c4; font-size: 12px; padding: 15px;">Error al cargar preguntas.</div>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    listContainer.innerHTML = `<div style="text-align: center; color: #888; font-size: 12px; padding: 15px;">No hay preguntas creadas en este modo aún.</div>`;
+    return;
+  }
+
+  listContainer.innerHTML = "";
+  data.forEach(q => {
+    const item = document.createElement("div");
+    item.className = "question-admin-item";
+    item.innerHTML = `
+      <div class="question-admin-info" title="${q.question_es}">🇪🇸 ${q.question_es}</div>
+      <div class="question-admin-actions">
+        <button class="action-mini-btn btn-edit" onclick="editQuestion(${q.id}, '${q.question_es.replace(/'/g, "\\'")}', '${(q.question_en || '').replace(/'/g, "\\'")}', '${(q.question_ar || '').replace(/'/g, "\\'")}', '${(q.options_es || '').replace(/'/g, "\\'")}')">Editar</button>
+        <button class="action-mini-btn btn-delete" onclick="deleteQuestion(${q.id})">Eliminar</button>
+      </div>
+    `;
+    listContainer.appendChild(item);
+  });
+}
+
+function editQuestion(id, qEs, qEn, qAr, optsEs) {
+  document.getElementById("editing_id").value = id;
+  document.getElementById("admin_es").value = qEs;
+  document.getElementById("admin_en").value = qEn;
+  document.getElementById("admin_ar").value = qAr;
+  document.getElementById("admin_opts_es").value = optsEs;
+
+  document.getElementById("formTitle").textContent = "✏️ Editando pregunta ID: " + id;
+  document.getElementById("saveQuestionBtn").textContent = "Actualizar Pregunta 💾";
+  document.getElementById("cancelEditBtn").classList.remove("hidden");
+}
+
+function resetAdminForm() {
+  document.getElementById("editing_id").value = "";
+  document.getElementById("admin_es").value = "";
+  document.getElementById("admin_en").value = "";
+  document.getElementById("admin_ar").value = "";
+  document.getElementById("admin_opts_es").value = "";
+
+  document.getElementById("formTitle").textContent = "➕ Agregar nueva pregunta";
+  document.getElementById("saveQuestionBtn").textContent = "Guardar Pregunta 💾";
+  document.getElementById("cancelEditBtn").classList.add("hidden");
+}
+
 async function guardarPreguntaSupabase() {
+  const editingId = document.getElementById("editing_id").value;
   const qEs = document.getElementById("admin_es").value.trim();
   const qEn = document.getElementById("admin_en").value.trim();
   const qAr = document.getElementById("admin_ar").value.trim();
@@ -1260,23 +1383,54 @@ async function guardarPreguntaSupabase() {
 
   if (!qEs) return alert("Ingresa al menos la pregunta en español.");
 
-  const { error } = await supabaseClient.from("questions").insert([{
-    question_es: qEs,
-    question_en: qEn,
-    question_ar: qAr,
-    options_es: optsEs,
-    mode_id: String(selectedAdminMode) 
-  }]);
+  if (editingId) {
+    // Actualizar existente
+    const { error } = await supabaseClient
+      .from("questions")
+      .update({
+        question_es: qEs,
+        question_en: qEn,
+        question_ar: qAr,
+        options_es: optsEs
+      })
+      .eq("id", editingId);
 
-  if (error) {
-    alert("Hubo un error al guardar en la base de datos.");
+    if (error) {
+      alert("Hubo un error al actualizar la pregunta.");
+    } else {
+      alert("¡Pregunta actualizada con éxito!");
+      resetAdminForm();
+      loadAdminQuestionsForMode();
+    }
   } else {
-    alert(`¡Pregunta agregada con éxito para el Modo ${selectedAdminMode}!`);
-    document.getElementById("admin_es").value = "";
-    document.getElementById("admin_en").value = "";
-    document.getElementById("admin_ar").value = "";
-    document.getElementById("admin_opts_es").value = "";
-    closeAdminModal();
+    // Crear nueva
+    const { error } = await supabaseClient.from("questions").insert([{
+      question_es: qEs,
+      question_en: qEn,
+      question_ar: qAr,
+      options_es: optsEs,
+      mode_id: String(selectedAdminMode)
+    }]);
+
+    if (error) {
+      alert("Hubo un error al guardar en la base de datos.");
+    } else {
+      alert(`¡Pregunta agregada con éxito para el Modo ${selectedAdminMode}!`);
+      resetAdminForm();
+      loadAdminQuestionsForMode();
+    }
+  }
+}
+
+async function deleteQuestion(id) {
+  if (!confirm("¿Estás seguro de que deseas eliminar esta pregunta?")) return;
+
+  const { error } = await supabaseClient.from("questions").delete().eq("id", id);
+  if (error) {
+    alert("Error al eliminar la pregunta.");
+  } else {
+    alert("Pregunta eliminada correctamente.");
+    loadAdminQuestionsForMode();
   }
 }
 
