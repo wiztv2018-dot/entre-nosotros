@@ -667,7 +667,7 @@
 
   <nav class="nav">
     <div class="logo">
-      <span id="logoText">Entre Nosotros</span> ♡
+      <span>Entre Nosotros</span> ♡
     </div>
 
     <div class="room-badge" id="roomBadge">
@@ -736,31 +736,31 @@
       </div>
     </div>
 
-    <div class="modes-selector-title" id="chooseModeTitle">Elige el modo de juego:</div>
+    <div class="modes-selector-title">Elige el modo de juego:</div>
     <div class="modes-grid">
       <div class="mode-card selected" onclick="selectGameMode(1, this)">
-        <h4 id="m1Title">❤️ Modo 1: Conóceme</h4>
-        <p id="m1Desc">Preguntas creadas para conocernos a fondo.</p>
+        <h4>❤️ Modo 1: Conóceme</h4>
+        <p>Preguntas creadas para conocernos a fondo.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(2, this)">
-        <h4 id="m2Title">🧠 Modo 2: ¿Cuánto me conoces?</h4>
-        <p id="m2Desc">Responde lo que crees que elegirá tu pareja.</p>
+        <h4>🧠 Modo 2: ¿Cuánto me conoces?</h4>
+        <p>Responde lo que crees que elegirá tu pareja.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(3, this)">
-        <h4 id="m3Title">🌎 Modo 3: ¿Quién sabe más?</h4>
-        <p id="m3Desc">Cultura general, cine, fútbol y música.</p>
+        <h4>🌎 Modo 3: ¿Quién sabe más?</h4>
+        <p>Cultura general, cine, fútbol y música.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(4, this)">
-        <h4 id="m4Title">😂 Modo 4: ¿Qué prefieres?</h4>
-        <p id="m4Desc">Dilemas divertidos para debatir juntos.</p>
+        <h4>😂 Modo 4: ¿Qué prefieres?</h4>
+        <p>Dilemas divertidos para debatir juntos.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(5, this)">
-        <h4 id="m5Title">🥹 Modo 5: Profundas</h4>
-        <p id="m5Desc">Respuestas de texto abierto y emociones.</p>
+        <h4>🥹 Modo 5: Profundas</h4>
+        <p>Respuestas de texto abierto y emociones.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(6, this)">
-        <h4 id="m6Title">🔥 Modo 6: Adivina mi respuesta</h4>
-        <p id="m6Desc">Intenta acertar la elección exacta de tu pareja.</p>
+        <h4>🔥 Modo 6: Adivina mi respuesta</h4>
+        <p>Intenta acertar la elección exacta de tu pareja.</p>
       </div>
     </div>
 
@@ -797,22 +797,18 @@
   <section class="card hidden" id="waitingPartner">
     <div class="waiting-partner">
       <div class="sand-clock">⏳</div>
-      <h2 id="waitingPartnerTitle">¡Has terminado!</h2>
-      <p style="color:#bdb5c7; margin-top: 10px; line-height: 1.5;" id="waitingPartnerText">El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗</p>
+      <h2>¡Has terminado!</h2>
+      <p style="color:#bdb5c7; margin-top: 10px; line-height: 1.5;">El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗</p>
     </div>
   </section>
 
   <!-- RESULTADO FINAL COMPARATIVO -->
   <section class="card hidden result" id="result">
     <div class="big">💞</div>
-    <div style="font-size: 14px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;" id="matchedLabel">Coincidieron en</div>
+    <div style="font-size: 14px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Coincidieron en</div>
     <div class="score" id="finalScore" style="font-size: 55px; color: #ff70b1;">0 de 10</div>
     <h2 id="resultTitle" style="margin-top: 5px;">respuestas</h2>
     <p id="resultText" style="color:#bdb5c7; margin: 15px 0 25px; line-height: 1.5;"></p>
-
-    <!-- DESGLOSE DETALLADO DE QUÉ ELIGIÓ CADA UNO -->
-    <div id="comparisonBreakdown" style="text-align: left; margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;">
-    </div>
 
     <button class="button" onclick="location.reload()" id="againButton">
       Jugar otra vez 🔄
@@ -824,13 +820,13 @@
 <script>
 
 /* =========================================================
-   SUPABASE & ESTADO GLOBAL (CON API KEY CORREGIDA)
+   SUPABASE & ESTADO GLOBAL (CONFIGURACIÓN CORREGIDA)
    ========================================================= */
 
 const SUPABASE_URL = "https://czxfitmwbwjhureyualf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
 
-// Forzamos que la librería incluya la cabecera de la API correctamente en cada petición
+// Inicialización con el header de apikey explícito para evitar bloqueos
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: false },
   global: {
@@ -855,14 +851,11 @@ let activeQuestions = [];
 let adminQuestionsCache = []; 
 
 /* =========================================================
-   TRADUCCIONES COMPLETAS (ES, EN, AR)
+   TRADUCCIONES DE LA INTERFAZ
    ========================================================= */
 
 const translations = {
   es: {
-    logo: "Entre Nosotros",
-    newRoom: "NUEVA SALA",
-    roomPrefix: "SALA ",
     title: "Entre<br>Nosotros",
     subtitle: "Un pequeño juego para conocerse, reírse y descubrir qué tanto tienen en común.",
     setupTitle: "Crear una partida",
@@ -874,79 +867,15 @@ const translations = {
     lobby: "Tu sala está lista",
     share: "Comparte este código con tu pareja.",
     waiting: "Esperando a tu pareja...",
-    partnerJoined: "❤️ ¡Tu pareja se unió!",
     secondPlayer: "Segundo jugador",
     start: "Empezar partida →",
     round: "Ronda",
     choose: "Elige una respuesta.",
     next: "Siguiente →",
-    waitingPartnerTitle: "¡Has terminado!",
-    waitingPartnerText: "El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗",
-    matchedLabel: "Coincidieron en",
-    resultTitle: "respuestas",
-    again: "Jugar otra vez 🔄",
-    getReady: "Prepárense...",
-    chooseModeTitle: "Elige el modo de juego:",
-    modes: [
-      { t: "❤️ Modo 1: Conóceme", d: "Preguntas creadas para conocernos a fondo." },
-      { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá tu pareja." },
-      { t: "🌎 Modo 3: ¿Quién sabe más?", d: "Cultura general, cine, fútbol y música." },
-      { t: "😂 Modo 4: ¿Qué prefieres?", d: "Dilemas divertidos para debatir juntos." },
-      { t: "🥹 Modo 5: Profundas", d: "Respuestas de texto abierto y emociones." },
-      { t: "🔥 Modo 6: Adivina mi respuesta", d: "Intenta acertar la elección exacta de tu pareja." }
-    ],
-    resultsTextMatch: "¡Conexión total! Respondieron exactamente lo mismo en todo.",
-    resultsTextHigh: "¡Tienen muchísima química! Están super alineados.",
-    resultsTextNormal: "¡Buen balance! Tienen mucho por descubrir el uno del otro.",
-    matchYes: "✓ ¡Coincidieron!",
-    matchNo: "× Distinta elección"
-  },
-  en: {
-    logo: "Between Us",
-    newRoom: "NEW ROOM",
-    roomPrefix: "ROOM ",
-    title: "Between<br>Us",
-    subtitle: "A little game to get to know each other, laugh together and discover how much we have in common.",
-    setupTitle: "Create a game",
-    nameLabel: "Your name",
-    languageLabel: "Your language",
-    create: "Create room 💗",
-    joinTitle: "Already have a room code?",
-    join: "Join ❤️",
-    lobby: "Your room is ready",
-    share: "Share this code with your partner.",
-    waiting: "Waiting for your partner...",
-    partnerJoined: "❤️ Your partner has joined!",
-    secondPlayer: "Second player",
-    start: "Start game →",
-    round: "Round",
-    choose: "Choose an answer.",
-    next: "Next →",
-    waitingPartnerTitle: "You're done!",
-    waitingPartnerText: "The love of your life is answering the last questions...<br>Please wait a moment 💗",
-    matchedLabel: "You matched in",
-    resultTitle: "answers",
-    again: "Play again 🔄",
-    getReady: "Get ready...",
-    chooseModeTitle: "Choose game mode:",
-    modes: [
-      { t: "❤️ Mode 1: Get to know me", d: "Questions designed to deeply know each other." },
-      { t: "🧠 Mode 2: How well do you know me?", d: "Answer what you think your partner will choose." },
-      { t: "🌎 Mode 3: Who knows more?", d: "General culture, movies, soccer, and music." },
-      { t: "😂 Modo 4: Would you rather?", d: "Fun dilemmas to debate together." },
-      { t: "🥹 Mode 5: Deep talks", d: "Open-ended answers and deep emotions." },
-      { t: "🔥 Mode 6: Guess my answer", d: "Try to guess your partner's exact choice." }
-    ],
-    resultsTextMatch: "Total connection! You answered exactly the same to everything.",
-    resultsTextHigh: "You have amazing chemistry! You are super aligned.",
-    resultsTextNormal: "Great balance! You have a lot left to discover about each other.",
-    matchYes: "✓ You matched!",
-    matchNo: "× Different choice"
+    again: "Jugar otra vez",
+    getReady: "Prepárense..."
   },
   ar: {
-    logo: "بيننا",
-    newRoom: "غرفة جديدة",
-    roomPrefix: "غرفة ",
     title: "بيننا",
     subtitle: "لعبة صغيرة لنتعرف على بعضنا أكثر، ونضحك معًا ونكتشف مدى تشابهنا.",
     setupTitle: "إنشاء لعبة",
@@ -958,37 +887,38 @@ const translations = {
     lobby: "غرفتك جاهزة",
     share: "شارك هذا الرمز مع شريكك.",
     waiting: "في انتظار شريكك...",
-    partnerJoined: "❤️ انضم شريكك!",
     secondPlayer: "اللاعب الثاني",
     start: "ابدأ اللعبة →",
     round: "الجولة",
     choose: "اختر إجابة.",
     next: "التالي →",
-    waitingPartnerTitle: "لقد انتهيت!",
-    waitingPartnerText: "شريك حياتك يجيب على الأسئلة الأخيرة...<br>يرجى الانتظار قليلاً 💗",
-    matchedLabel: "لقد تالقتما في",
-    resultTitle: "إجابات",
-    again: "العب مرة أخرى 🔄",
-    getReady: "استعدوا...",
-    chooseModeTitle: "اختر وضع اللعبة:",
-    modes: [
-      { t: "❤️ الوضع 1: اعرفني", d: "أسئلة مصممة للتعرف على بعضنا بعمق." },
-      { t: "🧠 الوضع 2: كم تعرفني؟", d: "أجب بما تعتقد أن شريكك سيختاره." },
-      { t: "🌎 الوضع 3: من يعرف أكثر؟", d: "ثقافة عامة، أفلام، كرة قدم وموسيقى." },
-      { t: "😂 الوضع 4: ماذا تفضل؟", d: "معضلات ممتعة للنقاش معاً." },
-      { t: "🥹 الوضع 5: عميقة", d: "إجابات مفتوحة ومشاعر عميقة." },
-      { t: "🔥 الوضع 6: احزر إجابتي", d: "حاول تخمين اختيار شريكك بدقة." }
-    ],
-    resultsTextMatch: "اتصال كامل! لقد أجبتم بنفس الطريقة تماماً على كل شيء.",
-    resultsTextHigh: "لديكما كيمياء مذهلة! أنت متطابقان للغاية.",
-    resultsTextNormal: "توازن رائع! لا يزال أمامكما الكثير لتكتشفاه عن بعضكما.",
-    matchYes: "✓ تطابقتما!",
-    matchNo: "× اختيار مختلف"
+    again: "العب مرة أخرى",
+    getReady: "استعدوا..."
+  },
+  en: {
+    title: "Between<br>Us",
+    subtitle: "A little game to get to know each other, laugh together and discover how much we have in common.",
+    setupTitle: "Create a game",
+    nameLabel: "Your name",
+    languageLabel: "Your language",
+    create: "Create room 💗",
+    joinTitle: "Already have a room code?",
+    join: "Join ❤️",
+    lobby: "Your room is ready",
+    share: "Share this code with your partner.",
+    waiting: "Waiting for your partner...",
+    secondPlayer: "Second player",
+    start: "Start game →",
+    round: "Round",
+    choose: "Choose an answer.",
+    next: "Next →",
+    again: "Play again",
+    getReady: "Get ready..."
   }
 };
 
 /* =========================================================
-   ACTUALIZAR INTERFAZ IDIOMA
+   IDIOMA
    ========================================================= */
 
 document.getElementById("language").addEventListener("change", function() {
@@ -1001,7 +931,6 @@ function updateInterface() {
   document.documentElement.lang = currentLanguage;
   document.documentElement.dir = currentLanguage === "ar" ? "rtl" : "ltr";
 
-  document.getElementById("logoText").textContent = t.logo;
   document.getElementById("title").innerHTML = t.title;
   document.getElementById("subtitle").textContent = t.subtitle;
   document.getElementById("setupTitle").textContent = t.setupTitle;
@@ -1012,29 +941,7 @@ function updateInterface() {
   document.getElementById("joinButton").textContent = t.join;
   document.getElementById("lobbyTitle").textContent = t.lobby;
   document.getElementById("shareText").textContent = t.share;
-  document.getElementById("chooseModeTitle").textContent = t.chooseModeTitle;
-
-  const modeCards = document.querySelectorAll(".mode-card");
-  modeCards.forEach((card, index) => {
-    if (t.modes[index]) {
-      card.querySelector("h4").textContent = t.modes[index].t;
-      card.querySelector("p").textContent = t.modes[index].d;
-    }
-  });
-
   document.getElementById("waiting").innerHTML = `<span class="dot"></span>${t.waiting}`;
-  document.getElementById("waitingPartnerTitle").textContent = t.waitingPartnerTitle;
-  document.getElementById("waitingPartnerText").innerHTML = t.waitingPartnerText;
-  document.getElementById("matchedLabel").textContent = t.matchedLabel;
-  document.getElementById("resultTitle").textContent = t.resultTitle;
-  document.getElementById("againButton").textContent = t.again;
-
-  const startBtn = document.getElementById("startButton");
-  if (startBtn.disabled) {
-    startBtn.textContent = t.waiting;
-  } else {
-    startBtn.textContent = t.start;
-  }
 }
 
 /* =========================================================
@@ -1045,7 +952,7 @@ async function createRoom() {
   clearMessages();
   const name = document.getElementById("name").value.trim();
   currentLanguage = document.getElementById("language").value;
-  if (!name) return;
+  if (!name) return showError("Escribe tu nombre primero.");
 
   const code = generateRoomCode();
   const { data: room, error } = await supabaseClient
@@ -1071,7 +978,7 @@ async function createRoom() {
   document.getElementById("playerOneLang").textContent = getLanguageName(currentLanguage);
   document.getElementById("player1Flag").textContent = getFlag(currentLanguage);
   document.getElementById("roomCode").textContent = code;
-  document.getElementById("roomBadge").textContent = translations[currentLanguage].roomPrefix + code;
+  document.getElementById("roomBadge").textContent = "SALA " + code;
 
   showOnly("lobby");
   subscribeToRoom(room.id);
@@ -1084,7 +991,7 @@ async function joinRoom() {
   const name = document.getElementById("name").value.trim();
   const code = document.getElementById("joinCode").value.trim().toUpperCase();
   currentLanguage = document.getElementById("language").value;
-  if (!name || !code) return;
+  if (!name || !code) return showError("Completa todos los campos.");
 
   const { data: room } = await supabaseClient.from("rooms").select("*").eq("code", code).maybeSingle();
   if (!room) return showError("No encontramos esa sala.");
@@ -1099,7 +1006,7 @@ async function joinRoom() {
   selectedGameMode = room.game_mode || 1; 
 
   document.getElementById("roomCode").textContent = room.code;
-  document.getElementById("roomBadge").textContent = translations[currentLanguage].roomPrefix + room.code;
+  document.getElementById("roomBadge").textContent = "SALA " + room.code;
 
   showOnly("lobby");
   subscribeToRoom(room.id);
@@ -1132,7 +1039,7 @@ function updatePlayers(players) {
     document.getElementById("playerTwo").textContent = player2.name;
     document.getElementById("playerTwoLang").textContent = getLanguageName(player2.language);
     document.getElementById("player2Flag").textContent = getFlag(player2.language);
-    document.getElementById("waiting").innerHTML = translations[currentLanguage].partnerJoined;
+    document.getElementById("waiting").innerHTML = "❤️ ¡Tu pareja se unió!";
 
     const btn = document.getElementById("startButton");
     btn.disabled = false;
@@ -1287,7 +1194,7 @@ function nextQuestion() {
 }
 
 /* =========================================================
-   FIN DEL JUEGO & RESULTADOS SÍNCRONOS
+   FIN DEL JUEGO & RESULTADOS
    ========================================================= */
 
 async function finishMyAnswers() {
@@ -1305,7 +1212,7 @@ async function finishMyAnswers() {
     });
   }
 
-  await supabaseClient.from("answers").upsert(rows, { onConflict: "room_id,player_id,question_id" });
+  await supabaseClient.from("answers").insert(rows);
 
   if (pollInterval) clearInterval(pollInterval);
   pollInterval = setInterval(checkIfBothFinished, 1500);
@@ -1329,92 +1236,36 @@ async function checkIfBothFinished() {
 
     if (p1Count >= totalQ && p2Count >= totalQ) {
       if (pollInterval) clearInterval(pollInterval);
-      
-      const { data: playersData } = await supabaseClient
-        .from("players")
-        .select("*")
-        .eq("room_id", currentRoom.id)
-        .order("joined_at", { ascending: true });
-
-      calculateFinalScore(allAnswers, totalQ, playersData);
+      calculateFinalScore(allAnswers, totalQ);
     }
   }
 }
 
-function calculateFinalScore(allAnswers, totalQ, playersData) {
+function calculateFinalScore(allAnswers, totalQ) {
   let matches = 0;
-  const playerIds = playersData ? playersData.map(p => p.id) : [...new Set(allAnswers.map(a => a.player_id))];
-  const p1 = playersData ? playersData[0] : { name: "Jugador 1" };
-  const p2 = playersData ? playersData[1] : { name: "Jugador 2" };
-
-  const breakdownContainer = document.getElementById("comparisonBreakdown");
-  breakdownContainer.innerHTML = "";
-  const t = translations[currentLanguage];
 
   for (let i = 0; i < totalQ; i++) {
-    const qObj = activeQuestions[i % activeQuestions.length];
-    
-    let qText = qObj ? (currentLanguage === "en" ? (qObj.question_en || qObj.question_es) : currentLanguage === "ar" ? (qObj.question_ar || qObj.question_es) : qObj.question_es) : `Pregunta ${i + 1}`;
-
-    let optsRaw = qObj ? (currentLanguage === "en" ? (qObj.options_en || qObj.options_es) : currentLanguage === "ar" ? (qObj.options_ar || qObj.options_es) : qObj.options_es) : "";
-    let optsList = optsRaw ? optsRaw.split(",") : [];
-
     const qAns = allAnswers.filter(a => String(a.question_id) === String(i));
-    
-    let p1AnsText = "N/A";
-    let p2AnsText = "N/A";
 
     if (qAns.length >= 2) {
-      const p1Record = qAns.find(a => String(a.player_id) === String(playerIds[0]));
-      const p2Record = qAns.find(a => String(a.player_id) === String(playerIds[1]));
+      const p1Val = String(qAns[0].original_text).trim();
+      const p2Val = String(qAns[1].original_text).trim();
 
-      if (p1Record) {
-        let idx = parseInt(p1Record.original_text);
-        p1AnsText = !isNaN(idx) && optsList[idx] ? optsList[idx].trim() : p1Record.original_text;
-      }
-      if (p2Record) {
-        let idx = parseInt(p2Record.original_text);
-        p2AnsText = !isNaN(idx) && optsList[idx] ? optsList[idx].trim() : p2Record.original_text;
+      if (p1Val === p2Val) {
+        matches++;
       }
     }
-
-    const isMatch = p1AnsText.trim().toLowerCase() === p2AnsText.trim().toLowerCase();
-    if (isMatch) matches++;
-
-    const itemDiv = document.createElement("div");
-    itemDiv.style.background = "rgba(255,255,255,0.05)";
-    itemDiv.style.border = `1px solid ${isMatch ? "rgba(80,220,160,0.3)" : "rgba(255,255,255,0.1)"}`;
-    itemDiv.style.borderRadius = "14px";
-    itemDiv.style.padding = "12px";
-    itemDiv.style.fontSize = "12px";
-
-    itemDiv.innerHTML = `
-      <div style="font-weight: bold; color: #ff70b1; margin-bottom: 6px;">${t.round} ${i + 1}: ${qText}</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #ddd;">
-        <div style="background: rgba(0,0,0,0.2); padding: 6px 8px; border-radius: 8px;">
-          <strong style="color: #bbb;">${p1.name}:</strong> ${p1AnsText}
-        </div>
-        <div style="background: rgba(0,0,0,0.2); padding: 6px 8px; border-radius: 8px;">
-          <strong style="color: #bbb;">${p2.name}:</strong> ${p2AnsText}
-        </div>
-      </div>
-      <div style="text-align: right; margin-top: 5px; font-size: 11px; color: ${isMatch ? "#a8f5d5" : "#ffb5c4"};">
-        ${isMatch ? t.matchYes : t.matchNo}
-      </div>
-    `;
-
-    breakdownContainer.appendChild(itemDiv);
   }
 
   document.getElementById("finalScore").textContent = `${matches} de ${totalQ}`;
 
   let feedbackText = "";
   if (matches === totalQ) {
-    feedbackText = t.resultsTextMatch;
+    feedbackText = "¡Conexión total! Respondieron exactamente lo mismo en todo.";
   } else if (matches >= Math.ceil(totalQ * 0.7)) {
-    feedbackText = t.resultsTextHigh;
+    feedbackText = "¡Tienen muchísima química! Están super alineados.";
   } else {
-    feedbackText = t.resultsTextNormal;
+    feedbackText = "¡Buen balance! Tienen mucho por descubrir el uno del otro.";
   }
 
   document.getElementById("resultText").textContent = feedbackText;
@@ -1422,7 +1273,7 @@ function calculateFinalScore(allAnswers, totalQ, playersData) {
 }
 
 /* =========================================================
-   PANEL ADMIN & GESTIÓN
+   PANEL ADMIN & GESTIÓN DE PREGUNTAS
    ========================================================= */
 
 function showOnly(section) {
