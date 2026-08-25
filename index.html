@@ -327,26 +327,26 @@
     }
 
     .result .big {
-      font-size: 80px;
+      font-size: 60px;
     }
 
-    /* ESTILOS NUEVOS PARA EL DESGLOSE CARIÑOSO DE RESULTADOS */
+    /* ESTILOS DE LA TABLITA / DESGLOSE */
     .breakdown-container {
       text-align: left;
-      margin-top: 25px;
+      margin-top: 20px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      max-height: 350px;
+      gap: 12px;
+      max-height: 280px;
       overflow-y: auto;
       padding-right: 5px;
     }
 
     .breakdown-section-title {
-      font-size: 15px;
+      font-size: 13px;
       font-weight: bold;
       color: #ff70b1;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -356,8 +356,8 @@
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 14px;
-      padding: 12px 15px;
-      font-size: 13px;
+      padding: 10px 14px;
+      font-size: 12px;
     }
 
     .breakdown-item.match {
@@ -372,16 +372,16 @@
 
     .breakdown-q {
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       color: #fff;
     }
 
     .breakdown-ans {
       color: #ccc;
-      font-size: 12px;
+      font-size: 11px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
     }
 
     .waiting-partner {
@@ -651,7 +651,7 @@
 
 <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">🔑</button>
 
-<!-- PANEL ADMIN / LLAVECITA -->
+<!-- PANEL ADMIN -->
 <div id="adminModal" class="admin-modal">
   <div class="admin-content">
     <h3>Panel de Administración 🔑</h3>
@@ -770,7 +770,7 @@
     <div class="success" id="success"></div>
   </section>
 
-  <!-- SALA DE ESPERA / LOBBY CON SELECTOR DE MODOS -->
+  <!-- LOBBY -->
   <section class="card hidden" id="lobby">
     <h2 id="lobbyTitle" style="text-align:center">Tu sala está lista</h2>
     <div class="code" id="roomCode">K7X92</div>
@@ -790,31 +790,31 @@
       </div>
     </div>
 
-    <div class="modes-selector-title">Elige el modo de juego:</div>
+    <div class="modes-selector-title" id="modeSelectorTitle">Elige el modo de juego:</div>
     <div class="modes-grid">
       <div class="mode-card selected" onclick="selectGameMode(1, this)">
-        <h4>❤️ Modo 1: Conóceme</h4>
-        <p>Preguntas creadas para conocernos a fondo.</p>
+        <h4 id="m1Title">❤️ Modo 1: Conóceme</h4>
+        <p id="m1Desc">Preguntas creadas para conocernos a fondo.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(2, this)">
-        <h4>🧠 Modo 2: ¿Cuánto me conoces?</h4>
-        <p>Responde lo que crees que elegirá tu pareja.</p>
+        <h4 id="m2Title">🧠 Modo 2: ¿Cuánto me conoces?</h4>
+        <p id="m2Desc">Responde lo que crees que elegirá tu pareja.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(3, this)">
-        <h4>🌎 Modo 3: ¿Quién sabe más?</h4>
-        <p>Cultura general, cine, fútbol y música.</p>
+        <h4 id="m3Title">🌎 Modo 3: ¿Quién sabe más?</h4>
+        <p id="m3Desc">Cultura general, cine, fútbol y música.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(4, this)">
-        <h4>😂 Modo 4: ¿Qué prefieres?</h4>
-        <p>Dilemas divertidos para debatir juntos.</p>
+        <h4 id="m4Title">😂 Modo 4: ¿Qué prefieres?</h4>
+        <p id="m4Desc">Dilemas divertidos para debatir juntos.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(5, this)">
-        <h4>🥹 Modo 5: Profundas</h4>
-        <p>Respuestas de texto abierto y emociones.</p>
+        <h4 id="m5Title">🥹 Modo 5: Profundas</h4>
+        <p id="m5Desc">Respuestas de texto abierto y emociones.</p>
       </div>
       <div class="mode-card" onclick="selectGameMode(6, this)">
-        <h4>🔥 Modo 6: Adivina mi respuesta</h4>
-        <p>Intenta acertar la elección exacta de tu pareja.</p>
+        <h4 id="m6Title">🔥 Modo 6: Adivina mi respuesta</h4>
+        <p id="m6Desc">Intenta acertar la elección exacta de tu pareja.</p>
       </div>
     </div>
 
@@ -851,25 +851,23 @@
   <section class="card hidden" id="waitingPartner">
     <div class="waiting-partner">
       <div class="sand-clock">⏳</div>
-      <h2>¡Has terminado!</h2>
-      <p style="color:#bdb5c7; margin-top: 10px; line-height: 1.5;">El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗</p>
+      <h2 id="finishedTitle">¡Has terminado!</h2>
+      <p id="finishedSubtitle" style="color:#bdb5c7; margin-top: 10px; line-height: 1.5;">El amor de tu vida está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗</p>
     </div>
   </section>
 
-  <!-- RESULTADO FINAL COMPARATIVO CON SECCIÓN DE MATCH Y DIFERENCIAS -->
+  <!-- RESULTADO FINAL CON LA TABLITA TRADUCIDA -->
   <section class="card hidden result" id="result">
     <div class="big">💞</div>
-    <div style="font-size: 14px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Coincidieron en</div>
-    <div class="score" id="finalScore" style="font-size: 55px; color: #ff70b1;">0 de 10</div>
-    <h2 id="resultTitle" style="margin-top: 5px;">respuestas</h2>
-    <p id="resultText" style="color:#bdb5c7; margin: 15px 0 10px; line-height: 1.5;"></p>
+    <div id="coincidedLabel" style="font-size: 13px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 5px;">Coincidieron en</div>
+    <div class="score" id="finalScore" style="font-size: 45px; color: #ff70b1;">0 de 10</div>
+    <h2 id="resultTitle" style="margin-top: 2px; font-size: 20px;">respuestas</h2>
+    <p id="resultText" style="color:#bdb5c7; margin: 10px 0; line-height: 1.4; font-size: 13px;"></p>
 
-    <!-- Contenedor del desglose cariñoso -->
-    <div class="breakdown-container" id="breakdownContainer">
-      <!-- Se llena dinámicamente -->
-    </div>
+    <!-- Contenedor del desglose -->
+    <div class="breakdown-container" id="breakdownContainer"></div>
 
-    <button class="button" onclick="location.reload()" id="againButton" style="margin-top: 25px;">
+    <button class="button" onclick="location.reload()" id="againButton" style="margin-top: 15px; padding: 12px;">
       Jugar otra vez 🔄
     </button>
   </section>
@@ -879,13 +877,12 @@
 <script>
 
 /* =========================================================
-   SUPABASE & ESTADO GLOBAL (CONFIGURACIÓN CORREGIDA)
+   SUPABASE & ESTADO GLOBAL
    ========================================================= */
 
 const SUPABASE_URL = "https://czxfitmwbwjhureyualf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6ACZ8Hmeg7m6Pqc1H5FM1A_PFa2G7I_";
 
-// Inicialización con el header de apikey explícito para evitar bloqueos
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: false },
   global: {
@@ -911,7 +908,7 @@ let adminQuestionsCache = [];
 let cachedPlayersList = [];
 
 /* =========================================================
-   TRADUCCIONES DE LA INTERFAZ
+   TRADUCCIONES COMPLETAS DE LA INTERFAZ
    ========================================================= */
 
 const translations = {
@@ -932,8 +929,25 @@ const translations = {
     round: "Ronda",
     choose: "Elige una respuesta.",
     next: "Siguiente →",
-    again: "Jugar otra vez",
-    getReady: "Prepárense..."
+    again: "Jugar otra vez 🔄",
+    getReady: "Prepárense...",
+    finishedTitle: "¡Has terminado!",
+    finishedSubtitle: "Tu pareja está respondiendo las últimas preguntas...<br>Por favor espera un momento 💗",
+    coincidedLabel: "Coincidieron en",
+    respuestasText: "respuestas",
+    matchTitle: "💖 Sintonía perfecta (¡Match Total!)",
+    diffTitle: "🌱 Nuevas perspectivas (¡Para conocerse más!)",
+    noMatchText: "¡Ninguna coincidencia exacta esta vez, pero mucho de qué hablar!",
+    allMatchText: "¡Pensaron exactamente igual en todo el juego!",
+    modeSelectorTitle: "Elige el modo de juego:",
+    modes: [
+      { t: "❤️ Modo 1: Conóceme", d: "Preguntas creadas para conocernos a fondo." },
+      { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá tu pareja." },
+      { t: "🌎 Modo 3: ¿Quién sabe más?", d: "Cultura general, cine, fútbol y música." },
+      { t: "😂 Modo 4: ¿Qué prefieres?", d: "Dilemas divertidos para debatir juntos." },
+      { t: "🥹 Modo 5: Profundas", d: "Respuestas de texto abierto y emociones." },
+      { t: "🔥 Modo 6: Adivina mi respuesta", d: "Intenta acertar la elección exacta de tu pareja." }
+    ]
   },
   ar: {
     title: "بيننا",
@@ -952,8 +966,25 @@ const translations = {
     round: "الجولة",
     choose: "اختر إجابة.",
     next: "التالي →",
-    again: "العب مرة أخرى",
-    getReady: "استعدوا..."
+    again: "العب مرة أخرى 🔄",
+    getReady: "استعدوا...",
+    finishedTitle: "لقد انتهيت!",
+    finishedSubtitle: "شريكك يجيب على الأسئلة الأخيرة...<br>يرجى الانتظار قليلاً 💗",
+    coincidedLabel: "لقد تطابقتم في",
+    respuestasText: "إجابات",
+    matchTitle: "💖 انسجام تام (تطابق كامل!)",
+    diffTitle: "🌱 وجهات نظر جديدة (لاكتشاف المزيد!)",
+    noMatchText: "لا توجد تطابقات دقيقة هذه المرة، ولكن هناك الكثير للحديث عنه!",
+    allMatchText: "لقد فكرتم بطريقة متطابقة تماماً في كل اللعبة!",
+    modeSelectorTitle: "اختر وضع اللعبة:",
+    modes: [
+      { t: "❤️ الوضع 1: تعرف علي", d: "أسئلة مصممة للتعرف على بعضنا بعمق." },
+      { t: "🧠 الوضع 2: كم تعرفني؟", d: "أجب بما تعتقد أن شريكك سيختاره." },
+      { t: "🌎 الوضع 3: من يعرف أكثر؟", d: "ثقافة عامة، سينما، كرة قدم وموسيقى." },
+      { t: "😂 الوضع 4: ماذا تفضل؟", d: "معضلات ممتعة للنقاش معاً." },
+      { t: "🥹 الوضع 5: أسئلة عميقة", d: "إجابات ومشاعر تعبيرية." },
+      { t: "🔥 الوضع 6: احزر إجابتي", d: "حاول تخمين الاختيار الدقيق لشريكك." }
+    ]
   },
   en: {
     title: "Between<br>Us",
@@ -972,13 +1003,30 @@ const translations = {
     round: "Round",
     choose: "Choose an answer.",
     next: "Next →",
-    again: "Play again",
-    getReady: "Get ready..."
+    again: "Play again 🔄",
+    getReady: "Get ready...",
+    finishedTitle: "You're done!",
+    finishedSubtitle: "Your partner is answering the last questions...<br>Please wait a moment 💗",
+    coincidedLabel: "You matched in",
+    respuestasText: "answers",
+    matchTitle: "💖 Perfect Harmony (Total Match!)",
+    diffTitle: "🌱 New Perspectives (To discover more!)",
+    noMatchText: "No exact matches this time, but plenty to talk about!",
+    allMatchText: "You thought exactly alike throughout the entire game!",
+    modeSelectorTitle: "Choose game mode:",
+    modes: [
+      { t: "❤️ Mode 1: Get to know me", d: "Questions designed to know each other deeply." },
+      { t: "🧠 Mode 2: How well do you know me?", d: "Answer what you think your partner will choose." },
+      { t: "🌎 Mode 3: Who knows more?", d: "General culture, movies, football and music." },
+      { t: "😂 Mode 4: Would you rather?", d: "Fun dilemmas to debate together." },
+      { t: "🥹 Mode 5: Deep questions", d: "Open answers and emotions." },
+      { t: "🔥 Mode 6: Guess my answer", d: "Try to guess your partner's exact choice." }
+    ]
   }
 };
 
 /* =========================================================
-   IDIOMA
+   ACTUALIZAR INTERFAZ Y IDIOMA
    ========================================================= */
 
 document.getElementById("language").addEventListener("change", function() {
@@ -1002,6 +1050,20 @@ function updateInterface() {
   document.getElementById("lobbyTitle").textContent = t.lobby;
   document.getElementById("shareText").textContent = t.share;
   document.getElementById("waiting").innerHTML = `<span class="dot"></span>${t.waiting}`;
+  document.getElementById("modeSelectorTitle").textContent = t.modeSelectorTitle;
+  document.getElementById("finishedTitle").textContent = t.finishedTitle;
+  document.getElementById("finishedSubtitle").innerHTML = t.finishedSubtitle;
+  document.getElementById("coincidedLabel").textContent = t.coincidedLabel;
+  document.getElementById("resultTitle").textContent = t.respuestasText;
+  document.getElementById("againButton").textContent = t.again;
+
+  for (let i = 0; i < 6; i++) {
+    const cardEl = document.querySelectorAll(".mode-card")[i];
+    if (cardEl) {
+      cardEl.querySelector("h4").textContent = t.modes[i].t;
+      cardEl.querySelector("p").textContent = t.modes[i].d;
+    }
+  }
 }
 
 /* =========================================================
@@ -1130,7 +1192,7 @@ function subscribeToRoom(roomId) {
 }
 
 /* =========================================================
-   CARGA DE PREGUNTAS DESDE SUPABASE SEGÚN EL MODO
+   CARGA DE PREGUNTAS DESDE SUPABASE
    ========================================================= */
 
 async function fetchQuestionsForGame() {
@@ -1255,7 +1317,7 @@ function nextQuestion() {
 }
 
 /* =========================================================
-   FIN DEL JUEGO & RESULTADOS
+   FIN DEL JUEGO & RESULTADOS CON TRADUCCIÓN DE LA TABLITA
    ========================================================= */
 
 async function finishMyAnswers() {
@@ -1310,20 +1372,33 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
   const p1Id = playerIds[0];
   const p2Id = playerIds[1];
   
-  const p1Obj = cachedPlayersList.find(p => p.id === p1Id) || { name: "Pareja 1" };
-  const p2Obj = cachedPlayersList.find(p => p.id === p2Id) || { name: "Pareja 2" };
+  const p1Obj = cachedPlayersList.find(p => p.id === p1Id) || { name: "Player 1", language: "es" };
+  const p2Obj = cachedPlayersList.find(p => p.id === p2Id) || { name: "Player 2", language: "es" };
 
-  let matchHtml = `<div class="breakdown-section-title">💖 Sintonía perfecta (¡Match Total!)</div>`;
+  const t = translations[currentLanguage];
+
+  let matchHtml = `<div class="breakdown-section-title">${t.matchTitle}</div>`;
   let matchCount = 0;
 
-  let diffHtml = `<div class="breakdown-section-title" style="margin-top: 15px;">🌱 Nuevas perspectivas (¡Para descubrirse más!)</div>`;
+  let diffHtml = `<div class="breakdown-section-title" style="margin-top: 10px;">${t.diffTitle}</div>`;
   let diffCount = 0;
 
   for (let i = 0; i < totalQ; i++) {
     const qObj = activeQuestions[i % activeQuestions.length];
-    let qText = qObj ? (qObj.question_es || "Pregunta") : `Pregunta ${i+1}`;
     
-    let rawOpts = qObj && qObj.options_es ? qObj.options_es.split(",") : ["Op A", "Op B", "Op C", "Op D"];
+    // Extraer pregunta en el idioma actual del usuario
+    let qText = qObj ? qObj.question_es : `Question ${i+1}`;
+    let optsRaw = qObj ? qObj.options_es : "A,B,C,D";
+
+    if (currentLanguage === "en") {
+      if (qObj && qObj.question_en) qText = qObj.question_en;
+      if (qObj && qObj.options_en) optsRaw = qObj.options_en;
+    } else if (currentLanguage === "ar") {
+      if (qObj && qObj.question_ar) qText = qObj.question_ar;
+      if (qObj && qObj.options_ar) optsRaw = qObj.options_ar;
+    }
+
+    let rawOpts = optsRaw ? optsRaw.split(",") : ["Op A", "Op B", "Op C", "Op D"];
 
     const qAns = allAnswers.filter(a => String(a.question_id) === String(i));
     const ansP1 = qAns.find(a => a.player_id === p1Id);
@@ -1342,7 +1417,7 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
           <div class="breakdown-item match">
             <div class="breakdown-q">${i+1}. ${qText}</div>
             <div class="breakdown-ans">
-              <span>✨ Coincidieron en: <b>${text1}</b></span>
+              <span>✨ <b>${text1}</b></span>
             </div>
           </div>`;
       } else {
@@ -1359,8 +1434,8 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
     }
   }
 
-  if (matchCount === 0) matchHtml += `<div style="font-size: 12px; color: #aaa; padding: 5px;">¡Ninguna coincidencia exacta esta vez, pero mucho de qué hablar!</div>`;
-  if (diffCount === 0) diffHtml += `<div style="font-size: 12px; color: #aaa; padding: 5px;">¡Pensaron exactamente igual en todo el juego!</div>`;
+  if (matchCount === 0) matchHtml += `<div style="font-size: 11px; color: #aaa; padding: 4px;">${t.noMatchText}</div>`;
+  if (diffCount === 0) diffHtml += `<div style="font-size: 11px; color: #aaa; padding: 4px;">${t.allMatchText}</div>`;
 
   breakdownContainer.innerHTML = matchHtml + diffHtml;
 
@@ -1368,11 +1443,11 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
 
   let feedbackText = "";
   if (matches === totalQ) {
-    feedbackText = "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
+    feedbackText = currentLanguage === "ar" ? "اتصال كامل يا تdm! لقد أجبتم على كل شيء بشكل مطبق تماماً." : currentLanguage === "en" ? "Total connection, tdm! You answered everything exactly the same." : "¡Conexión total, tdm! Respondieron exactamente lo mismo en todo.";
   } else if (matches >= Math.ceil(totalQ * 0.7)) {
-    feedbackText = "¡Tienen muchísima química! Están super alineados.";
+    feedbackText = currentLanguage === "ar" ? "ديكم كيمياء رائعة! أنتم متطابقون جداً." : currentLanguage === "en" ? "You have great chemistry! You are super aligned." : "¡Tienen muchísima química! Están super alineados.";
   } else {
-    feedbackText = "¡Buen balance! Sus diferencias son puertas abiertas para conocerse más.";
+    feedbackText = currentLanguage === "ar" ? "توازن جميل! اختلافاتكم هي أبواب مفتوحة لتعلم المزيد عن بعضكم." : currentLanguage === "en" ? "Great balance! Your differences are open doors to know each other more." : "¡Buen balance! Sus diferencias son puertas abiertas para conocerse más.";
   }
 
   document.getElementById("resultText").textContent = feedbackText;
@@ -1380,7 +1455,7 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
 }
 
 /* =========================================================
-   PANEL ADMIN & GESTIÓN DE PREGUNTAS
+   PANEL ADMIN & GESTIÓN
    ========================================================= */
 
 function showOnly(section) {
@@ -1495,16 +1570,12 @@ async function loadAdminQuestionsForMode() {
     const editBtn = document.createElement("button");
     editBtn.className = "action-mini-btn btn-edit";
     editBtn.textContent = "Editar";
-    editBtn.onclick = function() {
-      editQuestionById(q.id);
-    };
+    editBtn.onclick = function() { editQuestionById(q.id); };
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "action-mini-btn btn-delete";
     deleteBtn.textContent = "Eliminar";
-    deleteBtn.onclick = function() {
-      deleteQuestion(q.id);
-    };
+    deleteBtn.onclick = function() { deleteQuestion(q.id); };
 
     actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
