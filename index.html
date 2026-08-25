@@ -39,6 +39,90 @@
       cursor: pointer;
     }
 
+    /* CORAZÓN FLOTANTE SUPERIOR IZQUIERDO */
+    .floating-heart-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(236, 72, 153, 0.1);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      font-size: 20px;
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: heartBeat 2s infinite ease-in-out, glowHeart 3s infinite;
+      transition: all 0.2s;
+    }
+
+    .floating-heart-btn:hover {
+      transform: scale(1.15);
+      background: rgba(236, 72, 153, 0.25);
+      border-color: rgba(236, 72, 153, 0.6);
+    }
+
+    @keyframes glowHeart {
+      0%, 100% { box-shadow: 0 0 10px rgba(236, 72, 153, 0.2); }
+      50% { box-shadow: 0 0 20px rgba(236, 72, 153, 0.5); }
+    }
+
+    /* MODAL DEL CORAZÓN ESPECIAL */
+    .heart-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(9, 6, 15, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 10002;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .heart-content {
+      background: rgba(18, 14, 28, 0.95);
+      border: 1px solid rgba(236, 72, 153, 0.3);
+      padding: 30px;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 420px;
+      color: white;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.8), 0 0 30px rgba(236, 72, 153, 0.15);
+      animation: cardPopUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .heart-content h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      color: #f472b6;
+      margin-bottom: 8px;
+    }
+
+    .heart-content p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .heart-result-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(236, 72, 153, 0.08);
+      border: 1px solid rgba(236, 72, 153, 0.25);
+      border-radius: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fce7f3;
+      line-height: 1.5;
+      display: none;
+      animation: popIn 0.3s ease;
+    }
+
     .app {
       width: min(920px, 92%);
       margin: auto;
@@ -832,6 +916,26 @@
 
 <body>
 
+<!-- CORAZÓN FLOTANTE EN EL COSTADO IZQUIERDO ARRIBA -->
+<button class="floating-heart-btn" onclick="openHeartModal()" title="Espacio especial">💖</button>
+
+<!-- MODAL DEL CORAZÓN ESPECIAL -->
+<div id="heartModal" class="heart-modal">
+  <div class="heart-content">
+    <h3>Espacio Secreto 💖</h3>
+    <p>Escribe tu nombre para descubrir algo especial:</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input type="text" id="secretNameInput" placeholder="Tu nombre..." style="text-align: center;" />
+      <button class="button" onclick="checkSecretName()" style="margin-top: 0;">Revelar mensaje ✨</button>
+    </div>
+
+    <div id="heartResultBox" class="heart-result-box"></div>
+
+    <button onclick="closeHeartModal()" style="background: transparent; border: none; color: #94a3b8; margin-top: 18px; font-size: 12px; cursor: pointer;">Cerrar ventana</button>
+  </div>
+</div>
+
 <button class="admin-btn" id="adminKeyBtn" onclick="openAdminPrompt()" title="Administración">⚙️</button>
 
 <!-- PANEL ADMIN -->
@@ -1257,6 +1361,37 @@ const translations = {
 };
 
 /* =========================================================
+   FUNCIONES DEL CORAZÓN ESPECIAL (SALMA)
+   ========================================================= */
+
+function openHeartModal() {
+  document.getElementById("heartModal").style.display = "flex";
+  document.getElementById("secretNameInput").value = "";
+  document.getElementById("heartResultBox").style.display = "none";
+}
+
+function closeHeartModal() {
+  document.getElementById("heartModal").style.display = "none";
+}
+
+function checkSecretName() {
+  const inputVal = document.getElementById("secretNameInput").value.trim().toLowerCase();
+  const resultBox = document.getElementById("heartResultBox");
+  
+  // Acepta "salma" o "سلمى" (árabe)
+  if (inputVal === "salma" || inputVal === "سلمى") {
+    resultBox.innerHTML = `✨ La mujer más hermosa del mundo, la niña más hermosa de mi corazón 💖`;
+    resultBox.style.display = "block";
+  } else if (inputVal !== "") {
+    resultBox.innerHTML = `👋 ¡Hola ${document.getElementById("secretNameInput").value}! Este espacio es muy especial para alguien en particular... ✨`;
+    resultBox.style.display = "block";
+  } else {
+    resultBox.innerHTML = `Por favor escribe un nombre ❤️`;
+    resultBox.style.display = "block";
+  }
+}
+
+/* =========================================================
    ACTUALIZAR INTERFAZ Y IDIOMA
    ========================================================= */
 
@@ -1387,7 +1522,6 @@ function updatePlayers(players) {
   const player1 = players[0];
   const player2 = players[1];
 
-  // Actualizar nombre y aplicar la lógica del corazón para "Salma"
   formatLoveBadge(player1, player2);
 
   const c1Info = countryData[player1.country || 'co'] || countryData.co;
@@ -1402,7 +1536,6 @@ function updatePlayers(players) {
     document.getElementById("player2Flag").textContent = c2Info.flag;
     document.getElementById("waiting").innerHTML = "⚡ ¡Segundo jugador conectado!";
 
-    // Calcular distancia entre países
     calculateDistance(c1Info, c2Info);
 
     const btn = document.getElementById("startButton");
@@ -1430,7 +1563,7 @@ function formatLoveBadge(p1, p2) {
   if (targetLang === "ar") loveText = "حب حياتي (El amor de mi vida)";
   else if (targetLang === "en") loveText = "The love of my life";
 
-  if (name1 === "salma" || name2 === "salma") {
+  if (name1 === "salma" || name2 === "salma" || name1 === "سلمى" || name2 === "سلمى") {
     badge.innerHTML = `💖 ${loveText} 💖`;
   } else {
     badge.innerHTML = `❤️ Conexión Especial ❤️`;
@@ -1438,8 +1571,7 @@ function formatLoveBadge(p1, p2) {
 }
 
 function calculateDistance(c1, c2) {
-  // Fórmula de Haversine para calcular distancia en km entre dos coordenadas geográficas
-  const R = 6371; // Radio de la tierra en km
+  const R = 6371; 
   const dLat = (c2.lat - c1.lat) * Math.PI / 180;
   const dLon = (c2.lon - c1.lon) * Math.PI / 180;
   const a = 
