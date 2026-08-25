@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entre Nosotros ⚡</title>
+  <title>Entre Nosotros ⚡ - TDM</title>
 
   <!-- Fuentes de Google Fonts modernas y neutras -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -149,7 +149,6 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
-      margin-bottom: 14px;
     }
 
     .field {
@@ -296,15 +295,73 @@
       line-height: 1.5;
     }
 
+    /* NUEVO: WIDGET ESPECIAL DE AMOR Y DISTANCIA EN LOBBY */
+    .love-distance-box {
+      margin: 18px 0;
+      background: rgba(236, 72, 153, 0.06);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .love-name-badge {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .distance-info {
+      font-size: 12px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .clocks-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .clock-box {
+      text-align: center;
+    }
+
+    .clock-box small {
+      display: block;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    .clock-box span {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .clock-heart {
+      font-size: 20px;
+      animation: heartBeat 1.2s infinite;
+    }
+
     .players {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .player {
-      padding: 16px;
+      padding: 14px;
       border-radius: 16px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -718,27 +775,6 @@
       line-height: 1.3;
     }
 
-    /* ESTILO PARA LA INFO DE DISTANCIA Y HORA EN EL JUEGO */
-    .distance-clock-bar {
-      background: rgba(168, 85, 247, 0.08);
-      border: 1px solid rgba(168, 85, 247, 0.25);
-      border-radius: 14px;
-      padding: 10px 16px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      font-weight: 600;
-      color: #e2e8f0;
-      animation: popIn 0.3s ease;
-    }
-
-    .distance-badge-pill {
-      color: #f472b6;
-      font-weight: 700;
-    }
-
     /* KEYFRAMES */
     @keyframes floating {
       0%, 100% { transform: translateY(0); }
@@ -750,7 +786,7 @@
     }
 
     @keyframes heartBeat {
-      50% { transform: scale(1.12); }
+      50% { transform: scale(1.15); }
     }
 
     @keyframes numberPop {
@@ -790,7 +826,6 @@
       .join-row .button { width: 100%; padding: 14px; }
       .card { padding: 24px; }
       .hero { padding-top: 20px; }
-      .distance-clock-bar { flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
 </head>
@@ -900,12 +935,14 @@
   <section class="card" id="setup">
     <h2 id="setupTitle">Crear una partida</h2>
 
-    <div class="fields">
+    <div class="fields" style="grid-template-columns: 1fr;">
       <div class="field">
         <label id="nameLabel">Tu nombre</label>
-        <input id="name" value="Carlos" placeholder="Escribe tu nombre">
+        <input id="name" value="Salma" placeholder="Escribe tu nombre">
       </div>
+    </div>
 
+    <div class="fields" style="margin-top: 14px;">
       <div class="field">
         <label id="languageLabel">Tu idioma</label>
         <select id="language">
@@ -914,20 +951,18 @@
           <option value="en">🇬🇧 English</option>
         </select>
       </div>
-    </div>
 
-    <!-- SELECCIÓN DE PAÍS -->
-    <div class="field" style="margin-bottom: 14px;">
-      <label id="countryLabel">Tu país</label>
-      <select id="country">
-        <option value="CO">🇨🇴 Colombia</option>
-        <option value="MA">🇲🇦 Marruecos</option>
-        <option value="ES">🇪🇸 España</option>
-        <option value="US">🇺🇸 Estados Unidos</option>
-        <option value="FR">🇫🇷 Francia</option>
-        <option value="JP">🇯🇵 Japón</option>
-        <option value="AR">🇦🇷 Argentina</option>
-      </select>
+      <div class="field">
+        <label id="countryLabel">Tu país / Ubicación</label>
+        <select id="country">
+          <option value="co">🇨🇴 Colombia (Bogotá/Barranquilla)</option>
+          <option value="sa">🇸🇦 Arabia Saudita (Riad)</option>
+          <option value="es">🇪🇸 España (Madrid)</option>
+          <option value="us">🇺🇸 Estados Unidos (Miami/NY)</option>
+          <option value="mx">🇲🇽 México (CDMX)</option>
+          <option value="ar_arg">🇦🇷 Argentina (Buenos Aires)</option>
+        </select>
+      </div>
     </div>
 
     <button class="button" id="createButton" onclick="createRoom()">Crear sala ✨</button>
@@ -950,10 +985,28 @@
     <div class="code" id="roomCode">K7X92</div>
     <p class="share" id="shareText">Comparte este código con la otra persona.</p>
 
+    <!-- WIDGET DE AMOR, DISTANCIA Y HORA -->
+    <div class="love-distance-box">
+      <div class="love-name-badge" id="loveBadge">❤️ El amor de mi vida</div>
+      <div class="distance-info" id="distanceInfo">🌍 Calculando distancia entre ustedes...</div>
+      
+      <div class="clocks-container">
+        <div class="clock-box">
+          <small id="p1ClockName">Tú</small>
+          <span id="p1Time">--:--</span>
+        </div>
+        <div class="clock-heart">💖</div>
+        <div class="clock-box">
+          <small id="p2ClockName">Pareja</small>
+          <span id="p2Time">--:--</span>
+        </div>
+      </div>
+    </div>
+
     <div class="players">
       <div class="player">
         <span id="player1Flag">🇨🇴</span>
-        <b id="playerOne">Carlos</b>
+        <b id="playerOne">Salma</b>
         <small id="playerOneLang">Español</small>
       </div>
 
@@ -1003,12 +1056,6 @@
 
   <!-- JUEGO -->
   <section class="card hidden" id="game">
-    <!-- BARRA DE DISTANCIA Y RELOJES EN TIEMPO REAL -->
-    <div class="distance-clock-bar" id="distanceClockBar">
-      <span id="distanceInfo">Calculando distancia...</span>
-      <span id="realtimeClocksBar">Hora de x: --:-- ❤️ Hora de y: --:--</span>
-    </div>
-
     <div class="progress">
       <div class="bar" id="bar"></div>
     </div>
@@ -1090,34 +1137,18 @@ let activeQuestions = [];
 let adminQuestionsCache = []; 
 let cachedPlayersList = [];
 
-/* =========================================================
-   DATOS GEOGRÁFICOS Y DE ZONAS HORARIAS DE PAÍSES
-   ========================================================= */
-
+// Coordenadas orientativas de países para calcular distancia y zonas horarias
 const countryData = {
-  CO: { name: "Colombia", lat: 4.6097, lon: -74.0817, tz: "America/Bogota", flag: "🇨🇴" },
-  MA: { name: "Marruecos", lat: 33.9716, lon: -6.8498, tz: "Africa/Casablanca", flag: "🇲🇦" },
-  ES: { name: "España", lat: 40.4168, lon: -3.7038, tz: "Europe/Madrid", flag: "🇪🇸" },
-  US: { name: "Estados Unidos", lat: 40.7128, lon: -74.0060, tz: "America/New_York", flag: "🇺🇸" },
-  FR: { name: "Francia", lat: 48.8566, lon: 2.3522, tz: "Europe/Paris", flag: "🇫🇷" },
-  JP: { name: "Japón", lat: 35.6762, lon: 139.6503, tz: "Asia/Tokyo", flag: "🇯🇵" },
-  AR: { name: "Argentina", lat: -34.6037, lon: -58.3816, tz: "America/Argentina/Buenos_Aires", flag: "🇦🇷" }
+  co: { name: "Colombia", lat: 4.5709, lon: -74.2973, tz: "America/Bogota", flag: "🇨🇴" },
+  sa: { name: "Arabia Saudita", lat: 23.8859, lon: 45.0792, tz: "Asia/Riyadh", flag: "🇸🇦" },
+  es: { name: "España", lat: 40.4637, lon: -3.7492, tz: "Europe/Madrid", flag: "🇪🇸" },
+  us: { name: "Estados Unidos", lat: 37.0902, lon: -95.7129, tz: "America/New_York", flag: "🇺🇸" },
+  mx: { name: "México", lat: 23.6345, lon: -102.5528, tz: "America/Mexico_City", flag: "🇲🇽" },
+  ar_arg: { name: "Argentina", lat: -38.4161, lon: -63.6167, tz: "America/Argentina/Buenos_Aires", flag: "🇦🇷" }
 };
 
-function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Radio de la tierra en km
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return Math.round(R * c);
-}
-
 /* =========================================================
-   TRADUCCIONES DE LA INTERFAZ
+   TRADUCCIONES COMPLETAS DE LA INTERFAZ
    ========================================================= */
 
 const translations = {
@@ -1127,7 +1158,7 @@ const translations = {
     setupTitle: "Crear una partida",
     nameLabel: "Tu nombre",
     languageLabel: "Tu idioma",
-    countryLabel: "Tu país",
+    countryLabel: "Tu país / Ubicación",
     create: "Crear sala ✨",
     joinTitle: "¿Ya tienes un código de acceso?",
     join: "Unirse ⚡",
@@ -1161,7 +1192,7 @@ const translations = {
     setupTitle: "إنشاء لعبة",
     nameLabel: "اسمك",
     languageLabel: "لغتك",
-    countryLabel: "بلدك",
+    countryLabel: "بلدك / موقعك",
     create: "إنشاء غرفة ✨",
     joinTitle: "هل لديك رمز الغرفة؟",
     join: "انضم ⚡",
@@ -1195,7 +1226,7 @@ const translations = {
     setupTitle: "Create a game",
     nameLabel: "Your name",
     languageLabel: "Your language",
-    countryLabel: "Your country",
+    countryLabel: "Your country / Location",
     create: "Create room ✨",
     joinTitle: "Already have a room code?",
     join: "Join ⚡",
@@ -1224,6 +1255,10 @@ const translations = {
     ]
   }
 };
+
+/* =========================================================
+   ACTUALIZAR INTERFAZ Y IDIOMA
+   ========================================================= */
 
 document.getElementById("language").addEventListener("change", function() {
   currentLanguage = this.value;
@@ -1270,8 +1305,8 @@ function updateInterface() {
 async function createRoom() {
   clearMessages();
   const name = document.getElementById("name").value.trim();
-  const country = document.getElementById("country").value;
   currentLanguage = document.getElementById("language").value;
+  const country = document.getElementById("country").value;
   if (!name) return showError("Escribe tu nombre primero.");
 
   const code = generateRoomCode();
@@ -1294,9 +1329,6 @@ async function createRoom() {
   currentRoom = room;
   currentPlayer = player;
 
-  document.getElementById("playerOne").textContent = name;
-  document.getElementById("playerOneLang").textContent = getLanguageName(currentLanguage) + " • " + countryData[country].name;
-  document.getElementById("player1Flag").textContent = countryData[country].flag;
   document.getElementById("roomCode").textContent = code;
   document.getElementById("roomBadge").textContent = "SALA " + code;
 
@@ -1304,14 +1336,15 @@ async function createRoom() {
   subscribeToRoom(room.id);
   subscribeToPlayers(room.id);
   await loadPlayers(room.id);
+  startClockWidget();
 }
 
 async function joinRoom() {
   clearMessages();
   const name = document.getElementById("name").value.trim();
-  const country = document.getElementById("country").value;
   const code = document.getElementById("joinCode").value.trim().toUpperCase();
   currentLanguage = document.getElementById("language").value;
+  const country = document.getElementById("country").value;
   if (!name || !code) return showError("Completa todos los campos.");
 
   const { data: room } = await supabaseClient.from("rooms").select("*").eq("code", code).maybeSingle();
@@ -1333,6 +1366,7 @@ async function joinRoom() {
   subscribeToRoom(room.id);
   subscribeToPlayers(room.id);
   await loadPlayers(room.id);
+  startClockWidget();
 }
 
 function generateRoomCode() {
@@ -1353,21 +1387,95 @@ function updatePlayers(players) {
   const player1 = players[0];
   const player2 = players[1];
 
-  const c1 = countryData[player1.country] || countryData["CO"];
+  // Actualizar nombre y aplicar la lógica del corazón para "Salma"
+  formatLoveBadge(player1, player2);
+
+  const c1Info = countryData[player1.country || 'co'] || countryData.co;
   document.getElementById("playerOne").textContent = player1.name;
-  document.getElementById("playerOneLang").textContent = getLanguageName(player1.language) + " • " + c1.name;
-  document.getElementById("player1Flag").textContent = c1.flag;
+  document.getElementById("playerOneLang").textContent = `${getLanguageName(player1.language)} • ${c1Info.name}`;
+  document.getElementById("player1Flag").textContent = c1Info.flag;
 
   if (player2) {
-    const c2 = countryData[player2.country] || countryData["MA"];
+    const c2Info = countryData[player2.country || 'sa'] || countryData.sa;
     document.getElementById("playerTwo").textContent = player2.name;
-    document.getElementById("playerTwoLang").textContent = getLanguageName(player2.language) + " • " + c2.name;
-    document.getElementById("player2Flag").textContent = c2.flag;
+    document.getElementById("playerTwoLang").textContent = `${getLanguageName(player2.language)} • ${c2Info.name}`;
+    document.getElementById("player2Flag").textContent = c2Info.flag;
     document.getElementById("waiting").innerHTML = "⚡ ¡Segundo jugador conectado!";
+
+    // Calcular distancia entre países
+    calculateDistance(c1Info, c2Info);
 
     const btn = document.getElementById("startButton");
     btn.disabled = false;
     btn.textContent = translations[currentLanguage].start;
+  } else {
+    document.getElementById("distanceInfo").textContent = `🌍 Esperando al segundo jugador para calcular la distancia...`;
+  }
+}
+
+/* =========================================================
+   LÓGICA DEL CORAZÓN (SALMA) Y DISTANCIA
+   ========================================================= */
+
+function formatLoveBadge(p1, p2) {
+  const badge = document.getElementById("loveBadge");
+  const name1 = (p1 && p1.name) ? p1.name.trim().toLowerCase() : "";
+  const name2 = (p2 && p2.name) ? p2.name.trim().toLowerCase() : "";
+
+  let targetLang = currentLanguage;
+  if (p1 && p1.id === currentPlayer?.id) targetLang = p1.language;
+  else if (p2 && p2.id === currentPlayer?.id) targetLang = p2.language;
+
+  let loveText = "El amor de mi vida";
+  if (targetLang === "ar") loveText = "حب حياتي (El amor de mi vida)";
+  else if (targetLang === "en") loveText = "The love of my life";
+
+  if (name1 === "salma" || name2 === "salma") {
+    badge.innerHTML = `💖 ${loveText} 💖`;
+  } else {
+    badge.innerHTML = `❤️ Conexión Especial ❤️`;
+  }
+}
+
+function calculateDistance(c1, c2) {
+  // Fórmula de Haversine para calcular distancia en km entre dos coordenadas geográficas
+  const R = 6371; // Radio de la tierra en km
+  const dLat = (c2.lat - c1.lat) * Math.PI / 180;
+  const dLon = (c2.lon - c1.lon) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(c1.lat * Math.PI / 180) * Math.cos(c2.lat * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = Math.round(R * c);
+
+  document.getElementById("distanceInfo").textContent = `✈️ Distancia entre ${c1.name} y ${c2.name}: Aprox. ${distance.toLocaleString()} km`;
+}
+
+function startClockWidget() {
+  if (clockInterval) clearInterval(clockInterval);
+  updateClocks();
+  clockInterval = setInterval(updateClocks, 1000);
+}
+
+function updateClocks() {
+  if (!cachedPlayersList || cachedPlayersList.length === 0) return;
+  const p1 = cachedPlayersList[0];
+  const p2 = cachedPlayersList[1];
+
+  if (p1) {
+    const c1 = countryData[p1.country || 'co'] || countryData.co;
+    document.getElementById("p1ClockName").textContent = p1.name;
+    document.getElementById("p1Time").textContent = new Date().toLocaleTimeString('en-GB', { timeZone: c1.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  if (p2) {
+    const c2 = countryData[p2.country || 'sa'] || countryData.sa;
+    document.getElementById("p2ClockName").textContent = p2.name;
+    document.getElementById("p2Time").textContent = new Date().toLocaleTimeString('en-GB', { timeZone: c2.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  } else {
+    document.getElementById("p2ClockName").textContent = "Esperando...";
+    document.getElementById("p2Time").textContent = "--:--";
   }
 }
 
@@ -1418,7 +1526,7 @@ async function fetchQuestionsForGame() {
 }
 
 /* =========================================================
-   INICIO & JUEGO CON HORA EN TIEMPO REAL Y DISTANCIA
+   INICIO & JUEGO
    ========================================================= */
 
 async function startGame() {
@@ -1452,36 +1560,10 @@ function startCountdown() {
         screen.remove();
         currentQuestion = 0;
         showOnly("game");
-        initGameUIBar();
         renderQuestion();
       }, 500);
     }
   }, 1000);
-}
-
-function initGameUIBar() {
-  if (cachedPlayersList.length < 2) return;
-  const p1 = cachedPlayersList[0];
-  const p2 = cachedPlayersList[1];
-
-  const c1 = countryData[p1.country] || countryData["CO"];
-  const c2 = countryData[p2.country] || countryData["MA"];
-
-  const distanceKm = calculateDistanceKm(c1.lat, c1.lon, c2.lat, c2.lon);
-  document.getElementById("distanceInfo").innerHTML = `✈️ Distancia: <span class="distance-badge-pill">${distanceKm} km</span> (${c1.name} y ${c2.name})`;
-
-  if (clockInterval) clearInterval(clockInterval);
-  updateRealtimeClocks(p1, p2, c1, c2);
-  clockInterval = setInterval(() => updateRealtimeClocks(p1, p2, c1, c2), 1000);
-}
-
-function updateRealtimeClocks(p1, p2, c1, c2) {
-  const now = new Date();
-  
-  const time1 = new Intl.DateTimeFormat('es-ES', { timeZone: c1.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).format(now);
-  const time2 = new Intl.DateTimeFormat('es-ES', { timeZone: c2.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }).format(now);
-
-  document.getElementById("realtimeClocksBar").innerHTML = `Hora de ${p1.name}: ${time1} ❤️ Hora de ${p2.name}: ${time2}`;
 }
 
 function renderQuestion() {
@@ -1554,7 +1636,6 @@ function nextQuestion() {
    ========================================================= */
 
 async function finishMyAnswers() {
-  if (clockInterval) clearInterval(clockInterval);
   showOnly("waitingPartner");
 
   const totalQ = Math.min(activeQuestions.length, 10);
