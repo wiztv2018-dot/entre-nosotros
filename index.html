@@ -922,17 +922,17 @@
 <!-- MODAL DEL CORAZÓN ESPECIAL -->
 <div id="heartModal" class="heart-modal">
   <div class="heart-content">
-    <h3>Espacio Secreto 💖</h3>
-    <p>Escribe tu nombre para descubrir algo especial:</p>
+    <h3 id="heartModalTitle">Espacio Secreto 💖</h3>
+    <p id="heartModalDesc">Escribe tu nombre para descubrir algo especial:</p>
     
     <div style="display: flex; flex-direction: column; gap: 10px;">
       <input type="text" id="secretNameInput" placeholder="Tu nombre..." style="text-align: center;" />
-      <button class="button" onclick="checkSecretName()" style="margin-top: 0;">Revelar mensaje ✨</button>
+      <button class="button" id="heartModalBtn" onclick="checkSecretName()" style="margin-top: 0;">Revelar mensaje ✨</button>
     </div>
 
     <div id="heartResultBox" class="heart-result-box"></div>
 
-    <button onclick="closeHeartModal()" style="background: transparent; border: none; color: #94a3b8; margin-top: 18px; font-size: 12px; cursor: pointer;">Cerrar ventana</button>
+    <button id="heartCloseBtn" onclick="closeHeartModal()" style="background: transparent; border: none; color: #94a3b8; margin-top: 18px; font-size: 12px; cursor: pointer;">Cerrar ventana</button>
   </div>
 </div>
 
@@ -1060,7 +1060,7 @@
         <label id="countryLabel">Tu país / Ubicación</label>
         <select id="country">
           <option value="co">🇨🇴 Colombia (Bogotá/Barranquilla)</option>
-          <option value="sa">🇸🇦 Arabia Saudita (Riad)</option>
+          <option value="ma">🇲🇦 Marruecos (Rabat/Casablanca)</option>
           <option value="es">🇪🇸 España (Madrid)</option>
           <option value="us">🇺🇸 Estados Unidos (Miami/NY)</option>
           <option value="mx">🇲🇽 México (CDMX)</option>
@@ -1241,10 +1241,10 @@ let activeQuestions = [];
 let adminQuestionsCache = []; 
 let cachedPlayersList = [];
 
-// Coordenadas orientativas de países para calcular distancia y zonas horarias
+// Coordenadas orientativas de países para calcular distancia y zonas horarias (Marruecos en lugar de Arabia)
 const countryData = {
   co: { name: "Colombia", lat: 4.5709, lon: -74.2973, tz: "America/Bogota", flag: "🇨🇴" },
-  sa: { name: "Arabia Saudita", lat: 23.8859, lon: 45.0792, tz: "Asia/Riyadh", flag: "🇸🇦" },
+  ma: { name: "Marruecos", lat: 31.7917, lon: -7.0926, tz: "Africa/Casablanca", flag: "🇲🇦" },
   es: { name: "España", lat: 40.4637, lon: -3.7492, tz: "Europe/Madrid", flag: "🇪🇸" },
   us: { name: "Estados Unidos", lat: 37.0902, lon: -95.7129, tz: "America/New_York", flag: "🇺🇸" },
   mx: { name: "México", lat: 23.6345, lon: -102.5528, tz: "America/Mexico_City", flag: "🇲🇽" },
@@ -1288,7 +1288,12 @@ const translations = {
       { t: "😂 Modo 4: ¿Qué prefieres?", d: "Dilemas divertidos para debatir juntos." },
       { t: "🥹 Modo 5: Profundas", d: "Respuestas de texto abierto y emociones." },
       { t: "🔥 Modo 6: Adivina mi respuesta", d: "Intenta acertar la elección exacta." }
-    ]
+    ],
+    heartModalTitle: "Espacio Secreto 💖",
+    heartModalDesc: "Escribe tu nombre para descubrir algo especial:",
+    heartModalInputPlaceholder: "Tu nombre...",
+    heartModalBtn: "Revelar mensaje ✨",
+    heartCloseBtn: "Cerrar ventana"
   },
   ar: {
     title: "بيننا",
@@ -1322,7 +1327,12 @@ const translations = {
       { t: "😂 الوضع 4: ماذا تفضل؟", d: "معضلات ممتعة للنقاش معاً." },
       { t: "🥹 الوضع 5: أسئلة عميقة", d: "إجابات ومشاوير تعبيرية." },
       { t: "🔥 الوضع 6: احزر إجابتي", d: "حاول تخمين الاختيار الدقيق." }
-    ]
+    ],
+    heartModalTitle: "مساحة سرية 💖",
+    heartModalDesc: "اكتب اسمك لاكتشاف شيء مميز:",
+    heartModalInputPlaceholder: "اسمك...",
+    heartModalBtn: "كشف الرسالة ✨",
+    heartCloseBtn: "إغلاق النافذة"
   },
   en: {
     title: "Between<br>Us",
@@ -1356,22 +1366,37 @@ const translations = {
       { t: "😂 Mode 4: Would you rather?", d: "Fun dilemmas to debate together." },
       { t: "🥹 Mode 5: Deep questions", d: "Open answers and emotions." },
       { t: "🔥 Mode 6: Guess my answer", d: "Try to guess the exact choice." }
-    ]
+    ],
+    heartModalTitle: "Secret Space 💖",
+    heartModalDesc: "Type your name to discover something special:",
+    heartModalInputPlaceholder: "Your name...",
+    heartModalBtn: "Reveal message ✨",
+    heartCloseBtn: "Close window"
   }
 };
 
 /* =========================================================
-   FUNCIONES DEL CORAZÓN ESPECIAL (SALMA)
+   FUNCIONES DEL CORAZÓN ESPECIAL (SALMA) MULTIDIOMA
    ========================================================= */
 
 function openHeartModal() {
   document.getElementById("heartModal").style.display = "flex";
   document.getElementById("secretNameInput").value = "";
   document.getElementById("heartResultBox").style.display = "none";
+  updateHeartModalTexts();
 }
 
 function closeHeartModal() {
   document.getElementById("heartModal").style.display = "none";
+}
+
+function updateHeartModalTexts() {
+  const t = translations[currentLanguage];
+  document.getElementById("heartModalTitle").textContent = t.heartModalTitle;
+  document.getElementById("heartModalDesc").textContent = t.heartModalDesc;
+  document.getElementById("secretNameInput").placeholder = t.heartModalInputPlaceholder;
+  document.getElementById("heartModalBtn").textContent = t.heartModalBtn;
+  document.getElementById("heartCloseBtn").textContent = t.heartCloseBtn;
 }
 
 function checkSecretName() {
@@ -1380,13 +1405,29 @@ function checkSecretName() {
   
   // Acepta "salma" o "سلمى" (árabe)
   if (inputVal === "salma" || inputVal === "سلمى") {
-    resultBox.innerHTML = `✨ La mujer más hermosa del mundo, la niña más hermosa de mi corazón 💖`;
+    let msg = "✨ La mujer más hermosa del mundo, la niña más hermosa de mi corazón 💖";
+    if (currentLanguage === "ar") {
+      msg = "✨ أجمل امرأة في العالم، وألطف طفلة في قلبي 💖";
+    } else if (currentLanguage === "en") {
+      msg = "✨ The most beautiful woman in the world, the most precious girl in my heart 💖";
+    }
+    resultBox.innerHTML = msg;
     resultBox.style.display = "block";
   } else if (inputVal !== "") {
-    resultBox.innerHTML = `👋 ¡Hola ${document.getElementById("secretNameInput").value}! Este espacio es muy especial para alguien en particular... ✨`;
+    let msg = `👋 ¡Hola ${document.getElementById("secretNameInput").value}! Este espacio es muy especial para alguien en particular... ✨`;
+    if (currentLanguage === "ar") {
+      msg = `👋 أهلاً ${document.getElementById("secretNameInput").value}! هذه المساحة مميزة جداً لشخص معين... ✨`;
+    } else if (currentLanguage === "en") {
+      msg = `👋 Hello ${document.getElementById("secretNameInput").value}! This space is very special for someone in particular... ✨`;
+    }
+    resultBox.innerHTML = msg;
     resultBox.style.display = "block";
   } else {
-    resultBox.innerHTML = `Por favor escribe un nombre ❤️`;
+    let msg = "Por favor escribe un nombre ❤️";
+    if (currentLanguage === "ar") msg = "الرجاء كتابة اسم ❤️";
+    else if (currentLanguage === "en") msg = "Please enter a name ❤️";
+    
+    resultBox.innerHTML = msg;
     resultBox.style.display = "block";
   }
 }
@@ -1530,7 +1571,7 @@ function updatePlayers(players) {
   document.getElementById("player1Flag").textContent = c1Info.flag;
 
   if (player2) {
-    const c2Info = countryData[player2.country || 'sa'] || countryData.sa;
+    const c2Info = countryData[player2.country || 'ma'] || countryData.ma;
     document.getElementById("playerTwo").textContent = player2.name;
     document.getElementById("playerTwoLang").textContent = `${getLanguageName(player2.language)} • ${c2Info.name}`;
     document.getElementById("player2Flag").textContent = c2Info.flag;
@@ -1602,7 +1643,7 @@ function updateClocks() {
   }
 
   if (p2) {
-    const c2 = countryData[p2.country || 'sa'] || countryData.sa;
+    const c2 = countryData[p2.country || 'ma'] || countryData.ma;
     document.getElementById("p2ClockName").textContent = p2.name;
     document.getElementById("p2Time").textContent = new Date().toLocaleTimeString('en-GB', { timeZone: c2.tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
   } else {
