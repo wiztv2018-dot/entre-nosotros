@@ -330,12 +330,6 @@
       font-size: 80px;
     }
 
-    .score {
-      font-size: 65px;
-      font-weight: 900;
-      margin: 5px 0;
-    }
-
     .waiting-partner {
       text-align: center;
       padding: 20px 0;
@@ -653,15 +647,16 @@
     </div>
   </section>
 
-  <!-- RESULTADO -->
+  <!-- RESULTADO FINAL COMPARATIVO -->
   <section class="card hidden result" id="result">
     <div class="big">💞</div>
-    <div class="score" id="finalScore">--%</div>
-    <h2 id="resultTitle">¡Compatibilidad calculada!</h2>
-    <p id="resultText" style="color:#aaa2b2">Este es el resultado basado en las respuestas de ambos.</p>
+    <div style="font-size: 14px; color: #aaa2b2; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Coincidieron en</div>
+    <div class="score" id="finalScore" style="font-size: 55px; color: #ff70b1;">0 de 10</div>
+    <h2 id="resultTitle" style="margin-top: 5px;">respuestas</h2>
+    <p id="resultText" style="color:#bdb5c7; margin: 15px 0 25px; line-height: 1.5;"></p>
 
     <button class="button" onclick="location.reload()" id="againButton">
-      Jugar otra vez
+      Jugar otra vez 🔄
     </button>
   </section>
 
@@ -716,8 +711,6 @@ const translations = {
     category: "❤️ Conóceme",
     choose: "Elige una respuesta.",
     next: "Siguiente →",
-    result: "¡Hay mucho por descubrir!",
-    resultText: "Esta es su compatibilidad final.",
     again: "Jugar otra vez",
     getReady: "Prepárense..."
   },
@@ -739,8 +732,6 @@ const translations = {
     category: "❤️ لنتعرف على بعضنا",
     choose: "اختر إجابة.",
     next: "التالي →",
-    result: "لا يزال هناك الكثير لاكتشافه!",
-    resultText: "هذه هي النسبة النهائية لفقاتكم.",
     again: "العب مرة أخرى",
     getReady: "استعدوا..."
   },
@@ -762,8 +753,6 @@ const translations = {
     category: "❤️ Get to know me",
     choose: "Choose an answer.",
     next: "Next →",
-    result: "There is still so much to discover!",
-    resultText: "This is your final compatibility score.",
     again: "Play again",
     getReady: "Get ready..."
   }
@@ -1022,13 +1011,13 @@ async function finishMyAnswers() {
   }
   await supabaseClient.from("answers").insert(rows);
 
-  // Verificar si el otro ya había respondido todo
+  // Verificar si el otro jugador ya terminó
   checkIfBothFinished();
 }
 
 function listenToGameCompletion() {
   if (answersSubscription) supabaseClient.removeChannel(answersSubscription);
-  
+
   answersSubscription = supabaseClient.channel("answers-" + currentRoom.id)
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "answers", filter: "room_id=eq." + currentRoom.id }, () => {
       checkIfBothFinished();
@@ -1041,16 +1030,21 @@ async function checkIfBothFinished() {
     .select("*")
     .eq("room_id", currentRoom.id);
 
-  // 10 preguntas x 2 jugadores = 20 respuestas guardadas en total
+  // 10 preguntas x 2 jugadores = 20 respuestas acumuladas
   if (allAnswers && allAnswers.length >= 20) {
     calculateFinalScore(allAnswers);
   }
 }
 
+/* =========================================================
+   CÁLCULO DE COINCIDENCIAS COMPARATIVO
+   ========================================================= */
+
 function calculateFinalScore(allAnswers) {
   let matches = 0;
+  const totalQuestions = 10;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < totalQuestions; i++) {
     const qUUID = getQuestionUUID(i);
     const qAns = allAnswers.filter(a => a.question_id === qUUID);
 
@@ -1061,12 +1055,21 @@ function calculateFinalScore(allAnswers) {
     }
   }
 
-  const scorePercentage = Math.round((matches / 10) * 100);
+  // Muestra "X de 10"
+  document.getElementById("finalScore").textContent = `${matches} de ${totalQuestions}`;
 
-  document.getElementById("finalScore").textContent = scorePercentage + "%";
-  document.getElementById("resultTitle").textContent = translations[currentLanguage].result;
-  document.getElementById("resultText").textContent = translations[currentLanguage].resultText;
-  
+  let feedbackText = "";
+  if (matches === totalQuestions) {
+    feedbackText = "¡Conexión total! Respondieron exactamente lo mismo en todo.";
+  } else if (matches >= 7) {
+    feedbackText = "¡Tienen muchísima química! Están super alineados.";
+  } else if (matches >= 4) {
+    feedbackText = "¡Buen balance! Tienen varios puntos en común.";
+  } else {
+    feedbackText = "Los opuestos se atraen. ¡Tienen mucho por descubrir!";
+  }
+
+  document.getElementById("resultText").textContent = feedbackText;
   showOnly("result");
 }
 
