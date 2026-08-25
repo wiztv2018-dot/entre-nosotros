@@ -1723,6 +1723,10 @@ function subscribeToRoom(roomId) {
           currentRoom =
             payload.new;
 
+          if (payload.new.status === "starting") {
+  startCountdown();
+}
+
         }
       )
 
@@ -1735,17 +1739,171 @@ function subscribeToRoom(roomId) {
    JUEGO
    ========================================================= */
 
-function startGame() {
+async function startGame() {
 
-  currentQuestion = 0;
+  if (!currentRoom) return;
 
-  showOnly("game");
+  // Avisamos a la sala que la partida comenzará
+  const { error } = await supabaseClient
+    .from("rooms")
+    .update({
+      status: "starting"
+    })
+    .eq("id", currentRoom.id);
 
-  renderQuestion();
+  if (error) {
+    console.error(error);
+    return;
+  }
 
 }
 
+function startCountdown() {
 
+  // Evitamos que el contador se ejecute dos veces
+  if (
+    document.getElementById("countdownScreen")
+  ) {
+    return;
+  }
+
+
+  const countdown =
+    document.createElement("div");
+
+  countdown.id =
+    "countdownScreen";
+
+
+  countdown.style.position =
+    "fixed";
+
+  countdown.style.inset =
+    "0";
+
+  countdown.style.zIndex =
+    "9999";
+
+  countdown.style.display =
+    "flex";
+
+  countdown.style.flexDirection =
+    "column";
+
+  countdown.style.alignItems =
+    "center";
+
+  countdown.style.justifyContent =
+    "center";
+
+  countdown.style.background =
+    "radial-gradient(circle, #442052, #0c0910)";
+
+
+  const heart =
+    document.createElement("div");
+
+  heart.textContent =
+    "💗";
+
+  heart.style.fontSize =
+    "60px";
+
+
+  const number =
+    document.createElement("div");
+
+  number.style.fontSize =
+    "clamp(100px, 25vw, 220px)";
+
+  number.style.fontWeight =
+    "900";
+
+  number.style.lineHeight =
+    "1";
+
+  number.style.textShadow =
+    "0 0 50px rgba(255,100,170,.6)";
+
+
+  const text =
+    document.createElement("div");
+
+  text.style.marginTop =
+    "20px";
+
+  text.style.fontSize =
+    "18px";
+
+  text.style.color =
+    "#aaa2b2";
+
+
+  text.textContent =
+    currentLanguage === "ar"
+      ? "استعدوا..."
+      : currentLanguage === "en"
+        ? "Get ready..."
+        : "Prepárense...";
+
+
+  countdown.appendChild(heart);
+
+  countdown.appendChild(number);
+
+  countdown.appendChild(text);
+
+  document.body.appendChild(countdown);
+
+
+  let count = 5;
+
+
+  number.textContent =
+    count;
+
+
+  const interval =
+    setInterval(() => {
+
+      count--;
+
+
+      if (count > 0) {
+
+        number.textContent =
+          count;
+
+      }
+
+
+      else {
+
+        number.textContent =
+          "0";
+
+
+        clearInterval(interval);
+
+
+        setTimeout(() => {
+
+          countdown.remove();
+
+          currentQuestion = 0;
+
+          showOnly("game");
+
+          renderQuestion();
+
+        }, 500);
+
+      }
+
+    }, 1000);
+
+} 
+  
 function renderQuestion() {
 
   selectedAnswer = null;
