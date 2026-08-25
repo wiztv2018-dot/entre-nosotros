@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+[cite: 1]<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -810,6 +810,10 @@
     <h2 id="resultTitle" style="margin-top: 5px;">respuestas</h2>
     <p id="resultText" style="color:#bdb5c7; margin: 15px 0 25px; line-height: 1.5;"></p>
 
+    <!-- DESGLOSE DETALLADO DE QUÉ ELIGIó CADA UNO -->
+    <div id="comparisonBreakdown" style="text-align: left; margin-bottom: 25px; display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;">
+    </div>
+
     <button class="button" onclick="location.reload()" id="againButton">
       Jugar otra vez 🔄
     </button>
@@ -1229,25 +1233,81 @@ async function checkIfBothFinished() {
 
     if (p1Count >= totalQ && p2Count >= totalQ) {
       if (pollInterval) clearInterval(pollInterval);
-      calculateFinalScore(allAnswers, totalQ);
+      
+      // Obtener nombres de los jugadores para el desglose
+      const { data: playersData } = await supabaseClient
+        .from("players")
+        .select("*")
+        .eq("room_id", currentRoom.id)
+        .order("joined_at", { ascending: true });
+
+      calculateFinalScore(allAnswers, totalQ, playersData);
     }
   }
 }
 
-function calculateFinalScore(allAnswers, totalQ) {
+function calculateFinalScore(allAnswers, totalQ, playersData) {
   let matches = 0;
+  const playerIds = playersData ? playersData.map(p => p.id) : [...new Set(allAnswers.map(a => a.player_id))];
+  const p1 = playersData ? playersData[0] : { name: "Jugador 1" };
+  const p2 = playersData ? playersData[1] : { name: "Jugador 2" };
+
+  const breakdownContainer = document.getElementById("comparisonBreakdown");
+  breakdownContainer.innerHTML = "";
 
   for (let i = 0; i < totalQ; i++) {
+    const qObj = activeQuestions[i % activeQuestions.length];
+    let qText = qObj ? (currentLanguage === "en" ? (qObj.question_en || qObj.question_es) : currentLanguage === "ar" ? (qObj.question_ar || qObj.question_es) : qObj.question_es) : `Pregunta ${i + 1}`;
+
+    let optsRaw = qObj ? (currentLanguage === "en" ? (qObj.options_en || qObj.options_es) : currentLanguage === "ar" ? (qObj.options_ar || qObj.options_es) : qObj.options_es) : "";
+    let optsList = optsRaw ? optsRaw.split(",") : [];
+
     const qAns = allAnswers.filter(a => String(a.question_id) === String(i));
+    
+    let p1AnsText = "N/A";
+    let p2AnsText = "N/A";
 
     if (qAns.length >= 2) {
-      const p1Val = String(qAns[0].original_text).trim();
-      const p2Val = String(qAns[1].original_text).trim();
+      const p1Record = qAns.find(a => String(a.player_id) === String(playerIds[0]));
+      const p2Record = qAns.find(a => String(a.player_id) === String(playerIds[1]));
 
-      if (p1Val === p2Val) {
-        matches++;
+      if (p1Record) {
+        let idx = parseInt(p1Record.original_text);
+        p1AnsText = !isNaN(idx) && optsList[idx] ? optsList[idx].trim() : p1Record.original_text;
+      }
+      if (p2Record) {
+        let idx = parseInt(p2Record.original_text);
+        p2AnsText = !isNaN(idx) && optsList[idx] ? optsList[idx].trim() : p2Record.original_text;
       }
     }
+
+    const isMatch = p1AnsText.trim().toLowerCase() === p2AnsText.trim().toLowerCase();
+    if (isMatch) matches++;
+
+    // Generar tarjeta visual del desglose por cada pregunta
+    const itemDiv = document.createElement("div");
+    itemDiv.style.background = "rgba(255,255,255,0.05)";
+    itemDiv.style.border = `1px solid ${isMatch ? "rgba(80,220,160,0.3)" : "rgba(255,255,255,0.1)"}`;
+    itemDiv.style.borderRadius = "14px";
+    itemDiv.style.padding = "12px";
+    itemDiv.style.fontSize = "12px";
+
+    itemDiv.innerHTML = `
+      <div style="font-weight: bold; color: #ff70b1; margin-bottom: 6px;">Ronda ${i + 1}: ${qText}</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #ddd;">
+        <div style="background: rgba(0,0,0,0.2); padding: 6px 8px; border-radius: 8px;">
+          <strong style="color: #bbb;">${p1.name}:</strong> ${p1AnsText}
+        </div>
+        <div style="background: rgba(0,0,0,0.2); padding: 6px 8px; border-radius: 8px;">
+          <strong style="color: #bbb;">${p2.name}:</strong> ${p2AnsText}
+        </div>
+      </div>
+      <div style="text-align: right; margin-top: 5px; font-size: 11px; color: ${isMatch ? "#a8f5d5" : "#ffb5c4"};">
+        ${isMatch ? "✓ ¡Coincidieron!" : "× Distinta elección"}
+      </div>
+    `;
+
+    breakdownContainer.appendChild(itemDiv);
   }
 
   document.getElementById("finalScore").textContent = `${matches} de ${totalQ}`;
@@ -1366,7 +1426,6 @@ async function loadAdminQuestionsForMode() {
 
   listContainer.innerHTML = "";
   
-  // Construcción segura de elementos del DOM por nodos para evitar bloqueos en botones
   adminQuestionsCache.forEach(q => {
     const item = document.createElement("div");
     item.className = "question-admin-item";
