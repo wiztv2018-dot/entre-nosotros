@@ -837,10 +837,10 @@
 <div id="heartModal" class="heart-modal">
   <div class="heart-content">
     <div style="font-size: 40px;">❤️</div>
-    <h3 style="font-family: 'Outfit', sans-serif; font-size: 18px; color: #f472b6;">Espacio Especial</h3>
+    <h3 id="heartModalTitle" style="font-family: 'Outfit', sans-serif; font-size: 18px; color: #f472b6;">Espacio Especial</h3>
     <input type="text" id="secretInput" placeholder="Escribe algo..." oninput="checkSecretInput(this.value)">
     <p id="secretMessage" style="font-weight: bold; color: #ff4d6d; min-height: 24px; font-size: 14px;"></p>
-    <button onclick="closeHeartModal()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 10px; font-size: 13px; cursor: pointer; margin-top: 5px;">Cerrar</button>
+    <button id="heartCloseBtn" onclick="closeHeartModal()" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 10px; font-size: 13px; cursor: pointer; margin-top: 5px;">Cerrar</button>
   </div>
 </div>
 
@@ -1147,6 +1147,10 @@ const translations = {
     noMatchText: "¡Ninguna coincidencia exacta esta vez, pero mucho de qué hablar!",
     allMatchText: "¡Pensaron exactamente igual en todo el juego!",
     modeSelectorTitle: "Elige el modo de juego:",
+    heartTitle: "Espacio Especial",
+    heartPlaceholder: "Escribe algo...",
+    heartClose: "Cerrar",
+    secretLoveMsg: "¡Felicidades, eres el amor de mi vida! ❤️",
     modes: [
       { t: "❤️ Modo 1: Conóceme", d: "Preguntas creadas para conocernos a fondo." },
       { t: "🧠 Modo 2: ¿Cuánto me conoces?", d: "Responde lo que crees que elegirá tu pareja." },
@@ -1184,6 +1188,10 @@ const translations = {
     noMatchText: "لا توجد تطابقات دقيقة هذه المرة، ولكن هناك الكثير للنقاش!",
     allMatchText: "فكرتم بطريقة متطابقة تماماً في كل اللعبة!",
     modeSelectorTitle: "اختر وضع اللعبة:",
+    heartTitle: "مساحة خاصة",
+    heartPlaceholder: "اكتب شيئاً...",
+    heartClose: "إغلاق",
+    secretLoveMsg: "تهانينا، أنت حب حياتي! ❤️",
     modes: [
       { t: "❤️ الوضع 1: تعرف علي", d: "أسئلة مصممة للتعرف على بعضنا بعمق." },
       { t: "🧠 الوضع 2: كم تعرفني؟", d: "أجب بما تعتقد أن الشخص الآخر سيختاره." },
@@ -1221,6 +1229,10 @@ const translations = {
     noMatchText: "No exact matches this time, but plenty to talk about!",
     allMatchText: "You thought exactly alike throughout the entire game!",
     modeSelectorTitle: "Choose game mode:",
+    heartTitle: "Special Space",
+    heartPlaceholder: "Type something...",
+    heartClose: "Close",
+    secretLoveMsg: "Congratulations, you are the love of my life! ❤️",
     modes: [
       { t: "❤️ Mode 1: Get to know me", d: "Questions designed to know each other deeply." },
       { t: "🧠 Mode 2: How well do you know me?", d: "Answer what you think your partner will choose." },
@@ -1251,11 +1263,11 @@ function checkSecretInput(value) {
   const messageEl = document.getElementById("secretMessage");
   const cleanValue = value.trim().toLowerCase();
 
-  // Variaciones permitidas: Salma (español/inglés) o en árabe (سلمى / سلما)
-  const validNames = ["salma", "سلمى", "سلما"];
+  const validNames = ["salma", "سلمى", "سل馬", "سلما"];
 
   if (validNames.includes(cleanValue)) {
-    messageEl.textContent = "¡Felicidades, eres el amor de mi vida! ❤️";
+    const t = translations[currentLanguage];
+    messageEl.textContent = t.secretLoveMsg;
   } else {
     messageEl.textContent = "";
   }
@@ -1292,6 +1304,11 @@ function updateInterface() {
   document.getElementById("coincidedLabel").textContent = t.coincidedLabel;
   document.getElementById("resultTitle").textContent = t.respuestasText;
   document.getElementById("againButton").textContent = t.again;
+
+  // Textos del modal secreto adaptados al idioma
+  document.getElementById("heartModalTitle").textContent = t.heartTitle;
+  document.getElementById("secretInput").placeholder = t.heartPlaceholder;
+  document.getElementById("heartCloseBtn").textContent = t.heartClose;
 
   for (let i = 0; i < 6; i++) {
     const cardEl = document.querySelectorAll(".mode-card")[i];
@@ -1668,7 +1685,7 @@ function calculateFinalScore(allAnswers, totalQ, playerIds) {
           </div>`;
       } else {
         if (idx1 === idx2) {
-          p1Score++; // En otros modos, cuenta coincidencias
+          p1Score++;
           detailsHtml += `
             <div class="breakdown-item match">
               <div class="breakdown-q">${i+1}. ${qText}</div>
